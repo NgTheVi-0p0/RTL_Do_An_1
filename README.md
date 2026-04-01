@@ -39,7 +39,7 @@ Dự án thực hiện quy trình thiết kế từ RTL đến GDSII (ASIC Flow)
 
 ***
 
-```markdown
+
 # 📘 Hướng dẫn sử dụng Git/GitHub cho Nhóm Đồ Án RTL
 
 Tài liệu này hướng dẫn các thành viên trong nhóm cách lấy code về máy, cập nhật code mới và đẩy phần việc của mình lên GitHub dùng chung (`RTL_Do_An_1`).
