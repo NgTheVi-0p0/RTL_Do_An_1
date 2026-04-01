@@ -35,6 +35,10 @@ Dự án thực hiện quy trình thiết kế từ RTL đến GDSII (ASIC Flow)
 
 
 
+
+
+***
+
 ```markdown
 # 📘 Hướng dẫn sử dụng Git/GitHub cho Nhóm Đồ Án RTL
 
@@ -47,72 +51,89 @@ Tài liệu này hướng dẫn các thành viên trong nhóm cách lấy code v
 **Bước 0: Chấp nhận lời mời**
 - Kiểm tra Email của bạn, tìm thư từ GitHub và nhấn **"Accept Invitation"** để tham gia vào dự án.
 
-**Bước 1: Tải toàn bộ code về máy tính**
+**Bước 1: Tải toàn bộ code về máy tính (Clone code)**
 Mở Terminal (hoặc Terminal trong VS Code) và gõ lệnh:
 ```bash
 git clone https://github.com/NgTheVi-0p0/RTL_Do_An_1.git
 ```
 
-**Bước 2: Di chuyển vào thư mục dự án**
-Sau khi tải xong, bạn phải di chuyển Terminal vào trong thư mục chứa code:
+**Bước 2: Di chuyển vào thư mục dự án vừa tải về**
 ```bash
 cd RTL_Do_An_1
 ```
 
-**Bước 3: Định danh tài khoản cá nhân**
-Chạy 2 lệnh sau (thay tên và email của bạn vào) để hệ thống biết ai là người đang viết đoạn code nào:
+**Bước 3: Định danh tài khoản (Để nhóm biết ai là người viết đoạn code nào)**
+Gõ 2 lệnh sau (Nhớ thay thông tin của bạn vào trong ngoặc kép):
 ```bash
 git config --global user.name "Tên Của Bạn"
 git config --global user.email "email_cua_ban@gmail.com"
 ```
+*(Xong Phần 1! Máy tính của bạn đã kết nối thành công với kho code chung của nhóm).*
 
 ---
 
-## ♻️ PHẦN 2: Quy trình code hằng ngày (Lấy và Đẩy code)
+## ♻️ PHẦN 2: Quy trình làm việc HẰNG NGÀY (Cùng lấy và đẩy code)
 
-⚠️ **Quy tắc Vàng:** ĐỂ KHÔNG BỊ ĐÈ CODE HAY MẤT CODE CỦA NHAU, hãy làm đúng theo thứ tự sau mỗi khi bạn ngồi vào máy tính:
+Đây là quy trình **BẮT BUỘC** mỗi khi bạn ngồi vào máy tính để viết code. Việc này giúp tránh làm mất code của người khác.
 
-### Bước 1: LẤY CODE MỚI NHẤT VỀ MÁY (Bắt buộc làm đầu tiên)
-Trước khi gõ bất kỳ dòng code nào, hãy lấy phần code mà các bạn khác vừa làm về máy để đồng bộ:
+### 👉 BƯỚC 1: LẤY CODE MỚI NHẤT VỀ (Pull)
+**Tuyệt đối phải làm bước này đầu tiên** trước khi gõ bất kỳ dòng code nào. Lệnh này giúp bạn tải phần code mà các bạn khác vừa làm xong về máy mình để đồng bộ:
 ```bash
 git pull
 ```
+*(Nếu Terminal hiện dòng `Already up to date.` nghĩa là code trên máy bạn đang là mới nhất, không có ai thay đổi gì).*
 
-### Bước 2: BẮT ĐẦU LÀM PHẦN VIỆC CỦA MÌNH
-- Mở VS Code, tạo hoặc chỉnh sửa các file `.v` của mình.
-- *Lưu ý: Bạn được phân công làm khối nào thì chỉ sửa file của khối đó (VD: Bạn làm ALU thì chỉ sửa `alu.v`). Đừng sửa file của người khác để tránh bị đụng code.*
+### 👉 BƯỚC 2: Bắt đầu viết code của bạn
+- Mở VS Code, sửa file, tạo file `.v` mới, chạy mô phỏng...
+- **Nguyên tắc "Vàng":** Phân chia rõ ràng việc ai nấy làm. Hạn chế tối đa việc 2 người cùng mở 1 file (ví dụ `datapath.v`) ra sửa cùng lúc để tránh xung đột.
 
-### Bước 3: ĐẨY CODE LÊN CHO CẢ NHÓM (Sau khi làm xong)
-Sau khi bạn làm xong và code chạy không có lỗi, hãy đẩy lên GitHub bằng 3 lệnh liên tiếp sau:
+### 👉 BƯỚC 3: ĐẨY CODE LÊN GITHUB (Push)
+Sau khi bạn code xong, chạy thử không có lỗi và muốn gửi lên cho cả nhóm dùng, hãy gõ lần lượt 3 lệnh sau:
 
-**1. Gom tất cả các file vừa sửa lại:**
+**1. Đưa tất cả các file vừa sửa vào danh sách chuẩn bị gửi:**
 ```bash
 git add .
 ```
+*(Lưu ý: Có dấu chấm `.` ở cuối lệnh, nghĩa là chọn TẤT CẢ các file).*
 
-**2. Đóng gói và ghi chú lại bạn vừa làm gì (Ghi rõ ràng để nhóm dễ hiểu):**
+**2. Ghi chú lại bạn vừa làm gì:** (Ghi chú rõ ràng để các bạn khác đọc còn hiểu)
 ```bash
-git commit -m "Đã làm xong khối ALU và testbench ALU"
+git commit -m "Hoàn thành code khối ALU và viết xong file testbench"
 ```
 
-**3. Đẩy gói code đó lên kho chung trên GitHub:**
+**3. Đẩy code lên kho chung:**
 ```bash
 git push
 ```
+*(Lưu ý: Lần đẩy code đầu tiên, VS Code có thể sẽ bật lên một bảng thông báo yêu cầu đăng nhập GitHub. Bạn cứ bấm `Allow` hoặc `Sign in with Browser` để trình duyệt tự động xác thực là xong).*
 
 ---
 
-## 🆘 PHẦN 3: Xử lý lỗi khi 2 người cùng đẩy code (Conflict)
+## ⚠️ PHẦN 3: Xử lý khi bị lỗi (Conflict / Bị từ chối đẩy code)
 
-Nếu lúc gõ lệnh `git push` mà Terminal báo lỗi màu đỏ (có chữ **rejected** hoặc **fetch first**):
-- **Nguyên nhân:** Có một bạn khác trong nhóm đã `push` code lên trước bạn 1 bước. GitHub không cho bạn push đè lên code của người đó.
-- **Cách giải quyết:**
-  1. Gõ lệnh `git pull` để tải phần code của bạn kia về ghép với code của mình.
-  2. Nếu VS Code hiện màu xanh/vàng báo **Conflict (Xung đột)**, hãy xem kỹ dòng code đó, chọn "Accept Current Change" (Giữ code của mình) hoặc "Accept Incoming Change" (Giữ code của bạn kia).
-  3. Sau khi sửa xong xung đột, lưu file lại và đẩy lên lại bằng chu kỳ 3 lệnh:
+**Tình huống:** Bạn gõ `git push` nhưng Terminal hiện một nùi chữ đỏ báo lỗi **"rejected"** hoặc **"fetch first"**.
+
+- **Nguyên nhân:** Có một bạn khác trong nhóm đã `push` code lên trước bạn vài phút. Lúc này code trên GitHub đang mới hơn code trong máy bạn. Git khóa không cho bạn push đè lên để bảo vệ code của bạn kia.
+- **Cách giải quyết (Chỉ cần làm đúng 3 bước):**
+  
+  1. Gõ lệnh tải code của bạn kia về ghép với code của mình:
+     ```bash
+     git pull
+     ```
+  2. Nếu VS Code hiện lên các dòng code có màu sắc lạ (Xanh lá/Xanh dương) báo hiệu **Conflict (Xung đột)**:
+     - Đừng hoảng! Hãy nhìn vào đoạn code đó, VS Code sẽ hiện các nút bấm hỏi bạn muốn giữ lại code của bạn (Accept Current Change), hay giữ code của bạn kia (Accept Incoming Change), hay giữ cả hai.
+     - Chọn cái đúng, chỉnh sửa lại cho hoàn chỉnh rồi Bấm Lưu file (`Ctrl + S`).
+  3. Gõ lại chu kỳ đẩy code ban đầu:
      ```bash
      git add .
-     git commit -m "Sửa lỗi xung đột code"
+     git commit -m "Fix conflict code với bạn A"
      git push
      ```
+
+---
+### 💡 Mẹo nhỏ (Dùng giao diện VS Code thay cho gõ lệnh)
+Nếu bạn lười gõ lệnh, hãy nhìn sang **Cột bên trái của VS Code (Biểu tượng nhánh cây - Source Control)**:
+1. Bấm dấu `+` (Tương đương `git add .`).
+2. Gõ chữ vào ô Message và bấm nút **Commit** (Tương đương `git commit -m "..."`).
+3. Bấm nút **Sync Changes** (Tương đương gộp cả `git pull` và `git push` lại làm một).
 ```
