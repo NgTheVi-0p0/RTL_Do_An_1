@@ -72,7 +72,7 @@ git config --global user.email "email_cua_ban@gmail.com"
 
 ---
 
-## ♻️ PHẦN 2: Quy trình làm việc HẰNG NGÀY (Cùng lấy và đẩy code)
+## ♻️ PHẦN 2: Quy trình làm việc HẰNG NGÀY (Lấy và đẩy code)
 
 Đây là quy trình **BẮT BUỘC** mỗi khi bạn ngồi vào máy tính để viết code. Việc này giúp tránh làm mất code của người khác.
 
