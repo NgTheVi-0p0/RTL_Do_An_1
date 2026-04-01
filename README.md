@@ -136,4 +136,4 @@ Nếu bạn lười gõ lệnh, hãy nhìn sang **Cột bên trái của VS Code
 1. Bấm dấu `+` (Tương đương `git add .`).
 2. Gõ chữ vào ô Message và bấm nút **Commit** (Tương đương `git commit -m "..."`).
 3. Bấm nút **Sync Changes** (Tương đương gộp cả `git pull` và `git push` lại làm một).
-```
+
