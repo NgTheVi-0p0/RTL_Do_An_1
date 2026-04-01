@@ -5,20 +5,20 @@ Dự án thực hiện quy trình thiết kế từ RTL đến GDSII (ASIC Flow)
 ## 🚀 Tiến độ dự án (Progress)
 
 ### 1. Khối RTL (Verilog Design)
-- [x] ALU (Arithmetic Logic Unit)
-- [x] Control Unit
-- [x] Register File
-- [x] Datapath Integration
+- [ ] ALU (Arithmetic Logic Unit)
+- [ ] Control Unit
+- [ ] Register File
+- [ ] Datapath Integration
 - [ ] Branch Prediction (Gshare Algorithm) - *Đang thực hiện*
 - [ ] Hazard Unit (Forwarding/Stalling)
 
 ### 2. Kiểm tra & Mô phỏng (Simulation)
-- [x] Kiểm tra 37 lệnh cơ bản (R, I, S, U type)
+- [ ] Kiểm tra 37 lệnh cơ bản (R, I, S, U type)
 - [ ] Kiểm tra Branch/Jump instructions
 - [ ] Gate-level Simulation (GLS)
 
 ### 3. Thiết kế vật lý (Physical Design - OpenLane)
-- [x] Logic Synthesis
+- [ ] Logic Synthesis
 - [ ] Floorplan & Placement
 - [ ] CTS & Routing
 - [ ] Sign-off (DRC/LVS check)
