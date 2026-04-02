@@ -24,7 +24,7 @@ Dự án thực hiện quy trình thiết kế từ RTL đến GDSII (ASIC Flow)
 - [ ] Sign-off (DRC/LVS check)
 
 ## 🛠 Công cụ sử dụng (Tools)
-*   **Editor:** VS Code (WSL2 Ubuntu 22.04)
+*   **Editor:** VS Code (WSL Ubuntu )
 *   **Simulation:** Icarus Verilog + GTKWave
 *   **Synthesis:** Yosys
 *   **Backend:** OpenLane (Docker)
