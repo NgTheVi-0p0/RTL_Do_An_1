@@ -1,5 +1,4 @@
-// Cách viết ALU cho alu_ctrl[9:0] (One-hot)
-module alu (
+module ALU (
     input wire [31:0] a,
     input wire [31:0] b,
     input wire [9:0]  alu_ctrl, // 10 bit theo đồ án
