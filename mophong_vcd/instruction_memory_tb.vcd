@@ -1,0 +1,74 @@
+$date
+	Fri Apr 17 23:04:21 2026
+$end
+$version
+	Icarus Verilog
+$end
+$timescale
+	1ps
+$end
+$scope module instruction_memory_tb $end
+$var wire 32 ! instr [31:0] $end
+$var reg 32 " addr_ext [31:0] $end
+$var reg 1 # clk $end
+$var reg 32 $ din_ext [31:0] $end
+$var reg 32 % pc [31:0] $end
+$var reg 1 & we $end
+$scope module uut $end
+$var wire 32 ' addr_ext [31:0] $end
+$var wire 1 # clk $end
+$var wire 32 ( din_ext [31:0] $end
+$var wire 32 ) instr [31:0] $end
+$var wire 32 * pc [31:0] $end
+$var wire 1 & we $end
+$upscope $end
+$upscope $end
+$enddefinitions $end
+$comment Show the parameter values. $end
+$dumpall
+$end
+#0
+$dumpvars
+b0 *
+bx )
+b0 (
+b0 '
+0&
+b0 %
+b0 $
+0#
+b0 "
+bx !
+$end
+#5000
+b100000000000010010011 !
+b100000000000010010011 )
+1#
+b100000000000010010011 $
+b100000000000010010011 (
+1&
+#10000
+0#
+#15000
+1#
+b1000000000000100010011 $
+b1000000000000100010011 (
+b100 "
+b100 '
+#20000
+0#
+#25000
+1#
+0&
+#30000
+0#
+#35000
+1#
+#40000
+0#
+#41000
+b1000000000000100010011 !
+b1000000000000100010011 )
+b100 %
+b100 *
+#42000

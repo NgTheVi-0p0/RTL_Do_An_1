@@ -16,7 +16,7 @@ module ALU_tb;
     );
 
     initial begin
-        $dumpfile("ALU_tb.vcd");
+        $dumpfile("mophong_vcd/ALU_tb.vcd");
         $dumpvars(0, ALU_tb);
 
         a = 32'h0000_0005; b = 32'h0000_0003;

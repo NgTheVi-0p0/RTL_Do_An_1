@@ -24,7 +24,7 @@ module Register_File_tb;
     );
 
     initial begin
-        $dumpfile("Register_File_tb.vcd");
+        $dumpfile("mophong_vcd/Register_File_tb.vcd");
         $dumpvars(0, Register_File_tb);
 
         clk = 0; rst_n = 0; reg_write = 0;

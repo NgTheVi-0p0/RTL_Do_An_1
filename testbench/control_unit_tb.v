@@ -46,7 +46,7 @@ module control_unit_tb;
     endtask
 
     initial begin
-        $dumpfile("control_unit_tb.vcd");
+        $dumpfile("mophong_vcd/control_unit_tb.vcd");
         $dumpvars(0, control_unit_tb);
 
         opcode = 7'b0110111; funct3 = 3'b000; funct7 = 7'b0000000; // LUI

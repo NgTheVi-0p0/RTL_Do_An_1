@@ -12,7 +12,7 @@ module imm_extend_tb;
     );
 
     initial begin
-        $dumpfile("imm_extend_tb.vcd");
+        $dumpfile("mophong_vcd/imm_extend_tb.vcd");
         $dumpvars(0, imm_extend_tb);
 
         // I-type: addi x1, x0, -1 -> imm = 0xFFF

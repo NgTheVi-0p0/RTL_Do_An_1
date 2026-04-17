@@ -20,7 +20,7 @@ module data_memory_tb;
     );
 
     initial begin
-        $dumpfile("data_memory_tb.vcd");
+        $dumpfile("mophong_vcd/data_memory_tb.vcd");
         $dumpvars(0, data_memory_tb);
 
         clk = 0; mem_write = 0; addr = 32'h0000_0000; write_data = 32'hA5A5_A5A5;

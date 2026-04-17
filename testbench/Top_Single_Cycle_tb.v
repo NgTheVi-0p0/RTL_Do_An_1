@@ -22,7 +22,7 @@ module Top_Single_Cycle_tb;
     );
 
     initial begin
-        $dumpfile("Top_Single_Cycle_tb.vcd");
+        $dumpfile("mophong_vcd/Top_Single_Cycle_tb.vcd");
         $dumpvars(0, Top_Single_Cycle_tb);
 
         clk = 0;

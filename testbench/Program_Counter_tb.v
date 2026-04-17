@@ -18,7 +18,7 @@ module Program_Counter_tb;
     );
 
     initial begin
-        $dumpfile("Program_Counter_tb.vcd");
+        $dumpfile("mophong_vcd/Program_Counter_tb.vcd");
         $dumpvars(0, Program_Counter_tb);
 
         clk = 0; rst_n = 0; start = 0; stall = 0; pc_next = 32'h0000_0004;

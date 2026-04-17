@@ -1,5 +1,6 @@
 
 // ... thêm các file khác nếu cần
+
 module Top_Single_Cycle (
     input wire        clk,
     input wire        rst_n,
