@@ -14,7 +14,7 @@ module ALU (
             10'b0000010000: result = (a < b);                 // Bit 4: SLTU
             10'b0000100000: result = a ^ b;                   // Bit 5: XOR
             10'b0001000000: result = a >> b[4:0];             // Bit 6: SRL
-            10'b0010000000: result = a >>> b[4:0];            // Bit 7: SRA
+            10'b0010000000: result = $signed(a) >>> b[4:0];    // Bit 7: SRA
             10'b0100000000: result = a | b;                   // Bit 8: OR
             10'b1000000000: result = a & b;                   // Bit 9: AND
             default: result = 32'b0;
