@@ -1,0 +1,315 @@
+$date
+	Thu Apr 23 15:31:39 2026
+$end
+$version
+	Icarus Verilog
+$end
+$timescale
+	1ps
+$end
+$scope module ID_EX_tb $end
+$var wire 2 ! ex_write_back [1:0] $end
+$var wire 3 " ex_store_sel [2:0] $end
+$var wire 32 # ex_rs2_data [31:0] $end
+$var wire 5 $ ex_rs2 [4:0] $end
+$var wire 32 % ex_rs1_data [31:0] $end
+$var wire 5 & ex_rs1 [4:0] $end
+$var wire 1 ' ex_regWrite $end
+$var wire 5 ( ex_rd [4:0] $end
+$var wire 32 ) ex_pc_plus4 [31:0] $end
+$var wire 32 * ex_pc [31:0] $end
+$var wire 1 + ex_memWrite $end
+$var wire 3 , ex_load_sel [2:0] $end
+$var wire 2 - ex_jump [1:0] $end
+$var wire 3 . ex_imm_sel [2:0] $end
+$var wire 32 / ex_imm [31:0] $end
+$var wire 3 0 ex_bropcode [2:0] $end
+$var wire 1 1 ex_branch $end
+$var wire 1 2 ex_alu_srcB $end
+$var wire 1 3 ex_alu_srcA $end
+$var wire 10 4 ex_alu_ctrl [9:0] $end
+$var reg 1 5 clk $end
+$var reg 1 6 flush $end
+$var reg 10 7 id_alu_ctrl [9:0] $end
+$var reg 1 8 id_alu_srcA $end
+$var reg 1 9 id_alu_srcB $end
+$var reg 1 : id_branch $end
+$var reg 3 ; id_bropcode [2:0] $end
+$var reg 32 < id_imm [31:0] $end
+$var reg 3 = id_imm_sel [2:0] $end
+$var reg 2 > id_jump [1:0] $end
+$var reg 3 ? id_load_sel [2:0] $end
+$var reg 1 @ id_memWrite $end
+$var reg 32 A id_pc [31:0] $end
+$var reg 32 B id_pc_plus4 [31:0] $end
+$var reg 5 C id_rd [4:0] $end
+$var reg 1 D id_regWrite $end
+$var reg 5 E id_rs1 [4:0] $end
+$var reg 32 F id_rs1_data [31:0] $end
+$var reg 5 G id_rs2 [4:0] $end
+$var reg 32 H id_rs2_data [31:0] $end
+$var reg 3 I id_store_sel [2:0] $end
+$var reg 2 J id_write_back [1:0] $end
+$var reg 1 K rst_n $end
+$var reg 1 L stall $end
+$scope module uut $end
+$var wire 1 5 clk $end
+$var wire 1 6 flush $end
+$var wire 10 M id_alu_ctrl [9:0] $end
+$var wire 1 8 id_alu_srcA $end
+$var wire 1 9 id_alu_srcB $end
+$var wire 1 : id_branch $end
+$var wire 3 N id_bropcode [2:0] $end
+$var wire 32 O id_imm [31:0] $end
+$var wire 3 P id_imm_sel [2:0] $end
+$var wire 2 Q id_jump [1:0] $end
+$var wire 3 R id_load_sel [2:0] $end
+$var wire 1 @ id_memWrite $end
+$var wire 32 S id_pc [31:0] $end
+$var wire 32 T id_pc_plus4 [31:0] $end
+$var wire 5 U id_rd [4:0] $end
+$var wire 1 D id_regWrite $end
+$var wire 5 V id_rs1 [4:0] $end
+$var wire 32 W id_rs1_data [31:0] $end
+$var wire 5 X id_rs2 [4:0] $end
+$var wire 32 Y id_rs2_data [31:0] $end
+$var wire 3 Z id_store_sel [2:0] $end
+$var wire 2 [ id_write_back [1:0] $end
+$var wire 1 K rst_n $end
+$var wire 1 L stall $end
+$var reg 10 \ ex_alu_ctrl [9:0] $end
+$var reg 1 3 ex_alu_srcA $end
+$var reg 1 2 ex_alu_srcB $end
+$var reg 1 1 ex_branch $end
+$var reg 3 ] ex_bropcode [2:0] $end
+$var reg 32 ^ ex_imm [31:0] $end
+$var reg 3 _ ex_imm_sel [2:0] $end
+$var reg 2 ` ex_jump [1:0] $end
+$var reg 3 a ex_load_sel [2:0] $end
+$var reg 1 + ex_memWrite $end
+$var reg 32 b ex_pc [31:0] $end
+$var reg 32 c ex_pc_plus4 [31:0] $end
+$var reg 5 d ex_rd [4:0] $end
+$var reg 1 ' ex_regWrite $end
+$var reg 5 e ex_rs1 [4:0] $end
+$var reg 32 f ex_rs1_data [31:0] $end
+$var reg 5 g ex_rs2 [4:0] $end
+$var reg 32 h ex_rs2_data [31:0] $end
+$var reg 3 i ex_store_sel [2:0] $end
+$var reg 2 j ex_write_back [1:0] $end
+$upscope $end
+$upscope $end
+$enddefinitions $end
+$comment Show the parameter values. $end
+$dumpall
+$end
+#0
+$dumpvars
+b0 j
+b0 i
+b0 h
+b0 g
+b0 f
+b0 e
+b0 d
+b100 c
+b0 b
+b0 a
+b0 `
+b0 _
+b0 ^
+b0 ]
+b0 \
+b0 [
+b0 Z
+b0 Y
+b0 X
+b0 W
+b0 V
+b1 U
+b100 T
+b0 S
+b0 R
+b0 Q
+b0 P
+b0 O
+b0 N
+b0 M
+0L
+0K
+b0 J
+b0 I
+b0 H
+b0 G
+b0 F
+b0 E
+0D
+b1 C
+b100 B
+b0 A
+0@
+b0 ?
+b0 >
+b0 =
+b0 <
+b0 ;
+0:
+09
+08
+b0 7
+06
+05
+b0 4
+03
+02
+01
+b0 0
+b0 /
+b0 .
+b0 -
+b0 ,
+0+
+b0 *
+b100 )
+b0 (
+0'
+b0 &
+b0 %
+b0 $
+b0 #
+b0 "
+b0 !
+$end
+#5000
+15
+#10000
+05
+19
+1D
+b1 <
+b1 O
+1K
+#15000
+12
+1'
+b1 (
+b1 d
+b1 /
+b1 ^
+15
+#20000
+05
+b1 J
+b1 [
+b10 ?
+b10 R
+b1 E
+b1 V
+b10 C
+b10 U
+b0 <
+b0 O
+b1 F
+b1 W
+b1000 B
+b1000 T
+b100 A
+b100 S
+#25000
+b1 !
+b1 j
+b10 ,
+b10 a
+b1 &
+b1 e
+b10 (
+b10 d
+b0 /
+b0 ^
+b1 %
+b1 f
+b1000 )
+b1000 c
+b100 *
+b100 b
+15
+#30000
+05
+b11 C
+b11 U
+b1100 B
+b1100 T
+b1000 A
+b1000 S
+1L
+#35000
+15
+#40000
+05
+16
+0L
+#45000
+b0 !
+b0 j
+b0 ,
+b0 a
+02
+0'
+b0 &
+b0 e
+b0 (
+b0 d
+b0 %
+b0 f
+b100 )
+b100 c
+b0 *
+b0 b
+15
+#50000
+05
+1:
+0D
+b0 C
+b0 U
+b10000 <
+b10000 O
+b101 H
+b101 Y
+b101 F
+b101 W
+b10100 B
+b10100 T
+b10000 A
+b10000 S
+06
+#55000
+b1 !
+b1 j
+b10 ,
+b10 a
+11
+12
+b1 &
+b1 e
+b10000 /
+b10000 ^
+b101 #
+b101 h
+b101 %
+b101 f
+b10100 )
+b10100 c
+b10000 *
+b10000 b
+15
+#60000
+05
+#65000
+15
+#70000
+05
+#75000
+15
+#80000
+05
