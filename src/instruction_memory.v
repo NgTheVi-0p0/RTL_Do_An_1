@@ -12,7 +12,7 @@ module instruction_memory (
     integer i;
 
     // Ghi lệnh vào bộ nhớ (quá trình nạp chương trình)
-    always @(posedge clk) begin
+    always @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
             // Khi reset, xóa sạch bộ nhớ về 0 (lệnh NOP)
             for (i = 0; i < 1024; i = i + 1) begin
