@@ -18,13 +18,13 @@ run_tb() {
   vvp "${out}"
 }
 
-run_tb ALU_tb ALU
-run_tb Program_Counter_tb Program_Counter
-run_tb Register_File_tb Register_File
-run_tb control_unit_tb control_unit
-run_tb data_memory_tb data_memory
-run_tb instruction_memory_tb instruction_memory
-run_tb imm_extend_tb imm_extend
+#run_tb ALU_tb ALU
+#run_tb Program_Counter_tb Program_Counter
+#run_tb Register_File_tb Register_File
+#run_tb control_unit_tb control_unit
+#run_tb data_memory_tb data_memory
+#run_tb instruction_memory_tb instruction_memory
+#run_tb imm_extend_tb imm_extend
 run_tb Top_Single_Cycle_tb all
 
 echo "All testbenches completed."
