@@ -52,7 +52,7 @@ module data_memory_tb;
 
         // Test LB sign-extend from address 8
         #5 addr = 32'h0000_0008; load_sel = 3'b000;
-        #1 if (read_data !== 32'h0000_00EF) $display("ERROR LB: got %h", read_data);
+        #1 if (read_data !== 32'hFFFF_FFEF) $display("ERROR LB: got %h", read_data);
 
         // Test LBU zero-extend from address 8
         #5 load_sel = 3'b100;

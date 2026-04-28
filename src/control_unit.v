@@ -7,7 +7,7 @@ module control_unit (
     output reg [2:0]  imm_sel,      // Chọn kiểu mở rộng hằng số
     output reg        alu_srcA_D,   // Chọn đầu vào A cho ALU (0: rs1, 1: PC)
     output reg        alu_srcB_D,   // Chọn đầu vào B cho ALU (0: rs2, 1: Imm)
-    output reg [9:0]  alu_ctrl,     // 10-bit One-hot điều khiển phép toán ALU
+    output reg [10:0]  alu_ctrl,     // 10-bit One-hot điều khiển phép toán ALU
     output reg        branch_D,     // Báo hiệu lệnh rẽ nhánh (đi vào bộ dự đoán)
     output reg [2:0]  bropcode,     // Loại rẽ nhánh (BEQ, BNE, BLT...)
     output reg [1:0]  jump_D,       // Loại nhảy (00: No, 01: JAL, 10: JALR)
@@ -18,16 +18,17 @@ module control_unit (
 );
 
     // Định nghĩa hằng số ALU One-hot
-    localparam ALU_ADD  = 10'b0000000001;
-    localparam ALU_SUB  = 10'b0000000010;
-    localparam ALU_SLL  = 10'b0000000100;
-    localparam ALU_SLT  = 10'b0000001000;
-    localparam ALU_SLTU = 10'b0000010000;
-    localparam ALU_XOR  = 10'b0000100000;
-    localparam ALU_SRL  = 10'b0001000000;
-    localparam ALU_SRA  = 10'b0010000000;
-    localparam ALU_OR   = 10'b0100000000;
-    localparam ALU_AND  = 10'b1000000000;
+localparam ALU_ADD  = 11'b00000000001;
+localparam ALU_SUB  = 11'b00000000010;
+localparam ALU_SLL  = 11'b00000000100;
+localparam ALU_SLT  = 11'b00000001000;
+localparam ALU_SLTU = 11'b00000010000;
+localparam ALU_XOR  = 11'b00000100000;
+localparam ALU_SRL  = 11'b00001000000;
+localparam ALU_SRA  = 11'b00010000000;
+localparam ALU_OR   = 11'b00100000000;
+localparam ALU_AND  = 11'b01000000000;
+localparam ALU_LUI  = 11'b10000000000; // Mã mới: Bit thứ 11
 
     always @(*) begin
         // --- Mặc định ---
@@ -39,7 +40,7 @@ module control_unit (
             // 1. LUI (Load Upper Immediate)
             7'b0110111: begin
                 regWrite_D = 1; imm_sel = 3'b011; alu_srcB_D = 1;
-                alu_ctrl = ALU_ADD; // ALU tính x0 + Imm (rs1 lúc này là x0)
+                alu_ctrl = ALU_LUI; // Gán mã 11-bit mới
                 write_back_D = 2'b00;
             end
 

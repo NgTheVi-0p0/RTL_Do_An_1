@@ -1,5 +1,5 @@
 $date
-	Fri Apr 17 23:04:21 2026
+	Tue Apr 28 17:29:43 2026
 $end
 $version
 	Icarus Verilog
@@ -19,7 +19,7 @@ $var wire 3 ( bropcode [2:0] $end
 $var wire 1 ) branch_D $end
 $var wire 1 * alu_srcB_D $end
 $var wire 1 + alu_srcA_D $end
-$var wire 10 , alu_ctrl [9:0] $end
+$var wire 11 , alu_ctrl [10:0] $end
 $var reg 3 - funct3 [2:0] $end
 $var reg 7 . funct7 [6:0] $end
 $var reg 7 / opcode [6:0] $end
@@ -27,66 +27,68 @@ $scope module uut $end
 $var wire 3 0 funct3 [2:0] $end
 $var wire 7 1 funct7 [6:0] $end
 $var wire 7 2 opcode [6:0] $end
-$var parameter 10 3 ALU_ADD $end
-$var parameter 10 4 ALU_AND $end
-$var parameter 10 5 ALU_OR $end
-$var parameter 10 6 ALU_SLL $end
-$var parameter 10 7 ALU_SLT $end
-$var parameter 10 8 ALU_SLTU $end
-$var parameter 10 9 ALU_SRA $end
-$var parameter 10 : ALU_SRL $end
-$var parameter 10 ; ALU_SUB $end
-$var parameter 10 < ALU_XOR $end
-$var reg 10 = alu_ctrl [9:0] $end
+$var parameter 11 3 ALU_ADD $end
+$var parameter 11 4 ALU_AND $end
+$var parameter 11 5 ALU_LUI $end
+$var parameter 11 6 ALU_OR $end
+$var parameter 11 7 ALU_SLL $end
+$var parameter 11 8 ALU_SLT $end
+$var parameter 11 9 ALU_SLTU $end
+$var parameter 11 : ALU_SRA $end
+$var parameter 11 ; ALU_SRL $end
+$var parameter 11 < ALU_SUB $end
+$var parameter 11 = ALU_XOR $end
+$var reg 11 > alu_ctrl [10:0] $end
 $var reg 1 + alu_srcA_D $end
 $var reg 1 * alu_srcB_D $end
 $var reg 1 ) branch_D $end
-$var reg 3 > bropcode [2:0] $end
-$var reg 3 ? imm_sel [2:0] $end
-$var reg 2 @ jump_D [1:0] $end
-$var reg 3 A load_sel_D [2:0] $end
+$var reg 3 ? bropcode [2:0] $end
+$var reg 3 @ imm_sel [2:0] $end
+$var reg 2 A jump_D [1:0] $end
+$var reg 3 B load_sel_D [2:0] $end
 $var reg 1 $ memWrite_D $end
 $var reg 1 # regWrite_D $end
-$var reg 3 B store_sel_D [2:0] $end
-$var reg 2 C write_back_D [1:0] $end
+$var reg 3 C store_sel_D [2:0] $end
+$var reg 2 D write_back_D [1:0] $end
 $upscope $end
 $scope task check $end
-$var reg 2 D expect_wb [1:0] $end
-$var reg 128 E name [127:0] $end
+$var reg 2 E expect_wb [1:0] $end
+$var reg 128 F name [127:0] $end
 $upscope $end
 $upscope $end
 $enddefinitions $end
 $comment Show the parameter values. $end
 $dumpall
-b100000 <
-b10 ;
-b1000000 :
-b10000000 9
-b10000 8
-b1000 7
-b100 6
-b100000000 5
+b100000 =
+b10 <
+b1000000 ;
+b10000000 :
+b10000 9
+b1000 8
+b100 7
+b100000000 6
+b10000000000 5
 b1000000000 4
 b1 3
 $end
 #0
 $dumpvars
-b10011000101010101001001 E
+b10011000101010101001001 F
+b0 E
 b0 D
-b0 C
+b10 C
 b10 B
-b10 A
-b0 @
-b11 ?
-b0 >
-b1 =
+b0 A
+b11 @
+b0 ?
+b10000000000 >
 b110111 2
 b0 1
 b0 0
 b110111 /
 b0 .
 b0 -
-b1 ,
+b10000000000 ,
 0+
 1*
 0)
@@ -101,81 +103,83 @@ b0 !
 $end
 #5000
 1+
+b1 ,
+b1 >
 1*
 b11 '
-b11 ?
+b11 @
 1#
-b100000101010101010010010101000001000011 E
+b100000101010101010010010101000001000011 F
 b10111 /
 b10111 2
 #10000
 b10 !
-b10 C
+b10 D
 b1 &
-b1 @
+b1 A
 0*
 0+
 b100 '
-b100 ?
+b100 @
 1#
-b10 D
-b10010100100000101001100 E
+b10 E
+b10010100100000101001100 F
 b1101111 /
 b1101111 2
 #15000
 1*
 b10 !
-b10 C
+b10 D
 b10 &
-b10 @
+b10 A
 b0 '
-b0 ?
+b0 @
 1#
-b1001010010000010100110001010010 E
+b1001010010000010100110001010010 F
 b1100111 /
 b1100111 2
 #20000
 b10 ,
-b10 =
+b10 >
 b10 '
-b10 ?
+b10 @
 1)
 b0 !
-b0 C
+b0 D
 b0 &
-b0 @
+b0 A
 0*
 0#
-b0 D
-b10000100100010101010001 E
+b0 E
+b10000100100010101010001 F
 b1100011 /
 b1100011 2
 #25000
 b1 !
-b1 C
+b1 D
 1*
 1#
 0)
 b1 ,
-b1 =
+b1 >
 b0 '
-b0 ?
-b1 D
-b100110001010111 E
+b0 @
+b1 E
+b100110001010111 F
 b10 -
 b10 0
 b11 /
 b11 2
 #30000
 b1 '
-b1 ?
+b1 @
 1$
 b0 !
-b0 C
+b0 D
 1*
 0#
-b0 D
-b101001101010111 E
+b0 E
+b101001101010111 F
 b100011 /
 b100011 2
 #35000
@@ -183,8 +187,8 @@ b100011 2
 0$
 1*
 b0 '
-b0 ?
-b1000001010001000100010001001001 E
+b0 @
+b1000001010001000100010001001001 F
 b0 -
 b0 0
 b10011 /
@@ -192,14 +196,14 @@ b10011 2
 #40000
 0*
 1#
-b10000010100010001000100 E
+b10000010100010001000100 F
 b110011 /
 b110011 2
 #45000
 b10 ,
-b10 =
+b10 >
 1#
-b10100110101010101000010 E
+b10100110101010101000010 F
 b100000 .
 b100000 1
 #50000

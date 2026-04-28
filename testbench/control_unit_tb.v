@@ -8,7 +8,7 @@ module control_unit_tb;
     wire [2:0] imm_sel;
     wire alu_srcA_D;
     wire alu_srcB_D;
-    wire [9:0] alu_ctrl;
+    wire [10:0] alu_ctrl;
     wire branch_D;
     wire [2:0] bropcode;
     wire [1:0] jump_D;
