@@ -2,6 +2,8 @@ module Hazard_Unit (
     // Tín hiệu đầu vào từ các tầng
     input wire [4:0] if_id_rs1,     // rs1 của lệnh đang ở tầng ID
     input wire [4:0] if_id_rs2,     // rs2 của lệnh đang ở tầng ID
+    input wire       if_id_uses_rs1,// Lệnh ID có thực sự dùng rs1
+    input wire       if_id_uses_rs2,// Lệnh ID có thực sự dùng rs2
     input wire [4:0] id_ex_rd,      // rd của lệnh đang ở tầng EX
     input wire [1:0] id_ex_wb_sel,  // write_back_sel của EX (nếu = 2'b01 nghĩa là lệnh Load)
     
@@ -34,7 +36,8 @@ module Hazard_Unit (
         // và thanh ghi đích của nó trùng với thanh ghi nguồn của lệnh hiện tại (đang ở ID)
         else if ((id_ex_wb_sel == 2'b01) && 
                  (id_ex_rd != 5'b0) && 
-                 ((id_ex_rd == if_id_rs1) || (id_ex_rd == if_id_rs2))) begin
+                 ((if_id_uses_rs1 && (id_ex_rd == if_id_rs1)) ||
+                  (if_id_uses_rs2 && (id_ex_rd == if_id_rs2)))) begin
             stall_pc    = 1'b1; // Dừng nạp PC
             stall_if_id = 1'b1; // Dừng thay đổi IF_ID
             flush_id_ex = 1'b1; // Biến lệnh ID_EX hiện tại thành NOP (bubble)

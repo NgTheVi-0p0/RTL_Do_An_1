@@ -113,6 +113,8 @@ module Top_module_pipeline_RISC_V_32I (
     wire [2:0]  store_sel_D;
     wire        memWrite_D;
     wire [1:0]  write_back_D;
+    wire        uses_rs1_D;
+    wire        uses_rs2_D;
 
     wire [31:0] wb_data;
     wire        wb_regWrite;
@@ -133,7 +135,9 @@ module Top_module_pipeline_RISC_V_32I (
         .load_sel_D(load_sel_D),
         .store_sel_D(store_sel_D),
         .memWrite_D(memWrite_D),
-        .write_back_D(write_back_D)
+        .write_back_D(write_back_D),
+        .uses_rs1_D(uses_rs1_D),
+        .uses_rs2_D(uses_rs2_D)
     );
 
     imm_extend imm_gen (
@@ -169,7 +173,7 @@ module Top_module_pipeline_RISC_V_32I (
     wire [2:0]  imm_sel_E;
     wire        alu_srcA_E;
     wire        alu_srcB_E;
-    wire [9:0]  alu_ctrl_E_10b;
+    wire [10:0] alu_ctrl_E;
     wire        branch_E;
     wire [2:0]  bropcode_E;
     wire [1:0]  jump_E;
@@ -177,8 +181,6 @@ module Top_module_pipeline_RISC_V_32I (
     wire [2:0]  store_sel_E;
     wire        memWrite_E;
     wire [1:0]  write_back_E;
-    wire [10:0] alu_ctrl_E = {1'b0, alu_ctrl_E_10b};
-
     ID_EX id_ex_reg (
         .clk(clk),
         .rst_n(rst_n),
@@ -196,7 +198,7 @@ module Top_module_pipeline_RISC_V_32I (
         .id_imm_sel(imm_sel_D),
         .id_alu_srcA(alu_srcA_D),
         .id_alu_srcB(alu_srcB_D),
-        .id_alu_ctrl(alu_ctrl_D[9:0]),
+        .id_alu_ctrl(alu_ctrl_D),
         .id_branch(branch_D),
         .id_bropcode(bropcode_D),
         .id_jump(jump_D),
@@ -216,7 +218,7 @@ module Top_module_pipeline_RISC_V_32I (
         .ex_imm_sel(imm_sel_E),
         .ex_alu_srcA(alu_srcA_E),
         .ex_alu_srcB(alu_srcB_E),
-        .ex_alu_ctrl(alu_ctrl_E_10b),
+        .ex_alu_ctrl(alu_ctrl_E),
         .ex_branch(branch_E),
         .ex_bropcode(bropcode_E),
         .ex_jump(jump_E),
@@ -295,6 +297,7 @@ module Top_module_pipeline_RISC_V_32I (
         .taken_E(pred_taken_E),
         .branch(branch_taken_E),
         .pc_F(pc_F),
+        .pc_D(pc_D),
         .pc_E(pc_E),
         .pc_target(pc_target_E),
         .pc_next(predicted_pc_next_F),
@@ -306,6 +309,8 @@ module Top_module_pipeline_RISC_V_32I (
     Hazard_Unit hazard_unit (
         .if_id_rs1(instr_D[19:15]),
         .if_id_rs2(instr_D[24:20]),
+        .if_id_uses_rs1(uses_rs1_D),
+        .if_id_uses_rs2(uses_rs2_D),
         .id_ex_rd(rd_E),
         .id_ex_wb_sel(write_back_E),
         .branch_mispredicted(bpu_flush_E),

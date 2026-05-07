@@ -22,7 +22,7 @@ module ID_EX (
     input wire [2:0]  id_imm_sel,     // Chọn loại immediate
     input wire        id_alu_srcA,    // Chọn toán hạng A của ALU
     input wire        id_alu_srcB,    // Chọn toán hạng B của ALU
-    input wire [9:0]  id_alu_ctrl,    // Điều khiển ALU
+    input wire [10:0]  id_alu_ctrl,    // Điều khiển ALU
     input wire        id_branch,      // Tín hiệu branch
     input wire [2:0]  id_bropcode,    // Opcode cho branch
     input wire [1:0]  id_jump,        // Tín hiệu jump
@@ -46,7 +46,7 @@ module ID_EX (
     output reg [2:0]  ex_imm_sel,
     output reg        ex_alu_srcA,
     output reg        ex_alu_srcB,
-    output reg [9:0]  ex_alu_ctrl,
+    output reg [10:0]  ex_alu_ctrl,
     output reg        ex_branch,
     output reg [2:0]  ex_bropcode,
     output reg [1:0]  ex_jump,
@@ -73,7 +73,7 @@ module ID_EX (
             ex_imm_sel  <= 3'b000;
             ex_alu_srcA <= 1'b0;
             ex_alu_srcB <= 1'b0;
-            ex_alu_ctrl <= 10'b0000_000000;
+            ex_alu_ctrl <= 11'b000_0000_0000;
             ex_branch   <= 1'b0;
             ex_bropcode <= 3'b000;
             ex_jump     <= 2'b00;
@@ -98,7 +98,7 @@ module ID_EX (
             ex_imm_sel  <= 3'b000;
             ex_alu_srcA <= 1'b0;
             ex_alu_srcB <= 1'b0;
-            ex_alu_ctrl <= 10'b0000_000000;
+            ex_alu_ctrl <= 11'b000_0000_0000;
             ex_branch   <= 1'b0;
             ex_bropcode <= 3'b000;
             ex_jump     <= 2'b00;

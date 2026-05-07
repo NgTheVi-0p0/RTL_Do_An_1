@@ -6,6 +6,7 @@ module Branch_Prediction_Unit (
     input wire taken_E,
     input wire branch,
     input wire [31:0] pc_F,
+    input wire [31:0] pc_D,
     input wire [31:0] pc_E,
     input wire [31:0] pc_target,
     output wire [31:0] pc_next,
@@ -17,7 +18,7 @@ module Branch_Prediction_Unit (
     reg [7:0] ghr;
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n) ghr <= 8'b0;
-        else if (branch_E) ghr <= {ghr[6:0], branch};
+        else if (branch_E || jump_E) ghr <= {ghr[6:0], (branch_E ? branch : 1'b1)};
     end
 
     // 2. PHT
@@ -31,12 +32,12 @@ module Branch_Prediction_Unit (
         .rst_n(rst_n),
         .predict_index(pht_predict_index),
         .update_index(pht_update_index),
-        .update_taken(branch),
+        .update_taken(branch_E ? branch : 1'b1),
         .update_en(pht_update_en),
         .prediction(pht_prediction)
     );
 
-    assign pht_update_en = branch_E;
+    assign pht_update_en = branch_E || jump_E;
 
     // 3. BTB
     wire [31:0] btb_pc_out;
@@ -56,7 +57,11 @@ module Branch_Prediction_Unit (
     assign taken_F = (pht_prediction >= 2'b10) && btb_hit;
     assign pc_next = taken_F ? btb_pc_out : (pc_F + 32'd4);
     
-    // Flush khi đoán nhánh sai ở EX
-    assign flush = (branch_E && (taken_E != branch));
-    assign pc_restore = branch ? pc_target : (pc_E + 32'd4);
+    // Flush khi đoán sai hướng hoặc sai địa chỉ đích ở EX
+    wire ex_taken;
+    wire [31:0] actual_next_pc;
+    assign ex_taken = branch_E ? branch : jump_E;
+    assign actual_next_pc = ex_taken ? pc_target : (pc_E + 32'd4);
+    assign flush = (branch_E || jump_E) && (pc_D != actual_next_pc);
+    assign pc_restore = actual_next_pc;
 endmodule

@@ -22,7 +22,7 @@ module ID_EX_tb;
     reg [2:0]  id_imm_sel;
     reg        id_alu_srcA;
     reg        id_alu_srcB;
-    reg [9:0]  id_alu_ctrl;
+    reg [10:0] id_alu_ctrl;
     reg        id_branch;
     reg [2:0]  id_bropcode;
     reg [1:0]  id_jump;
@@ -44,7 +44,7 @@ module ID_EX_tb;
     wire [2:0]  ex_imm_sel;
     wire        ex_alu_srcA;
     wire        ex_alu_srcB;
-    wire [9:0]  ex_alu_ctrl;
+    wire [10:0] ex_alu_ctrl;
     wire        ex_branch;
     wire [2:0]  ex_bropcode;
     wire [1:0]  ex_jump;
@@ -128,7 +128,7 @@ module ID_EX_tb;
         id_imm_sel = 3'b000;
         id_alu_srcA = 1'b0;
         id_alu_srcB = 1'b0;
-        id_alu_ctrl = 10'b0000_000000;
+        id_alu_ctrl = 11'b000_0000_0000;
         id_branch = 1'b0;
         id_bropcode = 3'b000;
         id_jump = 2'b00;
@@ -151,7 +151,7 @@ module ID_EX_tb;
         id_regWrite = 1'b1;
         id_alu_srcA = 1'b0;
         id_alu_srcB = 1'b1;
-        id_alu_ctrl = 10'b0000_000000;  // ADD operation
+        id_alu_ctrl = 11'b000_0000_0000;  // ADD operation
         id_write_back = 2'b00;
         #10;
         
@@ -173,7 +173,7 @@ module ID_EX_tb;
         id_regWrite = 1'b1;
         id_alu_srcA = 1'b0;
         id_alu_srcB = 1'b1;
-        id_alu_ctrl = 10'b0000_000000;
+        id_alu_ctrl = 11'b000_0000_0000;
         id_load_sel = 3'b010;         // 32-bit load
         id_write_back = 2'b01;        // Memory data
         #10;

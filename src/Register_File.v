@@ -28,7 +28,9 @@ module Register_File (
 
     // Logic Đọc dữ liệu (Không đồng bộ - Asynchronous Read)
     // Theo kiến trúc RISC-V: thanh ghi x0 luôn luôn trả về giá trị 0
-    assign rd1 = (rs1 == 5'b0) ? 32'b0 : rf[rs1];
-    assign rd2 = (rs2 == 5'b0) ? 32'b0 : rf[rs2];
+    assign rd1 = (reg_write && (rd == rs1) && (rs1 != 5'b0)) ? wd :
+                 ((rs1 == 5'b0) ? 32'b0 : rf[rs1]);
+    assign rd2 = (reg_write && (rd == rs2) && (rs2 != 5'b0)) ? wd :
+                 ((rs2 == 5'b0) ? 32'b0 : rf[rs2]);
 
 endmodule
