@@ -3,7 +3,6 @@ module Branch_Prediction_Unit (
     input wire rst_n,
     input wire branch_E,
     input wire jump_E,
-    input wire taken_E,
     input wire branch,
     input wire [31:0] pc_F,
     input wire [31:0] pc_D,

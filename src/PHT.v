@@ -10,7 +10,7 @@ module PHT (
 );
     reg [1:0] pht_table [255:0];
     integer i;
-    reg [1:0] update_counter;
+    wire [1:0] update_counter = pht_table[update_index];
 
     assign prediction = pht_table[predict_index];
 
@@ -19,7 +19,6 @@ module PHT (
             for (i = 0; i < 256; i = i + 1)
                 pht_table[i] <= 2'b01;
         end else if (update_en) begin
-            update_counter = pht_table[update_index];
             if (update_taken) begin
                 if (update_counter != 2'b11)
                     pht_table[update_index] <= update_counter + 2'b01;

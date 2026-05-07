@@ -72,28 +72,6 @@ module Top_module_pipeline_RISC_V_32I (
         .id_instr(instr_D)
     );
 
-    // Pipeline bit dự đoán taken đi cùng lệnh từ F -> D -> E
-    reg pred_taken_D;
-    reg pred_taken_E;
-    always @(posedge clk or negedge rst_n) begin
-        if (!rst_n) begin
-            pred_taken_D <= 1'b0;
-            pred_taken_E <= 1'b0;
-        end else begin
-            if (flush_if_id_total) begin
-                pred_taken_D <= 1'b0;
-            end else if (!stall_if_id_total) begin
-                pred_taken_D <= pred_taken_F;
-            end
-
-            if (flush_id_ex_total) begin
-                pred_taken_E <= 1'b0;
-            end else if (!stall_id_ex_total) begin
-                pred_taken_E <= pred_taken_D;
-            end
-        end
-    end
-
     // =========================
     // ID stage
     // =========================
@@ -117,6 +95,7 @@ module Top_module_pipeline_RISC_V_32I (
     wire        uses_rs2_D;
 
     wire [31:0] wb_data;
+    wire [31:0] regfile_debug_val;
     wire        wb_regWrite;
     wire [4:0]  wb_rd;
 
@@ -155,7 +134,9 @@ module Top_module_pipeline_RISC_V_32I (
         .rd(wb_rd),
         .wd(wb_data),
         .rd1(rs1_data_D),
-        .rd2(rs2_data_D)
+        .rd2(rs2_data_D),
+        .debug_addr(check_address[4:0]),
+        .debug_val(regfile_debug_val)
     );
 
     // =========================
@@ -237,6 +218,15 @@ module Top_module_pipeline_RISC_V_32I (
     wire [31:0] mem_alu_result_M;
     wire [4:0]  mem_rd_M;
     wire        mem_regWrite_M;
+    wire [31:0] mem_read_data_M;
+    wire [31:0] pc4_M;
+    wire [1:0]  write_back_M;
+    wire [31:0] dmem_debug_val;
+
+    wire [31:0] mem_forward_data_M = (write_back_M == 2'b00) ? mem_alu_result_M :
+                                     (write_back_M == 2'b01) ? mem_read_data_M :
+                                     (write_back_M == 2'b10) ? pc4_M :
+                                     32'b0;
 
     Forwarding_Unit fwd_unit (
         .id_ex_rs1(rs1_E),
@@ -249,24 +239,22 @@ module Top_module_pipeline_RISC_V_32I (
         .forwardB(forwardB)
     );
 
-    wire [31:0] ex_rs1_fwd = (forwardA == 2'b01) ? mem_alu_result_M :
+    wire [31:0] ex_rs1_fwd = (forwardA == 2'b01) ? mem_forward_data_M :
                              (forwardA == 2'b10) ? wb_data :
                              rs1_data_E;
-    wire [31:0] ex_rs2_fwd = (forwardB == 2'b01) ? mem_alu_result_M :
+    wire [31:0] ex_rs2_fwd = (forwardB == 2'b01) ? mem_forward_data_M :
                              (forwardB == 2'b10) ? wb_data :
                              rs2_data_E;
 
     wire [31:0] alu_a_E = alu_srcA_E ? pc_E : ex_rs1_fwd;
     wire [31:0] alu_b_E = alu_srcB_E ? imm_E : ex_rs2_fwd;
     wire [31:0] alu_result_E;
-    wire        alu_zero_E;
-
     ALU alu (
         .a(alu_a_E),
         .b(alu_b_E),
         .alu_ctrl(alu_ctrl_E),
         .result(alu_result_E),
-        .zero(alu_zero_E)
+        .zero()
     );
 
     wire equal_E         = (ex_rs1_fwd == ex_rs2_fwd);
@@ -294,7 +282,6 @@ module Top_module_pipeline_RISC_V_32I (
         .rst_n(rst_n),
         .branch_E(branch_E),
         .jump_E(is_jump_E),
-        .taken_E(pred_taken_E),
         .branch(branch_taken_E),
         .pc_F(pc_F),
         .pc_D(pc_D),
@@ -323,12 +310,10 @@ module Top_module_pipeline_RISC_V_32I (
     // =========================
     // EX/MEM register
     // =========================
-    wire [31:0] pc4_M;
     wire [31:0] rs2_data_M;
     wire [2:0]  load_sel_M;
     wire [2:0]  store_sel_M;
     wire        memWrite_M;
-    wire [1:0]  write_back_M;
 
     EX_MEM ex_mem_reg (
         .clk(clk),
@@ -357,8 +342,6 @@ module Top_module_pipeline_RISC_V_32I (
     // =========================
     // MEM stage + MEM/WB
     // =========================
-    wire [31:0] mem_read_data_M;
-
     data_memory dmem (
         .clk(clk),
         .mem_write(memWrite_M),
@@ -366,7 +349,9 @@ module Top_module_pipeline_RISC_V_32I (
         .write_data(rs2_data_M),
         .load_sel(load_sel_M),
         .store_sel(store_sel_M),
-        .read_data(mem_read_data_M)
+        .read_data(mem_read_data_M),
+        .debug_addr(check_address[11:2]),
+        .debug_val(dmem_debug_val)
     );
 
     wire [31:0] pc4_W;
@@ -399,6 +384,5 @@ module Top_module_pipeline_RISC_V_32I (
     // =========================
     // Cổng quan sát giá trị theo yêu cầu đồ án
     // =========================
-    assign value = DataOrReg ? dmem.ram[check_address[11:2]] :
-                               regfile.rf[check_address[4:0]];
+    assign value = DataOrReg ? dmem_debug_val : regfile_debug_val;
 endmodule

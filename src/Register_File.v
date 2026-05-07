@@ -7,7 +7,9 @@ module Register_File (
     input wire [4:0] rd,     // Địa chỉ đích (từ tầng WB)
     input wire [31:0] wd,    // Dữ liệu ghi (từ tầng WB)
     output wire [31:0] rd1,  // Dữ liệu đọc ra 1
-    output wire [31:0] rd2   // Dữ liệu đọc ra 2
+    output wire [31:0] rd2,  // Dữ liệu đọc ra 2
+    input wire [4:0] debug_addr,
+    output wire [31:0] debug_val
 );
     reg [31:0] rf [31:0];
     integer i;
@@ -32,5 +34,6 @@ module Register_File (
                  ((rs1 == 5'b0) ? 32'b0 : rf[rs1]);
     assign rd2 = (reg_write && (rd == rs2) && (rs2 != 5'b0)) ? wd :
                  ((rs2 == 5'b0) ? 32'b0 : rf[rs2]);
+    assign debug_val = (debug_addr == 5'b0) ? 32'b0 : rf[debug_addr];
 
 endmodule

@@ -102,7 +102,9 @@ module Top_Single_Cycle (
         .rd(instr[11:7]),
         .wd(wb_data),
         .rd1(rd1),
-        .rd2(rd2)
+        .rd2(rd2),
+        .debug_addr(5'b0),
+        .debug_val()
     );
 
     // --- ALU ---
@@ -125,7 +127,9 @@ module Top_Single_Cycle (
         .write_data(rd2),
         .load_sel(load_sel_D),
         .store_sel(store_sel_D),
-        .read_data(mem_read_data)
+        .read_data(mem_read_data),
+        .debug_addr(10'b0),
+        .debug_val()
     );
 
     // --- Write-back ---

@@ -5,7 +5,9 @@ module data_memory (
     input wire [31:0] write_data, // Dữ liệu từ thanh ghi nguồn 2 (rs2)
     input wire [2:0] load_sel,  // load_sel_D: 000-LB, 001-LH, 010-LW, 100-LBU, 101-LHU
     input wire [2:0] store_sel, // store_sel_D: 000-SB, 001-SH, 010-SW
-    output reg [31:0] read_data // Dữ liệu trả về cho CPU
+    output reg [31:0] read_data, // Dữ liệu trả về cho CPU
+    input wire [9:0] debug_addr,
+    output wire [31:0] debug_val
 );
     // Khai báo bộ nhớ 4KB (1024 dòng x 32 bit)
     reg [31:0] ram [0:1023];
@@ -66,5 +68,7 @@ module data_memory (
             default: read_data = raw_word;
         endcase
     end
+
+    assign debug_val = ram[debug_addr];
 
 endmodule
