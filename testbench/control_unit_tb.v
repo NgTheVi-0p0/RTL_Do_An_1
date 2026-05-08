@@ -48,6 +48,8 @@ module control_unit_tb;
     initial begin
         $dumpfile("mophong_vcd/control_unit_tb.vcd");
         $dumpvars(0, control_unit_tb);
+        $monitor("t=%0t opcode=%b funct3=%b funct7=%b regWrite=%b branch=%b jump=%b alu_ctrl=%b wb=%b",
+                 $time, opcode, funct3, funct7, regWrite_D, branch_D, jump_D, alu_ctrl, write_back_D);
 
         opcode = 7'b0110111; funct3 = 3'b000; funct7 = 7'b0000000; // LUI
         check("LUI", 2'b00);

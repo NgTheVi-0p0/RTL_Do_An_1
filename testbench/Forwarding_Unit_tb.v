@@ -30,6 +30,8 @@ module Forwarding_Unit_tb;
     initial begin
         $dumpfile("mophong_vcd/Forwarding_Unit_tb.vcd");
         $dumpvars(0, Forwarding_Unit_tb);
+        $monitor("t=%0t rs1=%0d rs2=%0d ex_mem_rd=%0d ex_mem_regWrite=%b mem_wb_rd=%0d mem_wb_regWrite=%b forwardA=%b forwardB=%b",
+                 $time, id_ex_rs1, id_ex_rs2, ex_mem_rd, ex_mem_regWrite, mem_wb_rd, mem_wb_regWrite, forwardA, forwardB);
 
         // Khởi tạo
         id_ex_rs1 = 5'b0_0000;

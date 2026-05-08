@@ -1,5 +1,5 @@
 $date
-	Wed Apr 29 00:41:58 2026
+	Fri May  8 17:56:35 2026
 $end
 $version
 	Icarus Verilog
@@ -49,11 +49,13 @@ $var reg 3 B load_sel_D [2:0] $end
 $var reg 1 $ memWrite_D $end
 $var reg 1 # regWrite_D $end
 $var reg 3 C store_sel_D [2:0] $end
-$var reg 2 D write_back_D [1:0] $end
+$var reg 1 D uses_rs1_D $end
+$var reg 1 E uses_rs2_D $end
+$var reg 2 F write_back_D [1:0] $end
 $upscope $end
 $scope task check $end
-$var reg 2 E expect_wb [1:0] $end
-$var reg 128 F name [127:0] $end
+$var reg 2 G expect_wb [1:0] $end
+$var reg 128 H name [127:0] $end
 $upscope $end
 $upscope $end
 $enddefinitions $end
@@ -73,9 +75,11 @@ b1 3
 $end
 #0
 $dumpvars
-b10011000101010101001001 F
-b0 E
-b0 D
+b10011000101010101001001 H
+b0 G
+b0 F
+0E
+0D
 b10 C
 b10 B
 b0 A
@@ -109,12 +113,12 @@ b1 >
 b11 '
 b11 @
 1#
-b100000101010101010010010101000001000011 F
+b100000101010101010010010101000001000011 H
 b10111 /
 b10111 2
 #10000
 b10 !
-b10 D
+b10 F
 b1 &
 b1 A
 0*
@@ -122,88 +126,101 @@ b1 A
 b100 '
 b100 @
 1#
-b10 E
-b10010100100000101001100 F
+b10 G
+b10010100100000101001100 H
 b1101111 /
 b1101111 2
 #15000
+1D
 1*
 b10 !
-b10 D
+b10 F
 b10 &
 b10 A
 b0 '
 b0 @
 1#
-b1001010010000010100110001010010 F
+b1001010010000010100110001010010 H
 b1100111 /
 b1100111 2
 #20000
+1E
 b10 ,
 b10 >
 b10 '
 b10 @
 1)
+1D
 b0 !
-b0 D
+b0 F
 b0 &
 b0 A
 0*
 0#
-b0 E
-b10000100100010101010001 F
+b0 G
+b10000100100010101010001 H
 b1100011 /
 b1100011 2
 #25000
 b1 !
-b1 D
+b1 F
 1*
 1#
+0E
+1D
 0)
 b1 ,
 b1 >
 b0 '
 b0 @
-b1 E
-b100110001010111 F
+b1 G
+b100110001010111 H
 b10 -
 b10 0
 b11 /
 b11 2
 #30000
+1E
 b1 '
 b1 @
 1$
+1D
 b0 !
-b0 D
+b0 F
 1*
 0#
-b0 E
-b101001101010111 F
+b0 G
+b101001101010111 H
 b100011 /
 b100011 2
 #35000
 1#
+0E
+1D
 0$
 1*
 b0 '
 b0 @
-b1000001010001000100010001001001 F
+b1000001010001000100010001001001 H
 b0 -
 b0 0
 b10011 /
 b10011 2
 #40000
+1E
+1D
 0*
 1#
-b10000010100010001000100 F
+b10000010100010001000100 H
 b110011 /
 b110011 2
 #45000
 b10 ,
 b10 >
+1E
+1D
 1#
-b10100110101010101000010 F
+b10100110101010101000010 H
 b100000 .
 b100000 1
 #50000

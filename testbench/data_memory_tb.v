@@ -22,6 +22,8 @@ module data_memory_tb;
     initial begin
         $dumpfile("mophong_vcd/data_memory_tb.vcd");
         $dumpvars(0, data_memory_tb);
+        $monitor("t=%0t clk=%b mem_write=%b addr=%h write_data=%h load_sel=%b store_sel=%b read_data=%h",
+                 $time, clk, mem_write, addr, write_data, load_sel, store_sel, read_data);
 
         clk = 0; mem_write = 0; addr = 32'h0000_0000; write_data = 32'hA5A5_A5A5;
         store_sel = 3'b010; load_sel = 3'b010;

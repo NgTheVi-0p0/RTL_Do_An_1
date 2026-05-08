@@ -14,6 +14,7 @@ module imm_extend_tb;
     initial begin
         $dumpfile("mophong_vcd/imm_extend_tb.vcd");
         $dumpvars(0, imm_extend_tb);
+        $monitor("t=%0t imm_sel=%b instr=%h imm_ext=%h", $time, imm_sel, instr, imm_ext);
 
         // I-type: addi x1, x0, -1 -> imm = 0xFFF
         instr = 32'hFFF0_0093; imm_sel = 3'b000; #5;

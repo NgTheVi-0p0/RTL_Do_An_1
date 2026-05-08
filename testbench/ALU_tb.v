@@ -29,6 +29,8 @@ module ALU_tb;
     initial begin
         $dumpfile("mophong_vcd/ALU_tb.vcd");
         $dumpvars(0, ALU_tb);
+        $monitor("t=%0t alu_ctrl=%b a=%h b=%h result=%h zero=%b",
+                 $time, alu_ctrl, a, b, result, zero);
 
         // ADD
         a = 32'h0000_0005; b = 32'h0000_0003;

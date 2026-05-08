@@ -20,6 +20,8 @@ module Program_Counter_tb;
     initial begin
         $dumpfile("mophong_vcd/Program_Counter_tb.vcd");
         $dumpvars(0, Program_Counter_tb);
+        $monitor("t=%0t clk=%b rst_n=%b start=%b stall=%b pc_next=%h pc_out=%h",
+                 $time, clk, rst_n, start, stall, pc_next, pc_out);
 
         clk = 0; rst_n = 0; start = 0; stall = 0; pc_next = 32'h0000_0004;
         #5 rst_n = 1;

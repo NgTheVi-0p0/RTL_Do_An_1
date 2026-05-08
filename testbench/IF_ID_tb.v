@@ -40,6 +40,8 @@ module IF_ID_tb;
     initial begin
         $dumpfile("mophong_vcd/IF_ID_tb.vcd");
         $dumpvars(0, IF_ID_tb);
+        $monitor("t=%0t clk=%b rst_n=%b stall=%b flush=%b if_pc=%h if_instr=%h id_pc=%h id_instr=%h",
+                 $time, clk, rst_n, stall, flush, if_pc, if_instr, id_pc, id_instr);
         
         // Khởi tạo
         rst_n = 0;

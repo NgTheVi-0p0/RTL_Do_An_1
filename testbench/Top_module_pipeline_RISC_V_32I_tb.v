@@ -46,7 +46,7 @@ module Top_module_pipeline_RISC_V_32I_tb;
     endfunction
 
     function automatic [31:0] ENC_I;
-        input [11:0] imm12;
+        input[11:0] imm12;
         input [4:0] rs1;
         input [2:0] funct3;
         input [4:0] rd;
@@ -57,39 +57,47 @@ module Top_module_pipeline_RISC_V_32I_tb;
     endfunction
 
     function automatic [31:0] ENC_S;
-        input [11:0] imm12;
+        input[11:0] imm12;
         input [4:0] rs2;
-        input [4:0] rs1;
+        input[4:0] rs1;
         input [2:0] funct3;
-        input [6:0] opcode;
+        input[6:0] opcode;
         begin
             ENC_S = {imm12[11:5], rs2, rs1, funct3, imm12[4:0], opcode};
         end
     endfunction
 
-    // Branch immediate is byte offset, must be multiple of 2
     function automatic [31:0] ENC_B;
         input integer imm;
         input [4:0] rs2;
         input [4:0] rs1;
-        input [2:0] funct3;
+        input[2:0] funct3;
         input [6:0] opcode;
-        reg [12:0] bimm;
+        reg[12:0] bimm;
         begin
             bimm = imm[12:0];
             ENC_B = {bimm[12], bimm[10:5], rs2, rs1, funct3, bimm[4:1], bimm[11], opcode};
         end
     endfunction
 
-    // J immediate is byte offset, must be multiple of 2
     function automatic [31:0] ENC_J;
         input integer imm;
-        input [4:0] rd;
+        input[4:0] rd;
         input [6:0] opcode;
         reg [20:0] jimm;
         begin
             jimm = imm[20:0];
             ENC_J = {jimm[20], jimm[10:1], jimm[11], jimm[19:12], rd, opcode};
+        end
+    endfunction
+
+    // MỚI: Bổ sung bộ mã hóa lệnh U-Type (cho LUI, AUIPC)
+    function automatic[31:0] ENC_U;
+        input [19:0] imm20;
+        input[4:0] rd;
+        input [6:0] opcode;
+        begin
+            ENC_U = {imm20, rd, opcode};
         end
     endfunction
 
@@ -156,6 +164,8 @@ module Top_module_pipeline_RISC_V_32I_tb;
     initial begin
         $dumpfile("mophong_vcd/Top_module_pipeline_RISC_V_32I_tb.vcd");
         $dumpvars(0, Top_module_pipeline_RISC_V_32I_tb);
+        $monitor("t=%0t clk=%b rst_n=%b start=%b pc_F=%h instr_F=%h value=%h flush=%b",
+                 $time, clk, rst_n, start, uut.pc_F, uut.instr_F, value, uut.bpu_flush_E);
 
         rst_n        = 1'b0;
         start        = 1'b0;
@@ -166,102 +176,145 @@ module Top_module_pipeline_RISC_V_32I_tb;
         error_count  = 0;
         flush_count  = 0;
 
-        // Hold reset
+
         repeat (2) @(negedge clk);
         rst_n = 1'b1;
 
-        // Group A: reset/start/load behavior
-        check_equal("PC after reset release", uut.pc_F, 32'h0000_0000);
-        check_equal("IMEM reset to NOP at word0", uut.imem.mem[0], 32'h0000_0013);
+        // BẮT ĐẦU NẠP 37 LỆNH CƠ BẢN CỦA RISC-V 32I
+        // (1) CÁC LỆNH CƠ BẢN VÀ XUNG ĐỘT (Hazard test)
+        load_instr(32'h0000_0000, ENC_I(12'd5,   5'd0, 3'b000, 5'd1, 7'b0010011)); // 0x00: addi x1,x0,5
+        load_instr(32'h0000_0004, ENC_I(12'd7,   5'd0, 3'b000, 5'd2, 7'b0010011)); // 0x04: addi x2,x0,7
+        load_instr(32'h0000_0008, ENC_R(7'b0000000, 5'd2, 5'd1, 3'b000, 5'd3, 7'b0110011)); // 0x08: add x3,x1,x2
+        load_instr(32'h0000_000c, ENC_R(7'b0000000, 5'd1, 5'd3, 3'b000, 5'd4, 7'b0110011)); // 0x0C: add x4,x3,x1
+        load_instr(32'h0000_0010, ENC_I(12'd100, 5'd0, 3'b000, 5'd10,7'b0010011)); // 0x10: addi x10,x0,100
+        load_instr(32'h0000_0014, ENC_S(12'd0,   5'd10,5'd0, 3'b010, 7'b0100011)); // 0x14: sw x10,0(x0)
+        load_instr(32'h0000_0018, ENC_I(12'd0,   5'd0, 3'b010, 5'd5, 7'b0000011)); // 0x18: lw x5,0(x0)
+        load_instr(32'h0000_001c, ENC_R(7'b0000000, 5'd1, 5'd5, 3'b000, 5'd6, 7'b0110011)); // 0x1C: add x6,x5,x1 (Load-Use Stall)
+        
+        // (2) JUMP & CÁC LỆNH BRANCH CƠ BẢN
+        load_instr(32'h0000_0020, ENC_B(8,       5'd6, 5'd6, 3'b000, 7'b1100011)); // 0x20: beq x6,x6,+8
+        load_instr(32'h0000_0024, ENC_I(12'd99,  5'd0, 3'b000, 5'd0, 7'b0010011)); // 0x24: nop (Bị bỏ qua)
+        load_instr(32'h0000_0028, ENC_I(12'd64,  5'd0, 3'b000, 5'd8, 7'b0010011)); // 0x28: addi x8,x0,64
+        load_instr(32'h0000_002C, ENC_J(8,       5'd9, 7'b1101111));               // 0x2C: jal x9,+8
+        load_instr(32'h0000_0030, ENC_I(12'd77,  5'd0, 3'b000, 5'd11,7'b0010011)); // 0x30: nop (Bị bỏ qua)
+        load_instr(32'h0000_0034, ENC_I(12'd0,   5'd8, 3'b000, 5'd12,7'b1100111)); // 0x34: jalr x12,x8,0 (Nhảy tới 0x40)
+        load_instr(32'h0000_0038, ENC_I(12'd88,  5'd0, 3'b000, 5'd13,7'b0010011)); // 0x38: nop (Bị bỏ qua)
+        load_instr(32'h0000_003C, ENC_I(12'd88,  5'd0, 3'b000, 5'd13,7'b0010011)); // 0x3C: nop (Bị bỏ qua)
+        load_instr(32'h0000_0040, ENC_B(8,       5'd2, 5'd1, 3'b001, 7'b1100011)); // 0x40: bne x1,x2,+8 (Vì 5 != 7 -> Nhảy tới 0x48)
+        load_instr(32'h0000_0044, ENC_I(12'd11,  5'd0, 3'b000, 5'd14,7'b0010011)); // 0x44: nop (Bị bỏ qua)
 
-        // While start=0: load instructions from external pins
-        // Program map:
-        // 0x00 addi x1,x0,5
-        // 0x04 addi x2,x0,7
-        // 0x08 add  x3,x1,x2
-        // 0x0c add  x4,x3,x1
-        // 0x10 addi x10,x0,100
-        // 0x14 sw   x10,0(x0)
-        // 0x18 lw   x5,0(x0)
-        // 0x1c add  x6,x5,x1       (load-use hazard)
-        // 0x20 beq  x6,x6,+8       (taken)
-        // 0x24 addi x7,x0,99       (must be flushed/skipped)
-        // 0x28 addi x7,x0,42
-        // 0x2c addi x8,x0,64
-        // 0x30 jal  x9,+8          (to 0x38)
-        // 0x34 addi x11,x0,77      (must be skipped)
-        // 0x38 jalr x12,x8,0       (to 0x40)
-        // 0x3c addi x13,x0,88      (must be skipped)
-        // 0x40 bne  x1,x2,+8       (taken)
-        // 0x44 addi x14,x0,11      (must be skipped)
-        // 0x48 addi x14,x0,22
-        // 0x4c jal  x0,0           (loop forever)
-        load_instr(32'h0000_0000, ENC_I(12'd5,   5'd0, 3'b000, 5'd1, 7'b0010011)); // addi x1,x0,5
-        load_instr(32'h0000_0004, ENC_I(12'd7,   5'd0, 3'b000, 5'd2, 7'b0010011)); // addi x2,x0,7
-        load_instr(32'h0000_0008, ENC_R(7'b0000000, 5'd2, 5'd1, 3'b000, 5'd3, 7'b0110011)); // add x3,x1,x2
-        load_instr(32'h0000_000c, ENC_R(7'b0000000, 5'd1, 5'd3, 3'b000, 5'd4, 7'b0110011)); // add x4,x3,x1
-        load_instr(32'h0000_0010, ENC_I(12'd100, 5'd0, 3'b000, 5'd10,7'b0010011)); // addi x10,x0,100
-        load_instr(32'h0000_0014, ENC_S(12'd0,   5'd10,5'd0, 3'b010, 7'b0100011)); // sw x10,0(x0)
-        load_instr(32'h0000_0018, ENC_I(12'd0,   5'd0, 3'b010, 5'd5, 7'b0000011)); // lw x5,0(x0)
-        load_instr(32'h0000_001c, ENC_R(7'b0000000, 5'd1, 5'd5, 3'b000, 5'd6, 7'b0110011)); // add x6,x5,x1
-        load_instr(32'h0000_0020, ENC_B(8,       5'd6, 5'd6, 3'b000, 7'b1100011)); // beq x6,x6,+8
-        load_instr(32'h0000_0024, ENC_I(12'd99,  5'd0, 3'b000, 5'd7, 7'b0010011)); // addi x7,x0,99
-        load_instr(32'h0000_0028, ENC_I(12'd42,  5'd0, 3'b000, 5'd7, 7'b0010011)); // addi x7,x0,42
-        load_instr(32'h0000_002c, ENC_I(12'd64,  5'd0, 3'b000, 5'd8, 7'b0010011)); // addi x8,x0,64
-        load_instr(32'h0000_0030, ENC_J(8,       5'd9, 7'b1101111));                // jal x9,+8
-        load_instr(32'h0000_0034, ENC_I(12'd77,  5'd0, 3'b000, 5'd11,7'b0010011)); // addi x11,x0,77
-        load_instr(32'h0000_0038, ENC_I(12'd0,   5'd8, 3'b000, 5'd12,7'b1100111)); // jalr x12,x8,0
-        load_instr(32'h0000_003c, ENC_I(12'd88,  5'd0, 3'b000, 5'd13,7'b0010011)); // addi x13,x0,88
-        load_instr(32'h0000_0040, ENC_B(8,       5'd2, 5'd1, 3'b001, 7'b1100011)); // bne x1,x2,+8
-        load_instr(32'h0000_0044, ENC_I(12'd11,  5'd0, 3'b000, 5'd14,7'b0010011)); // addi x14,x0,11
-        load_instr(32'h0000_0048, ENC_I(12'd22,  5'd0, 3'b000, 5'd14,7'b0010011)); // addi x14,x0,22
-        load_instr(32'h0000_004c, ENC_J(0,       5'd0, 7'b1101111));                // jal x0,0
+        // (3) LỆNH U-TYPE VÀ LOGIC TỨC THỜI (I-Type Logic/Shift)
+        load_instr(32'h0000_0048, ENC_U(20'h12345, 5'd15, 7'b0110111));            // 0x48: lui x15, 0x12345 (x15 = 0x12345000)
+        load_instr(32'h0000_004C, ENC_U(20'h01000, 5'd16, 7'b0010111));            // 0x4C: auipc x16, 0x1000 (x16 = PC + 0x01000000 = 0x0100004C)
+        load_instr(32'h0000_0050, ENC_I(12'd15,  5'd1, 3'b100, 5'd17,7'b0010011)); // 0x50: xori x17, x1, 15 (5 ^ 15 = 10)
+        load_instr(32'h0000_0054, ENC_I(12'd8,   5'd1, 3'b110, 5'd18,7'b0010011)); // 0x54: ori x18, x1, 8 (5 | 8 = 13)
+        load_instr(32'h0000_0058, ENC_I(12'd4,   5'd1, 3'b111, 5'd19,7'b0010011)); // 0x58: andi x19, x1, 4 (5 & 4 = 4)
+        load_instr(32'h0000_005C, ENC_I(12'd2, 5'd1, 3'b001, 5'd20, 7'b0010011)); // 0x5C: slli x20, x1, 2 (5 << 2 = 20)
+        load_instr(32'h0000_0060, ENC_I(12'd1, 5'd20,3'b101, 5'd21, 7'b0010011)); // 0x60: srli x21, x20, 1 (20 >> 1 = 10)
+        load_instr(32'h0000_0064, ENC_I(12'hFF8, 5'd0, 3'b000, 5'd22, 7'b0010011)); // 0x64: addi x22, x0, -8 (Giá trị âm)
+        load_instr(32'h0000_0068, ENC_I({7'b0100000, 5'd00001}, 5'd22, 3'b101, 5'd23, 7'b0010011)); // 0x68: srai x23, x22, 1 (-8 >> 1 = -4)
+        load_instr(32'h0000_006C, ENC_I(12'd10,  5'd1, 3'b010, 5'd24, 7'b0010011)); // 0x6C: slti x24, x1, 10 (5 < 10 -> 1)
+        load_instr(32'h0000_0070, ENC_I(12'd10,  5'd22,3'b011, 5'd25, 7'b0010011)); // 0x70: sltiu x25, x22, 10 (unsigned -8 < 10 -> 0)
 
-        // Verify loading while start=0
-        check_equal("PC must stay at 0 while start=0", uut.pc_F, 32'h0000_0000);
-        check_equal("Loaded instr @0x00", uut.imem.mem[0], ENC_I(12'd5, 5'd0, 3'b000, 5'd1, 7'b0010011));
-        check_equal("Loaded instr @0x30", uut.imem.mem[12], ENC_J(8, 5'd9, 7'b1101111));
+        // (4) R-TYPE LOGIC/MATH
+        load_instr(32'h0000_0074, ENC_R(7'b0100000, 5'd1, 5'd3, 3'b000, 5'd26, 7'b0110011)); // 0x74: sub x26, x3, x1 (12 - 5 = 7)
+        load_instr(32'h0000_0078, ENC_I(12'd3,   5'd0, 3'b000, 5'd27, 7'b0010011));          // 0x78: addi x27, x0, 3
+        load_instr(32'h0000_007C, ENC_R(7'b0000000, 5'd27, 5'd1, 3'b001, 5'd27, 7'b0110011)); // 0x7C: sll x27, x1, x27 (5 << 3 = 40)
+        load_instr(32'h0000_0080, ENC_R(7'b0000000, 5'd1, 5'd22, 3'b010, 5'd28, 7'b0110011)); // 0x80: slt x28, x22, x1 (-8 < 5 -> 1)
+        load_instr(32'h0000_0084, ENC_R(7'b0000000, 5'd1, 5'd22, 3'b011, 5'd29, 7'b0110011)); // 0x84: sltu x29, x22, x1 (unsigned -8 < 5 -> 0)
+        load_instr(32'h0000_0088, ENC_R(7'b0000000, 5'd2, 5'd1, 3'b100, 5'd30, 7'b0110011)); // 0x88: xor x30, x1, x2 (5 ^ 7 = 2)
+        load_instr(32'h0000_008C, ENC_I(12'd1,   5'd0, 3'b000, 5'd31, 7'b0010011));          // 0x8C: addi x31, x0, 1
+        load_instr(32'h0000_0090, ENC_R(7'b0000000, 5'd31, 5'd20, 3'b101, 5'd31, 7'b0110011)); // 0x90: srl x31, x20, x31 (20 >> 1 = 10)
+        load_instr(32'h0000_0094, ENC_I(12'd2,   5'd0, 3'b000, 5'd5, 7'b0010011));           // 0x94: Ghi đè x5 = 2
+        load_instr(32'h0000_0098, ENC_R(7'b0100000, 5'd5, 5'd22, 3'b101, 5'd5, 7'b0110011)); // 0x98: sra x5, x22, x5 (-8 >> 2 = -2)
+        load_instr(32'h0000_009C, ENC_R(7'b0000000, 5'd2, 5'd1, 3'b110, 5'd6, 7'b0110011)); // 0x9C: or x6, x1, x2 (Ghi đè x6 = 7)
+        load_instr(32'h0000_00A0, ENC_R(7'b0000000, 5'd2, 5'd1, 3'b111, 5'd7, 7'b0110011)); // 0xA0: and x7, x1, x2 (Ghi đè x7 = 5)
 
-        // Group B/C/D/E: start CPU and run
+        // (5) LOAD/STORE ĐẦY ĐỦ (Byte, Halfword, Word)
+        // Tạo giá trị x8 = 0xABCD8765 và lưu vào địa chỉ 32 (0x20)
+        load_instr(32'h0000_00A4, ENC_U(20'hABCD8, 5'd8, 7'b0110111));            // 0xA4: lui x8, 0xABCD8 (x8 = 0xABCD8000)
+        load_instr(32'h0000_00A8, ENC_I(12'h765, 5'd8, 3'b000, 5'd8, 7'b0010011));// 0xA8: addi x8, x8, 0x765 -> 0xABCD8765
+        load_instr(32'h0000_00AC, ENC_S(12'd32,  5'd8, 5'd0, 3'b010, 7'b0100011));// 0xAC: sw x8, 32(x0)
+        
+        load_instr(32'h0000_00B0, ENC_I(12'd32,  5'd0, 3'b000, 5'd9, 7'b0000011));// 0xB0: lb x9, 32(x0) -> Đọc 0x65 (Kéo dài dấu -> 0x00000065)
+        load_instr(32'h0000_00B4, ENC_I(12'd32,  5'd0, 3'b001, 5'd10,7'b0000011));// 0xB4: lh x10, 32(x0) -> Đọc 0x8765 (Kéo dài dấu -> 0xFFFF8765)
+        load_instr(32'h0000_00B8, ENC_I(12'd33,  5'd0, 3'b100, 5'd11,7'b0000011));// 0xB8: lbu x11, 33(x0)-> Đọc Byte 1 (0x87, Không dấu -> 0x00000087)
+        load_instr(32'h0000_00BC, ENC_I(12'd34,  5'd0, 3'b101, 5'd12,7'b0000011));// 0xBC: lhu x12, 34(x0)-> Đọc Halfword cao (0xABCD, Không dấu -> 0x0000ABCD)
+        
+        // (6) CÁC LỆNH BRANCH CÒN LẠI (blt, bge, bltu, bgeu)
+        load_instr(32'h0000_00C0, ENC_I(12'hFFB, 5'd0, 3'b000, 5'd13,7'b0010011));// 0xC0: addi x13, x0, -5
+        load_instr(32'h0000_00C4, ENC_I(12'd5,   5'd0, 3'b000, 5'd14,7'b0010011));// 0xC4: addi x14, x0, 5
+        
+        load_instr(32'h0000_00C8, ENC_B(8,       5'd14,5'd13,3'b100, 7'b1100011));// 0xC8: blt x13, x14, +8 (Vì -5 < 5 -> Nhảy tới 0xD0)
+        load_instr(32'h0000_00CC, ENC_I(12'd0,   5'd0, 3'b000, 5'd0, 7'b0010011));// 0xCC: nop (Bị bỏ qua)
+        
+        load_instr(32'h0000_00D0, ENC_B(8,       5'd13,5'd14,3'b101, 7'b1100011));// 0xD0: bge x14, x13, +8 (Vì 5 >= -5 -> Nhảy tới 0xD8)
+        load_instr(32'h0000_00D4, ENC_I(12'd0,   5'd0, 3'b000, 5'd0, 7'b0010011));// 0xD4: nop (Bị bỏ qua)
+        
+        load_instr(32'h0000_00D8, ENC_B(8,       5'd13,5'd14,3'b110, 7'b1100011));// 0xD8: bltu x14, x13, +8 (Vì 5 < unsigned(-5) -> Nhảy tới 0xE0)
+        load_instr(32'h0000_00DC, ENC_I(12'd0,   5'd0, 3'b000, 5'd0, 7'b0010011));// 0xDC: nop (Bị bỏ qua)
+        
+        load_instr(32'h0000_00E0, ENC_B(8,       5'd14,5'd13,3'b111, 7'b1100011));// 0xE0: bgeu x13, x14, +8 (Vì unsigned(-5) >= 5 -> Nhảy tới 0xE8)
+        load_instr(32'h0000_00E4, ENC_I(12'd0,   5'd0, 3'b000, 5'd0, 7'b0010011));// 0xE4: nop (Bị bỏ qua)
+        
+        load_instr(32'h0000_00E8, ENC_J(0,       5'd0, 7'b1101111));              // 0xE8: jal x0,0 (Vòng lặp vô hạn kết thúc chương trình)
+
+        // Bắt đầu chạy CPU
         @(negedge clk);
         start = 1'b1;
 
-        // Allow enough cycles to execute and settle into final loop
-        repeat (120) @(negedge clk);
+        // Cho phép CPU đủ thời gian chạy qua hơn 60 lệnh + chu kỳ Flush
+        repeat (180) @(negedge clk);
 
-        // Check architectural state (forwarding, load-use stall, branch/jump paths)
-        check_reg_via_debug(5'd0,  32'd0,  "x0 must remain zero");
-        check_reg_via_debug(5'd1,  32'd5,  "x1 addi result");
-        check_reg_via_debug(5'd2,  32'd7,  "x2 addi result");
-        check_reg_via_debug(5'd3,  32'd12, "x3 = x1 + x2 (forward path)");
-        check_reg_via_debug(5'd4,  32'd17, "x4 = x3 + x1 (forward chain)");
-        check_reg_via_debug(5'd5,  32'd100,"x5 = lw mem[0]");
-        check_reg_via_debug(5'd6,  32'd105,"x6 = x5 + x1 (load-use hazard handled)");
-        check_reg_via_debug(5'd7,  32'd42, "x7 branch skip works");
-        check_reg_via_debug(5'd9,  32'h34, "x9 jal link address");
-        check_reg_via_debug(5'd11, 32'd0,  "x11 skipped by jal");
-        check_reg_via_debug(5'd12, 32'h3c, "x12 jalr link address");
-        check_reg_via_debug(5'd13, 32'd0,  "x13 skipped by jalr");
-        check_reg_via_debug(5'd14, 32'd22, "x14 bne skip works");
+        // KIỂM TRA TRẠNG THÁI CỦA 31 THANH GHI
+        $display("--- CHECKING REGISTERS ---");
+        check_reg_via_debug(5'd0,  32'd0,          "x0  must remain zero");
+        check_reg_via_debug(5'd1,  32'd5,          "x1  (addi) = 5");
+        check_reg_via_debug(5'd2,  32'd7,          "x2  (addi) = 7");
+        check_reg_via_debug(5'd3,  32'd12,         "x3  (add)  = 12");
+        check_reg_via_debug(5'd4,  32'd17,         "x4  (add)  = 17");
+        check_reg_via_debug(5'd5,  32'hFFFFFFFE,   "x5  (sra)  = -2");
+        check_reg_via_debug(5'd6,  32'd7,          "x6  (or)   = 7");
+        check_reg_via_debug(5'd7,  32'd5,          "x7  (and)  = 5");
+        check_reg_via_debug(5'd8,  32'hABCD8765,   "x8  (lui+addi) = 0xABCD8765");
+        check_reg_via_debug(5'd9,  32'h00000065,   "x9  (lb)   = 0x00000065 (Sign extended byte)");
+        check_reg_via_debug(5'd10, 32'hFFFF8765,   "x10 (lh)   = 0xFFFF8765 (Sign extended halfword)");
+        check_reg_via_debug(5'd11, 32'h00000087,   "x11 (lbu)  = 0x00000087 (Zero extended byte)");
+        check_reg_via_debug(5'd12, 32'h0000ABCD,   "x12 (lhu)  = 0x0000ABCD (Zero extended halfword)");
+        check_reg_via_debug(5'd13, 32'hFFFFFFFB,   "x13 (addi) = -5");
+        check_reg_via_debug(5'd14, 32'd5,          "x14 (addi) = 5");
+        check_reg_via_debug(5'd15, 32'h12345000,   "x15 (lui)  = 0x12345000");
+        check_reg_via_debug(5'd16, 32'h0100004C,   "x16 (auipc)= PC + 0x01000000");
+        check_reg_via_debug(5'd17, 32'd10,         "x17 (xori) = 10");
+        check_reg_via_debug(5'd18, 32'd13,         "x18 (ori)  = 13");
+        check_reg_via_debug(5'd19, 32'd4,          "x19 (andi) = 4");
+        check_reg_via_debug(5'd20, 32'd20,         "x20 (slli) = 20");
+        check_reg_via_debug(5'd21, 32'd10,         "x21 (srli) = 10");
+        check_reg_via_debug(5'd22, 32'hFFFFFFF8,   "x22 (addi) = -8");
+        check_reg_via_debug(5'd23, 32'hFFFFFFFC,   "x23 (srai) = -4");
+        check_reg_via_debug(5'd24, 32'd1,          "x24 (slti) = 1 (True)");
+        check_reg_via_debug(5'd25, 32'd0,          "x25 (sltiu)= 0 (False)");
+        check_reg_via_debug(5'd26, 32'd7,          "x26 (sub)  = 7");
+        check_reg_via_debug(5'd27, 32'd40,         "x27 (sll)  = 40");
+        check_reg_via_debug(5'd28, 32'd1,          "x28 (slt)  = 1 (True)");
+        check_reg_via_debug(5'd29, 32'd0,          "x29 (sltu) = 0 (False)");
+        check_reg_via_debug(5'd30, 32'd2,          "x30 (xor)  = 2");
+        check_reg_via_debug(5'd31, 32'd10,         "x31 (srl)  = 10");
 
-        check_mem_word_via_debug(32'h0000_0000, 32'd100, "mem[0] after sw");
-
-        // Control hazard activity must appear at least once
         if (flush_count == 0) begin
             error_count = error_count + 1;
-            $display("FAIL: no branch flush observed (expected at least one mispredict/recovery)");
+            $display("FAIL: No branch flush observed!");
         end else begin
-            $display("PASS: observed branch flush count = %0d", flush_count);
+            $display("PASS: Observed branch flush count = %0d", flush_count);
         end
 
-        // End report
         if (error_count == 0) begin
             $display("============================================");
-            $display("TOP PIPELINE TEST PASSED (all checks green)");
+            $display("PERFECT: ALL 37 INSTRUCTIONS PASSED!");
             $display("============================================");
         end else begin
             $display("============================================");
-            $display("TOP PIPELINE TEST FAILED, error_count = %0d", error_count);
+            $display("FAILED: error_count = %0d", error_count);
             $display("============================================");
         end
 

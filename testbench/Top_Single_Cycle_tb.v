@@ -33,6 +33,8 @@ module Top_Single_Cycle_tb;
     initial begin
         $dumpfile("mophong_vcd/Top_Single_Cycle_tb.vcd");
         $dumpvars(0, Top_Single_Cycle_tb);
+        $monitor("t=%0t clk=%b rst_n=%b start=%b inst_we=%b pc=%h instr=%h",
+                 $time, clk, rst_n, start, inst_we, pc, instr);
 
         clk = 0;
         rst_n = 0;

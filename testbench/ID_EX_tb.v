@@ -111,6 +111,8 @@ module ID_EX_tb;
     initial begin
         $dumpfile("mophong_vcd/ID_EX_tb.vcd");
         $dumpvars(0, ID_EX_tb);
+        $monitor("t=%0t clk=%b rst_n=%b stall=%b flush=%b id_pc=%h id_instr_ctrl=%b ex_pc=%h ex_rd=%0d ex_regWrite=%b",
+                 $time, clk, rst_n, stall, flush, id_pc, id_alu_ctrl, ex_pc, ex_rd, ex_regWrite);
         
         // Khởi tạo
         rst_n = 0;

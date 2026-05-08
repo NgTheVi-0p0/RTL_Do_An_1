@@ -20,6 +20,8 @@ module instruction_memory_tb;
     initial begin
         $dumpfile("mophong_vcd/instruction_memory_tb.vcd");
         $dumpvars(0, instruction_memory_tb);
+        $monitor("t=%0t clk=%b we=%b addr_ext=%h din_ext=%h pc=%h instr=%h",
+                 $time, clk, we, addr_ext, din_ext, pc, instr);
 
         clk = 0; we = 0; addr_ext = 32'h0000_0000; din_ext = 32'h0000_0000; pc = 32'h0000_0000;
 

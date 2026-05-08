@@ -26,6 +26,8 @@ module Register_File_tb;
     initial begin
         $dumpfile("mophong_vcd/Register_File_tb.vcd");
         $dumpvars(0, Register_File_tb);
+        $monitor("t=%0t clk=%b rst_n=%b reg_write=%b rs1=%0d rs2=%0d rd=%0d wd=%h rd1=%h rd2=%h",
+                 $time, clk, rst_n, reg_write, rs1, rs2, rd, wd, rd1, rd2);
 
         clk = 0; rst_n = 0; reg_write = 0;
         rs1 = 5'd1; rs2 = 5'd2; rd = 5'd1; wd = 32'hDEAD_BEEF;

@@ -51,6 +51,8 @@ module MEM_WB_tb;
     initial begin
         $dumpfile("mophong_vcd/MEM_WB_tb.vcd");
         $dumpvars(0, MEM_WB_tb);
+        $monitor("t=%0t clk=%b rst_n=%b mem_rd=%0d mem_regWrite=%b mem_wb_sel=%b wb_rd=%0d wb_regWrite=%b wb_alu=%h wb_mem=%h wb_pc4=%h",
+                 $time, clk, rst_n, mem_rd, mem_regWrite, mem_write_back, wb_rd, wb_regWrite, wb_alu_result, wb_mem_data, wb_pc_plus4);
         
         // Khởi tạo
         rst_n = 0;
