@@ -1,0 +1,25 @@
+#!/usr/bin/env yosys
+# Usage (via scripts/run_open_flow.sh):
+#   values are injected into __TOP__ and __OUT_NETLIST__ before running.
+#
+# Notes:
+# - Hierarchy is preserved by default (no flatten) to match modular RTL structure.
+
+read_verilog -sv src/*.v
+
+hierarchy -check -top __TOP__
+
+proc
+opt
+fsm
+opt
+memory
+opt
+techmap
+opt
+
+stat
+
+clean -purge
+
+write_verilog -noattr __OUT_NETLIST__

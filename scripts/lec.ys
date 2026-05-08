@@ -1,0 +1,26 @@
+#!/usr/bin/env yosys
+# Usage (via scripts/run_open_flow.sh):
+#   values are injected into __TOP__ and __NETLIST__ before running.
+
+read_verilog -sv src/*.v
+hierarchy -check -top __TOP__
+prep -top __TOP__
+design -stash gold
+
+read_verilog -sv __NETLIST__
+hierarchy -check -top __TOP__
+prep -top __TOP__
+design -stash gate
+
+design -copy-from gold -as gold __TOP__
+design -copy-from gate -as gate __TOP__
+
+equiv_make gold gate equiv
+prep -top equiv
+
+# Normalize undefined/undriven signals to reduce false mismatches.
+setundef -undriven -zero
+
+equiv_simple
+equiv_induct
+equiv_status -assert

@@ -29,6 +29,32 @@ Dự án thực hiện quy trình thiết kế từ RTL đến GDSII (ASIC Flow)
 *   **Synthesis:** Yosys
 *   **Backend:** OpenLane (Docker)
 
+## Open-source synthesis / LEC / STA flow
+
+Project now includes an automated free-tool flow:
+
+```bash
+# 1) Run all RTL testbenches (existing behavior)
+./run_all_tb.sh
+
+# 2) Run testbenches + synthesis/LEC/STA wrapper
+./run_all_tb.sh --with-flow
+
+# 3) Run synthesis/LEC/STA only
+./scripts/run_open_flow.sh
+```
+
+Optional technology mapping + STA with your liberty:
+
+```bash
+LIBERTY=/path/to/your.lib ./scripts/run_open_flow.sh
+```
+
+Generated artifacts:
+- Netlist: `netlist/Top_module_pipeline_RISC_V_32I_syn.v`
+- Logs/reports: `reports/`
+- Default constraints: `constraints/Top_module_pipeline_RISC_V_32I.sdc`
+
 
 
 

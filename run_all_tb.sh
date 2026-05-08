@@ -2,6 +2,7 @@
 set -u
 cd "$(dirname "$0")"
 mkdir -p mophong_vcd
+mkdir -p reports netlist
 
 echo "Running all testbenches one-by-one..."
 
@@ -51,4 +52,12 @@ echo "====================================="
 
 if [[ ${fail_count} -ne 0 ]]; then
   exit 1
+fi
+
+echo
+echo "RTL testbenches passed."
+
+if [[ "${1:-}" == "--with-flow" ]]; then
+  echo "Running open-source synthesis/LEC/STA flow..."
+  bash ./scripts/run_open_flow.sh
 fi

@@ -1,0 +1,27 @@
+#!/usr/bin/env yosys
+# Usage (via scripts/run_open_flow.sh):
+#   values are injected into __TOP__, __OUT_NETLIST__, and __LIBERTY__ before running.
+#
+# Notes:
+# - Performs technology mapping using the provided liberty file.
+# - Hierarchy is preserved by default (no flatten) to match modular RTL structure.
+
+read_verilog -sv src/*.v
+
+hierarchy -check -top __TOP__
+
+proc
+opt
+fsm
+opt
+memory
+opt
+techmap
+opt
+
+dfflibmap -liberty __LIBERTY__
+abc -liberty __LIBERTY__
+clean -purge
+stat -liberty __LIBERTY__
+
+write_verilog -noattr __OUT_NETLIST__
