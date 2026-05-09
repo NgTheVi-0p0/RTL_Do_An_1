@@ -381,8 +381,7 @@ module Top_module_pipeline_RISC_V_32I (
                      (write_back_W == 2'b10) ? pc4_W :
                      32'b0;
 
-    // =========================
-    // Cổng quan sát giá trị theo yêu cầu đồ án
+
     // =========================
     assign value = DataOrReg ? dmem_debug_val : regfile_debug_val;
 endmodule
