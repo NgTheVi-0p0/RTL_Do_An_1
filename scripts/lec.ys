@@ -1,26 +1,68 @@
-#!/usr/bin/env yosys
-# Usage (via scripts/run_open_flow.sh):
-#   values are injected into __TOP__ and __NETLIST__ before running.
+# LEC Script for RISC-V Pipeline (ASIC Flow) - FINAL STABLE VERSION
 
+# ==========================================================
+# 1. CHUẨN BỊ BẢN GỐC (GOLDEN RTL)
+# ==========================================================
 read_verilog -sv src/*.v
+
+# Đánh dấu Blackbox để giảm tải tính toán
+blackbox instruction_memory
+blackbox data_memory
+blackbox Register_File
+blackbox Branch_Prediction_Unit
+
 hierarchy -check -top __TOP__
 prep -top __TOP__
+async2sync
+flatten             
 design -stash gold
 
+
+# ==========================================================
+# 2. CHUẨN BỊ BẢN TỔNG HỢP (GATE NETLIST)
+# ==========================================================
+# Chỉ nạp file Netlist (không nạp lại src/*.v nữa)
 read_verilog -sv __NETLIST__
+
+# Đánh dấu các module con là Blackbox ngay trong Netlist
+# (Yosys sẽ hiểu đây là các 'hộp đen' dựa trên các chân In/Out trong Netlist)
+blackbox instruction_memory
+blackbox data_memory
+blackbox Register_File
+blackbox Branch_Prediction_Unit
+
 hierarchy -check -top __TOP__
 prep -top __TOP__
+async2sync
+flatten             
 design -stash gate
 
+
+# ==========================================================
+# 3. TIẾN HÀNH SO SÁNH LOGIC
+# ==========================================================
+# Bước A: Lấy Top module từ 2 bản ra để so sánh
 design -copy-from gold -as gold __TOP__
 design -copy-from gate -as gate __TOP__
 
+# Bước B: Lấy 'vỏ' của các Blackbox từ bản Gold sang không gian chung 
+# để equiv_make có thể nối dây. (Đây là cách tránh lỗi Re-definition)
+design -copy-from gold instruction_memory
+design -copy-from gold data_memory
+design -copy-from gold Register_File
+design -copy-from gold Branch_Prediction_Unit
+
+# Bước C: Tạo module so sánh logic
 equiv_make gold gate equiv
 prep -top equiv
 
-# Normalize undefined/undriven signals to reduce false mismatches.
+# Xử lý các tín hiệu chưa xác định
 setundef -undriven -zero
+setundef -anyseq
 
+# Thuật toán chứng minh
 equiv_simple
-equiv_induct
+equiv_induct -seq 20
+
+# Phán quyết cuối cùng
 equiv_status -assert

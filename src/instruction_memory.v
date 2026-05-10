@@ -8,7 +8,7 @@ module instruction_memory (
     output wire [31:0] instr    // Lệnh xuất ra cho CPU thực thi
 );
     // Khởi tạo bộ nhớ 1024 dòng (4KB), mỗi dòng 32-bit
-    reg [31:0] mem [0:1023];
+    reg [31:0] mem [0:128];
     integer i;
 
     // Ghi lệnh vào bộ nhớ (quá trình nạp chương trình)
