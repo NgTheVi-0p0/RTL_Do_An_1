@@ -129,40 +129,75 @@ module Branch_Prediction_Unit (
     assign pc_restore = actual_next_pc;
 endmodule
 // EX_MEM Pipeline Register (Execute to Memory)
+// Lưu trữ dữ liệu giữa giai đoạn EX và MEM trong pipeline 5 tầng
+
 module EX_MEM (
-    input wire        clk,
-    input wire        rst_n,
-    input wire        flush,          // Dùng khi dự đoán rẽ nhánh sai
+    input  wire        clk,
+    input  wire        rst_n,
+    input  wire        flush,         
 
     // Đầu vào từ EX stage
-    input wire [31:0] ex_pc_plus4,
-    input wire [31:0] ex_alu_result,  // Kết quả tính toán của ALU (hoặc địa chỉ bộ nhớ)
-    input wire [31:0] ex_rs2_data,    // Dữ liệu để ghi vào bộ nhớ (Store)
-    input wire [4:0]  ex_rd,          // Thanh ghi đích
+    input  wire [31:0] ex_pc_plus4,
+    input  wire [31:0] ex_alu_result, 
+    input  wire[31:0] ex_rs2_data,   
+    input  wire [4:0]  ex_rd,         
 
     // Tín hiệu điều khiển từ EX stage
-    input wire        ex_regWrite,
-    input wire [2:0]  ex_load_sel,
-    input wire [2:0]  ex_store_sel,
-    input wire        ex_memWrite,
-    input wire [1:0]  ex_write_back,
+    input  wire        ex_regWrite,
+    input  wire [2:0]  ex_load_sel,
+    input  wire[2:0]  ex_store_sel,
+    input  wire        ex_memWrite,
+    input  wire [1:0]  ex_write_back,
 
     // Đầu ra tới MEM stage
-    output reg [31:0] mem_pc_plus4,
-    output reg [31:0] mem_alu_result,
-    output reg [31:0] mem_rs2_data,
-    output reg [4:0]  mem_rd,
+    output reg  [31:0] mem_pc_plus4,
+    output reg[31:0] mem_alu_result,
+    output reg  [31:0] mem_rs2_data,
+    output reg  [4:0]  mem_rd,
 
     // Tín hiệu điều khiển cho MEM stage
-    output reg        mem_regWrite,
-    output reg [2:0]  mem_load_sel,
-    output reg [2:0]  mem_store_sel,
-    output reg        mem_memWrite,
-    output reg [1:0]  mem_write_back
+    output reg         mem_regWrite,
+    output reg  [2:0]  mem_load_sel,
+    output reg  [2:0]  mem_store_sel,
+    output reg         mem_memWrite,
+    output reg  [1:0]  mem_write_back
 );
 
+    // --- 1. Logic tổ hợp: Chọn giá trị tiếp theo ---
+    reg[31:0] next_mem_pc_plus4, next_mem_alu_result, next_mem_rs2_data;
+    reg [4:0]  next_mem_rd;
+    reg        next_mem_regWrite, next_mem_memWrite;
+    reg [2:0]  next_mem_load_sel, next_mem_store_sel;
+    reg[1:0]  next_mem_write_back;
+
+    always @(*) begin
+        if (flush) begin
+            next_mem_pc_plus4   = 32'h0;
+            next_mem_alu_result = 32'h0;
+            next_mem_rs2_data   = 32'h0;
+            next_mem_rd         = 5'b0;
+            next_mem_regWrite   = 1'b0;
+            next_mem_load_sel   = 3'b0;
+            next_mem_store_sel  = 3'b0;
+            next_mem_memWrite   = 1'b0;
+            next_mem_write_back = 2'b0;
+        end 
+        else begin
+            next_mem_pc_plus4   = ex_pc_plus4;
+            next_mem_alu_result = ex_alu_result;
+            next_mem_rs2_data   = ex_rs2_data;
+            next_mem_rd         = ex_rd;
+            next_mem_regWrite   = ex_regWrite;
+            next_mem_load_sel   = ex_load_sel;
+            next_mem_store_sel  = ex_store_sel;
+            next_mem_memWrite   = ex_memWrite;
+            next_mem_write_back = ex_write_back;
+        end
+    end
+
+    // --- 2. Logic tuần tự: Ghi vào thanh ghi ---
     always @(posedge clk or negedge rst_n) begin
-        if (!rst_n || flush) begin
+        if (!rst_n) begin
             mem_pc_plus4   <= 32'h0;
             mem_alu_result <= 32'h0;
             mem_rs2_data   <= 32'h0;
@@ -172,18 +207,20 @@ module EX_MEM (
             mem_store_sel  <= 3'b0;
             mem_memWrite   <= 1'b0;
             mem_write_back <= 2'b0;
-        end else begin
-            mem_pc_plus4   <= ex_pc_plus4;
-            mem_alu_result <= ex_alu_result;
-            mem_rs2_data   <= ex_rs2_data;
-            mem_rd         <= ex_rd;
-            mem_regWrite   <= ex_regWrite;
-            mem_load_sel   <= ex_load_sel;
-            mem_store_sel  <= ex_store_sel;
-            mem_memWrite   <= ex_memWrite;
-            mem_write_back <= ex_write_back;
+        end 
+        else begin
+            mem_pc_plus4   <= next_mem_pc_plus4;
+            mem_alu_result <= next_mem_alu_result;
+            mem_rs2_data   <= next_mem_rs2_data;
+            mem_rd         <= next_mem_rd;
+            mem_regWrite   <= next_mem_regWrite;
+            mem_load_sel   <= next_mem_load_sel;
+            mem_store_sel  <= next_mem_store_sel;
+            mem_memWrite   <= next_mem_memWrite;
+            mem_write_back <= next_mem_write_back;
         end
     end
+
 endmodule// Forwarding Unit - Xử lý Data Hazards bằng cách forward dữ liệu
 // Chuyển tiếp kết quả từ pipeline stage sau về stage trước
 
@@ -289,239 +326,303 @@ endmodule// ID_EX Pipeline Register (Instruction Decode to Execute)
 // Lưu trữ dữ liệu giữa giai đoạn ID và EX trong pipeline 5 tầng
 
 module ID_EX (
-    input wire        clk,
-    input wire        rst_n,
-    input wire        stall,      // Tín hiệu dừng pipeline (hazard)
-    input wire        flush,      // Tín hiệu xóa dữ liệu (branch/jump)
+    input  wire        clk,
+    input  wire        rst_n,
+    input  wire        stall,
+    input  wire        flush,
     
     // Đầu vào từ ID stage
-    input wire [31:0] id_pc,      // Program Counter từ ID stage
-    input wire [31:0] id_pc_plus4,// PC + 4 từ ID stage
-    input wire [31:0] id_rs1_data,// Dữ liệu từ Register File (rs1)
-    input wire [31:0] id_rs2_data,// Dữ liệu từ Register File (rs2)
-    input wire [31:0] id_imm,     // Immediate value (đã mở rộng)
-    input wire [4:0]  id_rd,      // Chỉ số thanh ghi đích (rd)
-    input wire [4:0]  id_rs1,     // Chỉ số thanh ghi nguồn 1 (rs1)
-    input wire [4:0]  id_rs2,     // Chỉ số thanh ghi nguồn 2 (rs2)
+    input  wire [31:0] id_pc,
+    input  wire[31:0] id_pc_plus4,
+    input  wire [31:0] id_rs1_data,
+    input  wire [31:0] id_rs2_data,
+    input  wire [31:0] id_imm,
+    input  wire [4:0]  id_rd,
+    input  wire [4:0]  id_rs1,
+    input  wire [4:0]  id_rs2,
     
-    // Tín hiệu điều khiển từ Control Unit
-    input wire        id_regWrite,    // Ghi vào Register File
-    input wire [2:0]  id_imm_sel,     // Chọn loại immediate
-    input wire        id_alu_srcA,    // Chọn toán hạng A của ALU
-    input wire        id_alu_srcB,    // Chọn toán hạng B của ALU
-    input wire [10:0]  id_alu_ctrl,    // Điều khiển ALU
-    input wire        id_branch,      // Tín hiệu branch
-    input wire [2:0]  id_bropcode,    // Opcode cho branch
-    input wire [1:0]  id_jump,        // Tín hiệu jump
-    input wire [2:0]  id_load_sel,    // Chọn loại load
-    input wire [2:0]  id_store_sel,   // Chọn loại store
-    input wire        id_memWrite,    // Ghi vào bộ nhớ dữ liệu
-    input wire [1:0]  id_write_back,  // Chọn dữ liệu ghi lại
+    // Tín hiệu điều khiển vào
+    input  wire        id_regWrite,
+    input  wire [2:0]  id_imm_sel,
+    input  wire        id_alu_srcA,
+    input  wire        id_alu_srcB,
+    input  wire [10:0] id_alu_ctrl,
+    input  wire        id_branch,
+    input  wire [2:0]  id_bropcode,
+    input  wire [1:0]  id_jump,
+    input  wire [2:0]  id_load_sel,
+    input  wire [2:0]  id_store_sel,
+    input  wire        id_memWrite,
+    input  wire [1:0]  id_write_back,
     
     // Đầu ra tới EX stage
-    output reg [31:0] ex_pc,
-    output reg [31:0] ex_pc_plus4,
-    output reg [31:0] ex_rs1_data,
-    output reg [31:0] ex_rs2_data,
-    output reg [31:0] ex_imm,
-    output reg [4:0]  ex_rd,
-    output reg [4:0]  ex_rs1,
-    output reg [4:0]  ex_rs2,
+    output reg  [31:0] ex_pc,
+    output reg  [31:0] ex_pc_plus4,
+    output reg  [31:0] ex_rs1_data,
+    output reg[31:0] ex_rs2_data,
+    output reg  [31:0] ex_imm,
+    output reg  [4:0]  ex_rd,
+    output reg  [4:0]  ex_rs1,
+    output reg  [4:0]  ex_rs2,
     
     // Tín hiệu điều khiển ra
-    output reg        ex_regWrite,
-    output reg [2:0]  ex_imm_sel,
-    output reg        ex_alu_srcA,
-    output reg        ex_alu_srcB,
-    output reg [10:0]  ex_alu_ctrl,
-    output reg        ex_branch,
-    output reg [2:0]  ex_bropcode,
-    output reg [1:0]  ex_jump,
-    output reg [2:0]  ex_load_sel,
-    output reg [2:0]  ex_store_sel,
-    output reg        ex_memWrite,
-    output reg [1:0]  ex_write_back
+    output reg         ex_regWrite,
+    output reg  [2:0]  ex_imm_sel,
+    output reg         ex_alu_srcA,
+    output reg         ex_alu_srcB,
+    output reg  [10:0] ex_alu_ctrl,
+    output reg         ex_branch,
+    output reg  [2:0]  ex_bropcode,
+    output reg  [1:0]  ex_jump,
+    output reg  [2:0]  ex_load_sel,
+    output reg[2:0]  ex_store_sel,
+    output reg         ex_memWrite,
+    output reg[1:0]  ex_write_back
 );
 
-    always @(posedge clk or negedge rst_n) begin
-        if (!rst_n) begin
-            // Khởi tạo tất cả register khi reset
-            ex_pc       <= 32'h0000_0000;
-            ex_pc_plus4 <= 32'h0000_0004;
-            ex_rs1_data <= 32'h0000_0000;
-            ex_rs2_data <= 32'h0000_0000;
-            ex_imm      <= 32'h0000_0000;
-            ex_rd       <= 5'b0_0000;
-            ex_rs1      <= 5'b0_0000;
-            ex_rs2      <= 5'b0_0000;
-            
-            // Tín hiệu điều khiển mặc định
-            ex_regWrite <= 1'b0;
-            ex_imm_sel  <= 3'b000;
-            ex_alu_srcA <= 1'b0;
-            ex_alu_srcB <= 1'b0;
-            ex_alu_ctrl <= 11'b000_0000_0000;
-            ex_branch   <= 1'b0;
-            ex_bropcode <= 3'b000;
-            ex_jump     <= 2'b00;
-            ex_load_sel <= 3'b000;
-            ex_store_sel<= 3'b000;
-            ex_memWrite <= 1'b0;
-            ex_write_back <= 2'b00;
+    // --- 1. Logic tổ hợp: Chọn giá trị tiếp theo ---
+    reg [31:0] next_ex_pc, next_ex_pc_plus4, next_ex_rs1_data, next_ex_rs2_data, next_ex_imm;
+    reg [4:0]  next_ex_rd, next_ex_rs1, next_ex_rs2;
+    reg        next_ex_regWrite, next_ex_alu_srcA, next_ex_alu_srcB, next_ex_branch, next_ex_memWrite;
+    reg [2:0]  next_ex_imm_sel, next_ex_bropcode, next_ex_load_sel, next_ex_store_sel;
+    reg [1:0]  next_ex_jump, next_ex_write_back;
+    reg[10:0] next_ex_alu_ctrl;
+
+    always @(*) begin
+        if (flush) begin
+            next_ex_pc         = 32'h0;
+            next_ex_pc_plus4   = 32'h4;
+            next_ex_rs1_data   = 32'h0;
+            next_ex_rs2_data   = 32'h0;
+            next_ex_imm        = 32'h0;
+            next_ex_rd         = 5'b0;
+            next_ex_rs1        = 5'b0;
+            next_ex_rs2        = 5'b0;
+            next_ex_regWrite   = 1'b0;
+            next_ex_imm_sel    = 3'b0;
+            next_ex_alu_srcA   = 1'b0;
+            next_ex_alu_srcB   = 1'b0;
+            next_ex_alu_ctrl   = 11'b0;
+            next_ex_branch     = 1'b0;
+            next_ex_bropcode   = 3'b0;
+            next_ex_jump       = 2'b0;
+            next_ex_load_sel   = 3'b0;
+            next_ex_store_sel  = 3'b0;
+            next_ex_memWrite   = 1'b0;
+            next_ex_write_back = 2'b0;
+        end 
+        else if (stall) begin
+            next_ex_pc         = ex_pc;
+            next_ex_pc_plus4   = ex_pc_plus4;
+            next_ex_rs1_data   = ex_rs1_data;
+            next_ex_rs2_data   = ex_rs2_data;
+            next_ex_imm        = ex_imm;
+            next_ex_rd         = ex_rd;
+            next_ex_rs1        = ex_rs1;
+            next_ex_rs2        = ex_rs2;
+            next_ex_regWrite   = ex_regWrite;
+            next_ex_imm_sel    = ex_imm_sel;
+            next_ex_alu_srcA   = ex_alu_srcA;
+            next_ex_alu_srcB   = ex_alu_srcB;
+            next_ex_alu_ctrl   = ex_alu_ctrl;
+            next_ex_branch     = ex_branch;
+            next_ex_bropcode   = ex_bropcode;
+            next_ex_jump       = ex_jump;
+            next_ex_load_sel   = ex_load_sel;
+            next_ex_store_sel  = ex_store_sel;
+            next_ex_memWrite   = ex_memWrite;
+            next_ex_write_back = ex_write_back;
+        end 
+        else begin
+            next_ex_pc         = id_pc;
+            next_ex_pc_plus4   = id_pc_plus4;
+            next_ex_rs1_data   = id_rs1_data;
+            next_ex_rs2_data   = id_rs2_data;
+            next_ex_imm        = id_imm;
+            next_ex_rd         = id_rd;
+            next_ex_rs1        = id_rs1;
+            next_ex_rs2        = id_rs2;
+            next_ex_regWrite   = id_regWrite;
+            next_ex_imm_sel    = id_imm_sel;
+            next_ex_alu_srcA   = id_alu_srcA;
+            next_ex_alu_srcB   = id_alu_srcB;
+            next_ex_alu_ctrl   = id_alu_ctrl;
+            next_ex_branch     = id_branch;
+            next_ex_bropcode   = id_bropcode;
+            next_ex_jump       = id_jump;
+            next_ex_load_sel   = id_load_sel;
+            next_ex_store_sel  = id_store_sel;
+            next_ex_memWrite   = id_memWrite;
+            next_ex_write_back = id_write_back;
         end
-        else if (flush) begin
-            // Xóa dữ liệu khi có branch/jump được thực thi
-            ex_pc       <= 32'h0000_0000;
-            ex_pc_plus4 <= 32'h0000_0004;
-            ex_rs1_data <= 32'h0000_0000;
-            ex_rs2_data <= 32'h0000_0000;
-            ex_imm      <= 32'h0000_0000;
-            ex_rd       <= 5'b0_0000;
-            ex_rs1      <= 5'b0_0000;
-            ex_rs2      <= 5'b0_0000;
-            
-            // Tín hiệu điều khiển bị xóa (NOP)
-            ex_regWrite <= 1'b0;
-            ex_imm_sel  <= 3'b000;
-            ex_alu_srcA <= 1'b0;
-            ex_alu_srcB <= 1'b0;
-            ex_alu_ctrl <= 11'b000_0000_0000;
-            ex_branch   <= 1'b0;
-            ex_bropcode <= 3'b000;
-            ex_jump     <= 2'b00;
-            ex_load_sel <= 3'b000;
-            ex_store_sel<= 3'b000;
-            ex_memWrite <= 1'b0;
-            ex_write_back <= 2'b00;
-        end
-        else if (!stall) begin
-            // Cập nhật dữ liệu từ ID stage khi không bị stall
-            ex_pc       <= id_pc;
-            ex_pc_plus4 <= id_pc_plus4;
-            ex_rs1_data <= id_rs1_data;
-            ex_rs2_data <= id_rs2_data;
-            ex_imm      <= id_imm;
-            ex_rd       <= id_rd;
-            ex_rs1      <= id_rs1;
-            ex_rs2      <= id_rs2;
-            
-            // Cập nhật tín hiệu điều khiển
-            ex_regWrite <= id_regWrite;
-            ex_imm_sel  <= id_imm_sel;
-            ex_alu_srcA <= id_alu_srcA;
-            ex_alu_srcB <= id_alu_srcB;
-            ex_alu_ctrl <= id_alu_ctrl;
-            ex_branch   <= id_branch;
-            ex_bropcode <= id_bropcode;
-            ex_jump     <= id_jump;
-            ex_load_sel <= id_load_sel;
-            ex_store_sel<= id_store_sel;
-            ex_memWrite <= id_memWrite;
-            ex_write_back <= id_write_back;
-        end
-        // Nếu stall = 1, giữ nguyên giá trị cũ
     end
 
-endmodule
-// IF_ID Pipeline Register (Instruction Fetch to Instruction Decode)
+    // --- 2. Logic tuần tự: Ghi vào thanh ghi ---
+    always @(posedge clk or negedge rst_n) begin
+        if (!rst_n) begin
+            ex_pc         <= 32'h0;
+            ex_pc_plus4   <= 32'h4;
+            ex_rs1_data   <= 32'h0;
+            ex_rs2_data   <= 32'h0;
+            ex_imm        <= 32'h0;
+            ex_rd         <= 5'b0;
+            ex_rs1        <= 5'b0;
+            ex_rs2        <= 5'b0;
+            ex_regWrite   <= 1'b0;
+            ex_imm_sel    <= 3'b0;
+            ex_alu_srcA   <= 1'b0;
+            ex_alu_srcB   <= 1'b0;
+            ex_alu_ctrl   <= 11'b0;
+            ex_branch     <= 1'b0;
+            ex_bropcode   <= 3'b0;
+            ex_jump       <= 2'b0;
+            ex_load_sel   <= 3'b0;
+            ex_store_sel  <= 3'b0;
+            ex_memWrite   <= 1'b0;
+            ex_write_back <= 2'b0;
+        end 
+        else begin
+            ex_pc         <= next_ex_pc;
+            ex_pc_plus4   <= next_ex_pc_plus4;
+            ex_rs1_data   <= next_ex_rs1_data;
+            ex_rs2_data   <= next_ex_rs2_data;
+            ex_imm        <= next_ex_imm;
+            ex_rd         <= next_ex_rd;
+            ex_rs1        <= next_ex_rs1;
+            ex_rs2        <= next_ex_rs2;
+            ex_regWrite   <= next_ex_regWrite;
+            ex_imm_sel    <= next_ex_imm_sel;
+            ex_alu_srcA   <= next_ex_alu_srcA;
+            ex_alu_srcB   <= next_ex_alu_srcB;
+            ex_alu_ctrl   <= next_ex_alu_ctrl;
+            ex_branch     <= next_ex_branch;
+            ex_bropcode   <= next_ex_bropcode;
+            ex_jump       <= next_ex_jump;
+            ex_load_sel   <= next_ex_load_sel;
+            ex_store_sel  <= next_ex_store_sel;
+            ex_memWrite   <= next_ex_memWrite;
+            ex_write_back <= next_ex_write_back;
+        end
+    end
+
+endmodule// IF_ID Pipeline Register (Instruction Fetch to Instruction Decode)
 // Lưu trữ dữ liệu giữa giai đoạn IF và ID trong pipeline 5 tầng
 
 module IF_ID (
-    input wire        clk,
-    input wire        rst_n,
-    input wire        stall,      // Tín hiệu dừng pipeline (hazard từ Hazard Unit)
-    input wire        flush,      // Tín hiệu xóa dữ liệu (khi có branch/jump)
+    input  wire        clk,
+    input  wire        rst_n,
+    input  wire        stall,      // Tín hiệu dừng pipeline
+    input  wire        flush,      // Tín hiệu xóa dữ liệu
     
     // Đầu vào từ IF stage
-    input wire [31:0] if_pc,      // Program Counter từ IF stage
-    input wire [31:0] if_pc_plus4,// PC + 4 từ IF stage
-    input wire [31:0] if_instr,   // Instruction từ Instruction Memory
+    input  wire [31:0] if_pc,
+    input  wire [31:0] if_pc_plus4,
+    input  wire[31:0] if_instr,
     
     // Đầu ra tới ID stage
-    output reg [31:0] id_pc,      // Program Counter cho ID stage
-    output reg [31:0] id_pc_plus4,// PC + 4 cho ID stage
-    output reg [31:0] id_instr    // Instruction cho ID stage
+    output reg  [31:0] id_pc,
+    output reg  [31:0] id_pc_plus4,
+    output reg  [31:0] id_instr
 );
 
-    always @(posedge clk or negedge rst_n) begin
-        if (!rst_n) begin
-            // Khởi tạo toàn bộ register khi reset
-            id_pc      <= 32'h0000_0000;
-            id_pc_plus4 <= 32'h0000_0004;
-            id_instr   <= 32'h0000_0013;  // NOP (addi x0, x0, 0)
+    // --- 1. Logic tổ hợp: Chọn giá trị tiếp theo ---
+    reg [31:0] next_id_pc;
+    reg [31:0] next_id_pc_plus4;
+    reg [31:0] next_id_instr;
+
+    always @(*) begin
+        if (flush) begin
+            next_id_pc       = 32'h0000_0000;
+            next_id_pc_plus4 = 32'h0000_0004;
+            next_id_instr    = 32'h0000_0013; // NOP (addi x0, x0, 0)
+        end 
+        else if (stall) begin
+            next_id_pc       = id_pc;         // Giữ nguyên khi stall
+            next_id_pc_plus4 = id_pc_plus4;
+            next_id_instr    = id_instr;
+        end 
+        else begin
+            next_id_pc       = if_pc;         // Cập nhật giá trị mới
+            next_id_pc_plus4 = if_pc_plus4;
+            next_id_instr    = if_instr;
         end
-        else if (flush) begin
-            // Xóa dữ liệu khi có branch/jump được thực thi
-            id_pc      <= 32'h0000_0000;
-            id_pc_plus4 <= 32'h0000_0004;
-            id_instr   <= 32'h0000_0013;  // NOP
-        end
-        else if (!stall) begin
-            // Cập nhật dữ liệu từ IF stage khi không bị stall
-            id_pc      <= if_pc;
-            id_pc_plus4 <= if_pc_plus4;
-            id_instr   <= if_instr;
-        end
-        // Nếu stall = 1, giữ nguyên giá trị cũ
     end
 
-endmodule
-// MEM_WB Pipeline Register (Memory to Write Back)
+    // --- 2. Logic tuần tự: Ghi vào thanh ghi ---
+    always @(posedge clk or negedge rst_n) begin
+        if (!rst_n) begin
+            id_pc       <= 32'h0000_0000;
+            id_pc_plus4 <= 32'h0000_0004;
+            id_instr    <= 32'h0000_0013; // NOP
+        end 
+        else begin
+            id_pc       <= next_id_pc;
+            id_pc_plus4 <= next_id_pc_plus4;
+            id_instr    <= next_id_instr;
+        end
+    end
+
+endmodule// MEM_WB Pipeline Register (Memory to Write Back)
 // Lưu trữ dữ liệu giữa giai đoạn MEM và WB trong pipeline 5 tầng
 
 module MEM_WB (
-    input wire        clk,
-    input wire        rst_n,
-    // MEM_WB không cần stall hoặc flush vì là stage cuối cùng
+    input  wire        clk,
+    input  wire        rst_n,
     
     // Đầu vào từ MEM stage
-    input wire [31:0] mem_pc_plus4,     // PC + 4 từ MEM stage
-    input wire [31:0] mem_alu_result,   // Kết quả từ ALU
-    input wire [31:0] mem_mem_data,     // Dữ liệu đọc từ bộ nhớ
-    input wire [4:0]  mem_rd,           // Chỉ số thanh ghi đích
-    
-    // Tín hiệu điều khiển từ MEM stage
-    input wire        mem_regWrite,     // Ghi vào Register File
-    input wire [1:0]  mem_write_back,   // Chọn dữ liệu ghi lại
+    input  wire[31:0] mem_pc_plus4,
+    input  wire [31:0] mem_alu_result,
+    input  wire [31:0] mem_mem_data,
+    input  wire [4:0]  mem_rd,
+    input  wire        mem_regWrite,
+    input  wire [1:0]  mem_write_back,
     
     // Đầu ra tới WB stage
-    output reg [31:0] wb_pc_plus4,
-    output reg [31:0] wb_alu_result,
-    output reg [31:0] wb_mem_data,
-    output reg [4:0]  wb_rd,
-    
-    // Tín hiệu điều khiển ra
-    output reg        wb_regWrite,
-    output reg [1:0]  wb_write_back
+    output reg  [31:0] wb_pc_plus4,
+    output reg  [31:0] wb_alu_result,
+    output reg  [31:0] wb_mem_data,
+    output reg  [4:0]  wb_rd,
+    output reg         wb_regWrite,
+    output reg  [1:0]  wb_write_back
 );
 
+    // --- 1. Logic tổ hợp: Chọn giá trị tiếp theo ---
+    reg[31:0] next_wb_pc_plus4, next_wb_alu_result, next_wb_mem_data;
+    reg [4:0]  next_wb_rd;
+    reg        next_wb_regWrite;
+    reg [1:0]  next_wb_write_back;
+
+    always @(*) begin
+        // Stage cuối không có stall hay flush, chỉ truyền dữ liệu qua
+        next_wb_pc_plus4   = mem_pc_plus4;
+        next_wb_alu_result = mem_alu_result;
+        next_wb_mem_data   = mem_mem_data;
+        next_wb_rd         = mem_rd;
+        next_wb_regWrite   = mem_regWrite;
+        next_wb_write_back = mem_write_back;
+    end
+
+    // --- 2. Logic tuần tự: Ghi vào thanh ghi ---
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
-            // Khởi tạo tất cả register khi reset
             wb_pc_plus4   <= 32'h0000_0004;
             wb_alu_result <= 32'h0000_0000;
             wb_mem_data   <= 32'h0000_0000;
-            wb_rd         <= 5'b0_0000;
-            
-            // Tín hiệu điều khiển mặc định
+            wb_rd         <= 5'b00000;
             wb_regWrite   <= 1'b0;
             wb_write_back <= 2'b00;
-        end
+        end 
         else begin
-            // Luôn cập nhật dữ liệu từ MEM stage (stage cuối không bị stall/flush)
-            wb_pc_plus4   <= mem_pc_plus4;
-            wb_alu_result <= mem_alu_result;
-            wb_mem_data   <= mem_mem_data;
-            wb_rd         <= mem_rd;
-            
-            // Cập nhật tín hiệu điều khiển
-            wb_regWrite   <= mem_regWrite;
-            wb_write_back <= mem_write_back;
+            wb_pc_plus4   <= next_wb_pc_plus4;
+            wb_alu_result <= next_wb_alu_result;
+            wb_mem_data   <= next_wb_mem_data;
+            wb_rd         <= next_wb_rd;
+            wb_regWrite   <= next_wb_regWrite;
+            wb_write_back <= next_wb_write_back;
         end
     end
 
-endmodule
-// Pattern History Table (PHT)
+endmodule// Pattern History Table (PHT)
 module PHT (
     input clk,
     input rst_n,
@@ -557,26 +658,36 @@ module PHT (
     end
 endmodule
 module Program_Counter (
-    input wire clk,
-    input wire rst_n,
-    input wire start,         // Tín hiệu cho phép vi xử lý hoạt động (Trang 27)
-    input wire stall,         // Tín hiệu dừng từ Hazard Unit (khi gặp Load Hazard)
-    input wire [31:0] pc_next,// Địa chỉ tiếp theo (từ khối Branch Prediction hoặc bộ cộng)
-    output reg [31:0] pc_out  // Địa chỉ hiện tại đưa tới bộ nhớ lệnh
+    input  wire        clk,
+    input  wire        rst_n,
+    input  wire        start,         // Tín hiệu cho phép vi xử lý hoạt động
+    input  wire        stall,         // Tín hiệu dừng từ Hazard Unit
+    input  wire [31:0] pc_next,       // Địa chỉ tiếp theo
+    output reg  [31:0] pc_out         // Địa chỉ hiện tại
 );
 
+    // --- 1. Logic tổ hợp: Quyết định giá trị PC tiếp theo ---
+    reg [31:0] next_pc_val;
+
+    always @(*) begin
+        if (start && !stall) begin
+            // Chỉ cập nhật khi máy đã khởi động và không bị dừng (Stall)
+            next_pc_val = pc_next;
+        end 
+        else begin
+            // Giữ nguyên giá trị PC cũ (Đứng yên)
+            next_pc_val = pc_out;
+        end
+    end
+
+    // --- 2. Logic tuần tự: Chỉ thực hiện việc lưu trữ ---
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
-            // Khi reset, đưa địa chỉ về 0
             pc_out <= 32'h0000_0000;
         end 
-        else if (start && !stall) begin
-            // Chỉ cập nhật địa chỉ mới khi:
-            // 1. Hệ thống đã nhấn START
-            // 2. Không bị STALL (không có xung đột dữ liệu)
-            pc_out <= pc_next;
+        else begin
+            pc_out <= next_pc_val;
         end
-        // Nếu start = 0 hoặc stall = 1, pc_out sẽ giữ nguyên giá trị cũ (đứng yên)
     end
 
 endmodulemodule Register_File (
@@ -618,8 +729,169 @@ endmodulemodule Register_File (
     assign debug_val = (debug_addr == 5'b0) ? 32'b0 : rf[debug_addr];
 
 endmodule
+// ... thêm các file khác nếu cần
 
-module Top_module_pipeline_RISC_V_32I (
+module Top_Single_Cycle (
+    input wire        clk,
+    input wire        rst_n,
+    input wire        start,
+
+    // Cổng nạp chương trình từ bên ngoài (testbench)
+    input wire        inst_we,
+    input wire [31:0] inst_addr,
+    input wire [31:0] inst_data,
+
+    // Đầu ra debug
+    output wire [31:0] pc,
+    output wire [31:0] instr
+);
+
+    // --- Giao tiếp giữa các khối ---
+    wire [31:0] imm_ext;
+    wire [31:0] rd1;
+    wire [31:0] rd2;
+    wire [31:0] alu_a;
+    wire [31:0] alu_b;
+    wire [31:0] alu_result;
+    wire [31:0] mem_read_data;
+    wire [31:0] wb_data;
+    wire [31:0] pc_plus_4;
+    wire [31:0] pc_branch;
+    wire [31:0] pc_jalr;
+    wire [31:0] pc_next;
+    wire        zero;
+    wire        stall = 1'b0; // Single-cycle không cần hazard stall
+
+    wire        regWrite_D;
+    wire [2:0]  imm_sel;
+    wire        alu_srcA_D;
+    wire        alu_srcB_D;
+    wire [10:0]  alu_ctrl;
+    wire        branch_D;
+    wire [2:0]  bropcode;
+    wire [1:0]  jump_D;
+    wire [2:0]  load_sel_D;
+    wire [2:0]  store_sel_D;
+    wire        memWrite_D;
+    wire [1:0]  write_back_D;
+
+    // --- Program Counter ---
+    Program_Counter pc_reg (
+        .clk(clk),
+        .rst_n(rst_n),
+        .start(start),
+        .stall(stall),
+        .pc_next(pc_next),
+        .pc_out(pc)
+    );
+
+    // --- Instruction Memory ---,
+    instruction_memory instr_mem (
+        .clk(clk),
+        .rst_n(rst_n), 
+        .we(inst_we),
+        .addr_ext(inst_addr),
+        .din_ext(inst_data),
+        .pc(pc),
+        .instr(instr)
+    );
+
+    // --- Control Unit ---
+    control_unit cu (
+        .opcode(instr[6:0]),
+        .funct3(instr[14:12]),
+        .funct7(instr[31:25]),
+        .regWrite_D(regWrite_D),
+        .imm_sel(imm_sel),
+        .alu_srcA_D(alu_srcA_D),
+        .alu_srcB_D(alu_srcB_D),
+        .alu_ctrl(alu_ctrl),
+        .branch_D(branch_D),
+        .bropcode(bropcode),
+        .jump_D(jump_D),
+        .load_sel_D(load_sel_D),
+        .store_sel_D(store_sel_D),
+        .memWrite_D(memWrite_D),
+        .write_back_D(write_back_D)
+    );
+
+    // --- Immediate Extend ---
+    imm_extend imm_gen (
+        .instr(instr),
+        .imm_sel(imm_sel),
+        .imm_ext(imm_ext)
+    );
+
+    // --- Register File ---
+    Register_File regfile (
+        .clk(clk),
+        .rst_n(rst_n),
+        .reg_write(regWrite_D),
+        .rs1(instr[19:15]),
+        .rs2(instr[24:20]),
+        .rd(instr[11:7]),
+        .wd(wb_data),
+        .rd1(rd1),
+        .rd2(rd2),
+        .debug_addr(5'b0),
+        .debug_val()
+    );
+
+    // --- ALU ---
+    assign alu_a = (alu_srcA_D == 1'b1) ? pc : rd1;
+    assign alu_b = (alu_srcB_D == 1'b1) ? imm_ext : rd2;
+
+    ALU alu_unit (
+        .a(alu_a),
+        .b(alu_b),
+        .alu_ctrl(alu_ctrl),
+        .result(alu_result),
+        .zero(zero)
+    );
+
+    // --- Data Memory ---
+    data_memory dmem (
+        .clk(clk),
+        .mem_write(memWrite_D),
+        .addr(alu_result),
+        .write_data(rd2),
+        .load_sel(load_sel_D),
+        .store_sel(store_sel_D),
+        .read_data(mem_read_data),
+        .debug_addr(10'b0),
+        .debug_val()
+    );
+
+    // --- Write-back ---
+    assign wb_data = (write_back_D == 2'b00) ? alu_result :
+                     (write_back_D == 2'b01) ? mem_read_data :
+                     (write_back_D == 2'b10) ? pc_plus_4 :
+                     32'b0;
+
+    // --- Compute next PC ---
+    assign pc_plus_4 = pc + 32'd4;
+    assign pc_branch = pc + imm_ext;
+    assign pc_jalr   = alu_result; // ALU computes rs1 + imm cho JALR
+
+    wire equal         = (rd1 == rd2);
+    wire less_signed   = ($signed(rd1) < $signed(rd2));
+    wire less_unsigned = (rd1 < rd2);
+
+    wire branch_taken = branch_D && (
+        (bropcode == 3'b000 && equal)       || // BEQ
+        (bropcode == 3'b001 && !equal)      || // BNE
+        (bropcode == 3'b100 && less_signed) || // BLT
+        (bropcode == 3'b101 && !less_signed) || // BGE
+        (bropcode == 3'b110 && less_unsigned) || // BLTU
+        (bropcode == 3'b111 && !less_unsigned)   // BGEU
+    );
+
+    assign pc_next = (jump_D == 2'b01) ? pc_branch :
+                     (jump_D == 2'b10) ? pc_jalr   :
+                     (branch_taken)      ? pc_branch :
+                     pc_plus_4;
+
+endmodulemodule Top_module_pipeline_RISC_V_32I (
     input wire        clk,
     input wire        rst_n,
     input wire        start,
@@ -1142,7 +1414,7 @@ endmodulemodule data_memory (
     output wire [31:0] debug_val
 );
     // Khai báo bộ nhớ 4KB (1024 dòng x 32 bit)
-    reg [31:0] ram [0:1023];
+    reg [31:0] ram [0:128];
 
     // --- LOGIC GHI (STORE) ---
     // Sử dụng addr[11:2] để chọn dòng (Word)
@@ -1238,7 +1510,7 @@ module instruction_memory (
     output wire [31:0] instr    // Lệnh xuất ra cho CPU thực thi
 );
     // Khởi tạo bộ nhớ 1024 dòng (4KB), mỗi dòng 32-bit
-    reg [31:0] mem [0:1023];
+    reg [31:0] mem [0:128];
     integer i;
 
     // Ghi lệnh vào bộ nhớ (quá trình nạp chương trình)
@@ -1257,4 +1529,4 @@ module instruction_memory (
     // addr[11:2] vì địa chỉ RISC-V nhảy mỗi lần 4 đơn vị (byte-aligned)
     assign instr = mem[pc[11:2]];
 
-endmodule 
+endmodule

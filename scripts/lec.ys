@@ -1,11 +1,11 @@
-# LEC Script for RISC-V Pipeline (ASIC Flow) - FINAL STABLE VERSION
+# LEC Script for RISC-V Pipeline (ASIC Flow)
 
 # ==========================================================
 # 1. CHUẨN BỊ BẢN GỐC (GOLDEN RTL)
 # ==========================================================
 read_verilog -sv src/*.v
 
-# Đánh dấu Blackbox để giảm tải tính toán
+# Đánh dấu Blackbox các module phức tạp
 blackbox instruction_memory
 blackbox data_memory
 blackbox Register_File
@@ -21,11 +21,11 @@ design -stash gold
 # ==========================================================
 # 2. CHUẨN BỊ BẢN TỔNG HỢP (GATE NETLIST)
 # ==========================================================
-# Chỉ nạp file Netlist (không nạp lại src/*.v nữa)
+# Đọc file Netlist (File này đã chứa sẵn các module con)
 read_verilog -sv __NETLIST__
 
-# Đánh dấu các module con là Blackbox ngay trong Netlist
-# (Yosys sẽ hiểu đây là các 'hộp đen' dựa trên các chân In/Out trong Netlist)
+# Vì Netlist đã có sẵn các module con, ta KHÔNG đọc lại file src/*.v nữa.
+# Ta chỉ việc yêu cầu Yosys "biến" các module đang có trong bộ nhớ thành Blackbox.
 blackbox instruction_memory
 blackbox data_memory
 blackbox Register_File
@@ -41,28 +41,33 @@ design -stash gate
 # ==========================================================
 # 3. TIẾN HÀNH SO SÁNH LOGIC
 # ==========================================================
-# Bước A: Lấy Top module từ 2 bản ra để so sánh
+# Làm sạch không gian làm việc hiện tại
+design -reset
+
+# Copy Top module từ 2 bản đã cất vào để so sánh
 design -copy-from gold -as gold __TOP__
 design -copy-from gate -as gate __TOP__
 
-# Bước B: Lấy 'vỏ' của các Blackbox từ bản Gold sang không gian chung 
-# để equiv_make có thể nối dây. (Đây là cách tránh lỗi Re-definition)
-design -copy-from gold instruction_memory
-design -copy-from gold data_memory
-design -copy-from gold Register_File
-design -copy-from gold Branch_Prediction_Unit
+# --- QUAN TRỌNG: Cung cấp định nghĩa Port cho các Blackbox tại đây ---
+# Lúc này bộ nhớ đang trống, ta nạp "vỏ" module để equiv_make có thể nối dây.
+read_verilog -sv src/instruction_memory.v
+read_verilog -sv src/data_memory.v
+read_verilog -sv src/Register_File.v
+read_verilog -sv src/Branch_Prediction_Unit.v
+blackbox instruction_memory
+blackbox data_memory
+blackbox Register_File
+blackbox Branch_Prediction_Unit
 
-# Bước C: Tạo module so sánh logic
+# Tạo module so sánh
 equiv_make gold gate equiv
 prep -top equiv
 
-# Xử lý các tín hiệu chưa xác định
+# Xử lý tín hiệu
 setundef -undriven -zero
 setundef -anyseq
 
-# Thuật toán chứng minh
+# Chứng minh toán học
 equiv_simple
 equiv_induct -seq 20
-
-# Phán quyết cuối cùng
 equiv_status -assert

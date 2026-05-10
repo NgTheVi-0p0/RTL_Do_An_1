@@ -22,7 +22,7 @@
  Yosys 0.33 (git sha1 2584903a060)
 
 
--- Executing script file `/tmp/tmp.57JEaYgFcm/synth.ys' --
+-- Executing script file `/tmp/tmp.6HAHUjA0Si/synth.ys' --
 
 1. Executing Verilog-2005 frontend: src/ALU.v
 Parsing SystemVerilog input from `src/ALU.v' to AST representation.
@@ -8815,6 +8815,6 @@ Dumping module `\imm_extend'.
 Dumping module `\instruction_memory'.
 
 Warnings: 6 unique messages, 6 total
-End of script. Logfile hash: d15b7b6fa5, CPU: user 90.34s system 1.86s, MEM: 283.91 MB peak
+End of script. Logfile hash: f70a8440c2, CPU: user 80.51s system 4.68s, MEM: 283.81 MB peak
 Yosys 0.33 (git sha1 2584903a060)
-Time spent: 33% 24x opt_expr (28 sec), 14% 14x opt_clean (12 sec), ...
+Time spent: 25% 24x opt_expr (20 sec), 14% 14x opt_clean (11 sec), ...
