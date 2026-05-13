@@ -8,7 +8,7 @@ module PHT (
     input update_en,
     output [1:0] prediction
 );
-    reg [1:0] pht_table [255:0];
+    reg [1:0] pht_table [2:0];
     integer i;
     wire [1:0] update_counter = pht_table[update_index];
 
@@ -16,7 +16,7 @@ module PHT (
 
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
-            for (i = 0; i < 256; i = i + 1)
+            for (i = 0; i < 3; i = i + 1)
                 pht_table[i] <= 2'b01;
         end else if (update_en) begin
             if (update_taken) begin

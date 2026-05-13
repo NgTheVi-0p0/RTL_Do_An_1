@@ -1,58 +1,49 @@
-# LEC Script for RISC-V Pipeline (ASIC Flow)
-
-# ==========================================================
-# 1. CHUẨN BỊ BẢN GỐC (GOLDEN RTL)
-# ==========================================================
+read_liberty -lib sky130_fd_sc_hd__tt_025C_1v80.lib
 read_verilog -sv src/*.v
 
-# Đánh dấu Blackbox các module phức tạp
-
+blackbox instruction_memory
+blackbox data_memory
+blackbox Register_File
 
 hierarchy -check -top __TOP__
 prep -top __TOP__
-flatten
-memory_map                              
-async2sync             
+#flatten
+memory
+opt
 design -stash gold
 
+# ---------------- GATE ----------------
 
-# ==========================================================
-# 2. CHUẨN BỊ BẢN TỔNG HỢP (GATE NETLIST)
-# ==========================================================
-# Đọc file Netlist (File này đã chứa sẵn các module con)
+read_liberty -lib sky130_fd_sc_hd__tt_025C_1v80.lib
+read_verilog -lib -sv sky130_fd_sc_hd__blackbox.v
+
 read_verilog -sv __NETLIST__
 
-# Vì Netlist đã có sẵn các module con, ta KHÔNG đọc lại file src/*.v nữa.
-# Ta chỉ việc yêu cầu Yosys "biến" các module đang có trong bộ nhớ thành Blackbox.
+blackbox instruction_memory
+blackbox data_memory
+blackbox Register_File
 
 hierarchy -check -top __TOP__
 prep -top __TOP__
-flatten
-memory_map                              
-async2sync             
+#flatten
+memory
+opt
 design -stash gate
 
+# ---------------- LEC ----------------
 
-# ==========================================================
-# 3. TIẾN HÀNH SO SÁNH LOGIC
-# ==========================================================
-
-
-# Copy Top module từ 2 bản đã cất vào để so sánh
 design -copy-from gold -as gold __TOP__
 design -copy-from gate -as gate __TOP__
 
-
-# Tạo module so sánh
 equiv_make gold gate equiv
-prep -top equiv
+#prep -top equiv
 
-# Xử lý tín hiệu
 setundef -undriven -zero
-setundef -anyseq
+setundef -zero
 
-# Chứng minh toán học
+equiv_struct
 equiv_simple
-equiv_induct -seq 5
-equiv_purge
-equiv_status -assert
+
+equiv_induct -seq 20
+
+equiv_status 

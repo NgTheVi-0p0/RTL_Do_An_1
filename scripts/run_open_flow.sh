@@ -7,7 +7,7 @@ NETLIST_DIR="${NETLIST_DIR:-netlist}"
 REPORT_DIR="${REPORT_DIR:-reports}"
 CONSTRAINTS="${CONSTRAINTS:-constraints/Top_module_pipeline_RISC_V_32I.sdc}"
 OUT_NETLIST="${OUT_NETLIST:-${NETLIST_DIR}/${TOP}_syn.v}"
-LIBERTY="${LIBERTY:-}"
+LIBERTY="${LIBERTY:-sky130_fd_sc_hd__tt_025C_1v80.lib}"
 
 mkdir -p "${NETLIST_DIR}" "${REPORT_DIR}"
 TMP_DIR="$(mktemp -d)"
@@ -81,14 +81,15 @@ if [[ -z "${LIBERTY}" ]]; then
   echo "SKIP: STA requires LIBERTY."
   echo "      Re-run with: LIBERTY=/path/to/your.lib ./scripts/run_open_flow.sh"
 else
-  run_with_log "STA" "${REPORT_DIR}/sta.log" \
-    sta -exit \
-    -top "${TOP}" \
-    -liberty "${LIBERTY}" \
-    -netlist "${OUT_NETLIST}" \
-    -sdc "${CONSTRAINTS}" \
-    -report_dir "${REPORT_DIR}" \
-    scripts/run_sta.tcl
+  # TRUYỀN THAM SỐ QUA BIẾN MÔI TRƯỜNG
+  export STA_TOP="${TOP}"
+  export STA_LIBERTY="${LIBERTY}"
+  export STA_NETLIST="${OUT_NETLIST}"
+  export STA_SDC="${CONSTRAINTS}"
+  export STA_REPORT_DIR="${REPORT_DIR}"
+
+  # Chạy sta và chỉ trỏ vào file script tcl
+  run_with_log "STA" "${REPORT_DIR}/sta.log" sta -exit scripts/run_sta.tcl
 fi
 
 echo

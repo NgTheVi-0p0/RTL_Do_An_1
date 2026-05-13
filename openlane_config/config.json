@@ -1,0 +1,42 @@
+{
+    "DESIGN_NAME": "Top_module_pipeline_RISC_V_32I",
+    "VERILOG_FILES": "dir::../netlist/Top_module_pipeline_RISC_V_32I_syn.v",
+    "CLOCK_PORT": "clk",
+    "CLOCK_PERIOD": 20.0,
+    "SDC_FILE": "dir::../constraints/Top_module_pipeline_RISC_V_32I.sdc",
+
+    "//": "--- MỤC 3.2.3.2 FLOORPLAN ---",
+    "FP_CORE_UTIL": 69,
+    "PL_TARGET_DENSITY": 0.69,
+    "FP_ASPECT_RATIO": 1.0,
+    "FP_PIN_ORDER_CFG": "dir::pin_order.cfg",
+    
+    "//": "Giả lập đặt I/O ở Layer giữa (met3) thay vì Layer 5 như GPDK045",
+    "FP_IO_VLAYER": "met3",
+    "FP_IO_HLAYER": "met3",
+
+    "//": "Khoảng cách từ Core đến Boundary (Để đặt Power Ring)",
+    "FP_IO_VEXTEND": 4,
+    "FP_IO_HEXTEND": 4,
+
+    "//": "--- MỤC 3.2.3.3 POWER PLANNING ---",
+    "VDD_NETS": ["vccd1"],
+    "VSS_NETS": ["vssd1"],
+    "//": "Sky130 chỉ có 5 Layer, nên Power Ring sẽ đặt ở met4 (Dọc) và met5 (Ngang) thay vì 10/11",
+    "FP_PDN_LOWER_LAYER": "met4",
+    "FP_PDN_UPPER_LAYER": "met5",
+    "FP_PDN_VWIDTH": 0.7,
+    "FP_PDN_HWIDTH": 0.7,
+    "FP_PDN_VSPACING": 0.2,
+    "FP_PDN_HSPACING": 0.2,
+
+    "//": "--- MỤC 3.2.3.4 PLACE, CTS, ROUTE ---",
+    "//": "Mặc định OpenLane dùng thuật toán tương đương place_opt_design của Innovus",
+    "RUN_CTS": 1,
+    "CTS_TARGET_SKEW": 200,
+
+    "//": "--- TỐI ƯU CHO MÁY 8GB RAM ---",
+    "ROUTING_CORES": 2,
+    "GRT_ALLOW_CONGESTION": 1,
+    "RUN_HEURISTIC_DIODE_INSERTION": 1
+}
