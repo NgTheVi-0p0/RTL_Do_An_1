@@ -10,7 +10,7 @@ module IF_ID (
     // Đầu vào từ IF stage
     input  wire [31:0] if_pc,
     input  wire [31:0] if_pc_plus4,
-    input  wire[31:0] if_instr,
+    input  wire [31:0] if_instr,
     
     // Đầu ra tới ID stage
     output reg  [31:0] id_pc,
@@ -18,41 +18,28 @@ module IF_ID (
     output reg  [31:0] id_instr
 );
 
-    // --- 1. Logic tổ hợp: Chọn giá trị tiếp theo ---
-    reg [31:0] next_id_pc;
-    reg [31:0] next_id_pc_plus4;
-    reg [31:0] next_id_instr;
-
-    always @(*) begin
-        if (flush) begin
-            next_id_pc       = 32'h0000_0000;
-            next_id_pc_plus4 = 32'h0000_0004;
-            next_id_instr    = 32'h0000_0013; // NOP (addi x0, x0, 0)
-        end 
-        else if (stall) begin
-            next_id_pc       = id_pc;         // Giữ nguyên khi stall
-            next_id_pc_plus4 = id_pc_plus4;
-            next_id_instr    = id_instr;
-        end 
-        else begin
-            next_id_pc       = if_pc;         // Cập nhật giá trị mới
-            next_id_pc_plus4 = if_pc_plus4;
-            next_id_instr    = if_instr;
-        end
-    end
-
-    // --- 2. Logic tuần tự: Ghi vào thanh ghi ---
+    // Sử dụng 1 block tuần tự duy nhất
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
+            // Reset không đồng bộ (Asynchronous Reset)
+            id_pc       <= 32'h0000_0000;
+            id_pc_plus4 <= 32'h0000_0004;
+            id_instr    <= 32'h0000_0013; // NOP (addi x0, x0, 0)
+        end 
+        else if (flush) begin
+            // Xóa đồng bộ (Synchronous Flush) - Ghi đè bằng lệnh NOP
             id_pc       <= 32'h0000_0000;
             id_pc_plus4 <= 32'h0000_0004;
             id_instr    <= 32'h0000_0013; // NOP
         end 
-        else begin
-            id_pc       <= next_id_pc;
-            id_pc_plus4 <= next_id_pc_plus4;
-            id_instr    <= next_id_instr;
+        else if (!stall) begin
+            // Chỉ cập nhật giá trị mới khi không bị Stall (Clock Enable)
+            id_pc       <= if_pc;
+            id_pc_plus4 <= if_pc_plus4;
+            id_instr    <= if_instr;
         end
+        // Lưu ý: Nếu stall == 1 và flush == 0, các thanh ghi (id_pc, id_pc_plus4, id_instr) 
+        // sẽ tự động giữ nguyên giá trị hiện tại mà không cần viết lệnh gán lại.
     end
 
 endmodule

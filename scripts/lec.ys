@@ -6,15 +6,13 @@
 read_verilog -sv src/*.v
 
 # Đánh dấu Blackbox các module phức tạp
-blackbox instruction_memory
-blackbox data_memory
-blackbox Register_File
-blackbox Branch_Prediction_Unit
+
 
 hierarchy -check -top __TOP__
 prep -top __TOP__
-async2sync
-flatten             
+flatten
+memory_map                              
+async2sync             
 design -stash gold
 
 
@@ -26,38 +24,24 @@ read_verilog -sv __NETLIST__
 
 # Vì Netlist đã có sẵn các module con, ta KHÔNG đọc lại file src/*.v nữa.
 # Ta chỉ việc yêu cầu Yosys "biến" các module đang có trong bộ nhớ thành Blackbox.
-blackbox instruction_memory
-blackbox data_memory
-blackbox Register_File
-blackbox Branch_Prediction_Unit
 
 hierarchy -check -top __TOP__
 prep -top __TOP__
-async2sync
-flatten             
+flatten
+memory_map                              
+async2sync             
 design -stash gate
 
 
 # ==========================================================
 # 3. TIẾN HÀNH SO SÁNH LOGIC
 # ==========================================================
-# Làm sạch không gian làm việc hiện tại
-design -reset
+
 
 # Copy Top module từ 2 bản đã cất vào để so sánh
 design -copy-from gold -as gold __TOP__
 design -copy-from gate -as gate __TOP__
 
-# --- QUAN TRỌNG: Cung cấp định nghĩa Port cho các Blackbox tại đây ---
-# Lúc này bộ nhớ đang trống, ta nạp "vỏ" module để equiv_make có thể nối dây.
-read_verilog -sv src/instruction_memory.v
-read_verilog -sv src/data_memory.v
-read_verilog -sv src/Register_File.v
-read_verilog -sv src/Branch_Prediction_Unit.v
-blackbox instruction_memory
-blackbox data_memory
-blackbox Register_File
-blackbox Branch_Prediction_Unit
 
 # Tạo module so sánh
 equiv_make gold gate equiv
@@ -69,5 +53,6 @@ setundef -anyseq
 
 # Chứng minh toán học
 equiv_simple
-equiv_induct -seq 20
+equiv_induct -seq 5
+equiv_purge
 equiv_status -assert

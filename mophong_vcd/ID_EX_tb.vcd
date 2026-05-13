@@ -1,5 +1,5 @@
 $date
-	Fri May  8 21:20:50 2026
+	Mon May 11 14:44:21 2026
 $end
 $version
 	Icarus Verilog
@@ -97,6 +97,26 @@ $var reg 5 g ex_rs2 [4:0] $end
 $var reg 32 h ex_rs2_data [31:0] $end
 $var reg 3 i ex_store_sel [2:0] $end
 $var reg 2 j ex_write_back [1:0] $end
+$var reg 11 k next_ex_alu_ctrl [10:0] $end
+$var reg 1 l next_ex_alu_srcA $end
+$var reg 1 m next_ex_alu_srcB $end
+$var reg 1 n next_ex_branch $end
+$var reg 3 o next_ex_bropcode [2:0] $end
+$var reg 32 p next_ex_imm [31:0] $end
+$var reg 3 q next_ex_imm_sel [2:0] $end
+$var reg 2 r next_ex_jump [1:0] $end
+$var reg 3 s next_ex_load_sel [2:0] $end
+$var reg 1 t next_ex_memWrite $end
+$var reg 32 u next_ex_pc [31:0] $end
+$var reg 32 v next_ex_pc_plus4 [31:0] $end
+$var reg 5 w next_ex_rd [4:0] $end
+$var reg 1 x next_ex_regWrite $end
+$var reg 5 y next_ex_rs1 [4:0] $end
+$var reg 32 z next_ex_rs1_data [31:0] $end
+$var reg 5 { next_ex_rs2 [4:0] $end
+$var reg 32 | next_ex_rs2_data [31:0] $end
+$var reg 3 } next_ex_store_sel [2:0] $end
+$var reg 2 ~ next_ex_write_back [1:0] $end
 $upscope $end
 $upscope $end
 $enddefinitions $end
@@ -105,6 +125,26 @@ $dumpall
 $end
 #0
 $dumpvars
+b0 ~
+b0 }
+b0 |
+b0 {
+b0 z
+b0 y
+0x
+b1 w
+b100 v
+b0 u
+0t
+b0 s
+b0 r
+b0 q
+b0 p
+b0 o
+0n
+0m
+0l
+b0 k
 b0 j
 b0 i
 b0 h
@@ -183,6 +223,9 @@ $end
 #5000
 15
 #10000
+1m
+1x
+b1 p
 05
 19
 1D
@@ -198,6 +241,14 @@ b1 /
 b1 ^
 15
 #20000
+b1 ~
+b10 s
+b1 y
+b10 w
+b0 p
+b1 z
+b1000 v
+b100 u
 05
 b1 J
 b1 [
@@ -245,6 +296,15 @@ b1000 S
 #35000
 15
 #40000
+b0 ~
+b0 s
+0m
+0x
+b0 y
+b0 w
+b0 z
+b100 v
+b0 u
 05
 16
 0L
@@ -267,6 +327,16 @@ b0 *
 b0 b
 15
 #50000
+b1 ~
+b10 s
+1n
+1m
+b1 y
+b10000 p
+b101 |
+b101 z
+b10100 v
+b10000 u
 05
 1:
 0D
