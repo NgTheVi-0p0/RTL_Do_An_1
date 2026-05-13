@@ -8,14 +8,14 @@ module instruction_memory (
     output wire [31:0] instr    // Lệnh xuất ra cho CPU thực thi
 );
     // Khởi tạo bộ nhớ 1024 dòng (4KB), mỗi dòng 32-bit
-    reg [31:0] mem [0:2];
+    reg [31:0] mem [0:1023];
     integer i;
 
     // Ghi lệnh vào bộ nhớ (quá trình nạp chương trình)
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
             // Khi reset, xóa sạch bộ nhớ về 0 (lệnh NOP)
-            for (i = 0; i < 3; i = i + 1) begin
+            for (i = 0; i < 1024; i = i + 1) begin
                 mem[i] <= 32'h00000013; // 0x00000013 là lệnh ADDI x0, x0, 0 (NOP trong RISC-V)
             end
         end 
