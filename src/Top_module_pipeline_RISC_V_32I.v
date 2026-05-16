@@ -44,7 +44,6 @@ module Top_module_pipeline_RISC_V_32I (
 
     instruction_memory imem (
         .clk(clk),
-        .rst_n(rst_n),
         .we(~start),
         .addr_ext(address),
         .din_ext(instruction),

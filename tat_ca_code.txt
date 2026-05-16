@@ -1152,7 +1152,7 @@ endmodulemodule data_memory (
     output wire [31:0] debug_val
 );
     // Khai báo bộ nhớ 4KB (1024 dòng x 32 bit)
-    reg [31:0] ram [0:1023];
+    reg [31:0] ram [0:1023]; // 1024 dòng, mỗi dòng 32-bit (4KB)
 
     // --- LOGIC GHI (STORE) ---
     // Sử dụng addr[11:2] để chọn dòng (Word)
@@ -1255,7 +1255,7 @@ module instruction_memory (
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
             // Khi reset, xóa sạch bộ nhớ về 0 (lệnh NOP)
-            for (i = 0; i < 1023; i = i + 1) begin
+            for (i = 0; i < 2; i = i + 1) begin
                 mem[i] <= 32'h00000013; // 0x00000013 là lệnh ADDI x0, x0, 0 (NOP trong RISC-V)
             end
         end 

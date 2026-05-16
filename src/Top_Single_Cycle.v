@@ -58,7 +58,6 @@ module Top_Single_Cycle (
     // --- Instruction Memory ---,
     instruction_memory instr_mem (
         .clk(clk),
-        .rst_n(rst_n), 
         .we(inst_we),
         .addr_ext(inst_addr),
         .din_ext(inst_data),

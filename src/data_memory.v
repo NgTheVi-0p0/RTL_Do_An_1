@@ -10,7 +10,7 @@ module data_memory (
     output wire [31:0] debug_val
 );
     // Khai báo bộ nhớ 4KB (1024 dòng x 32 bit)
-    reg [31:0] ram [0:127]; // 128 dòng, mỗi dòng 32-bit (4KB)
+    reg [31:0] ram [0:1023]; // 1024 dòng, mỗi dòng 32-bit (4KB)
 
     // --- LOGIC GHI (STORE) ---
     // Sử dụng addr[11:2] để chọn dòng (Word)
