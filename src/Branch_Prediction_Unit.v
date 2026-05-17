@@ -14,15 +14,15 @@ module Branch_Prediction_Unit (
     output wire taken_F
 );
     // 1. Global History Register
-    reg [7:0] ghr;
+    reg [4:0] ghr; // Giảm GHR xuống 5 bit để khớp với index 5 bit của PHT
     always @(posedge clk or negedge rst_n) begin
-        if (!rst_n) ghr <= 8'b0;
-        else if (branch_E || jump_E) ghr <= {ghr[6:0], (branch_E ? branch : 1'b1)};
+        if (!rst_n) ghr <= 5'b0;
+        else if (branch_E || jump_E) ghr <= {ghr[3:0], (branch_E ? branch : 1'b1)};
     end
 
     // 2. PHT
-    wire [7:0] pht_predict_index = pc_F[9:2] ^ ghr;
-    wire [7:0] pht_update_index = pc_E[9:2] ^ ghr;
+    wire [4:0] pht_predict_index = pc_F[6:2] ^ ghr;
+    wire [4:0] pht_update_index = pc_E[6:2] ^ ghr;
     wire [1:0] pht_prediction;
     wire pht_update_en;
 

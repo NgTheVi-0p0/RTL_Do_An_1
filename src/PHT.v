@@ -1,14 +1,13 @@
-// Pattern History Table (PHT)
 module PHT (
     input clk,
     input rst_n,
-    input [7:0] predict_index,
-    input [7:0] update_index,
+    input [4:0] predict_index, // Dùng 5 bit
+    input [4:0] update_index,  // Dùng 5 bit
     input update_taken,
     input update_en,
     output [1:0] prediction
 );
-    reg [1:0] pht_table [255:0];
+    reg [1:0] pht_table [31:0]; // Giảm từ 256 xuống 32
     integer i;
     wire [1:0] update_counter = pht_table[update_index];
 
@@ -16,7 +15,7 @@ module PHT (
 
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
-            for (i = 0; i < 256; i = i + 1)
+            for (i = 0; i < 32; i = i + 1)
                 pht_table[i] <= 2'b01;
         end else if (update_en) begin
             if (update_taken) begin

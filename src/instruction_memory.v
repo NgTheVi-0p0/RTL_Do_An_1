@@ -1,23 +1,23 @@
 module instruction_memory (
     input wire clk,
-    input wire we,              // Tín hiệu cho phép nạp lệnh từ bên ngoài (khi start=0)
-    input wire [31:0] addr_ext, // Địa chỉ nạp lệnh từ bên ngoài
-    input wire [31:0] din_ext,  // Dữ liệu lệnh nạp từ bên ngoài
-    input wire [31:0] pc,       // Địa chỉ từ Program Counter của CPU
-    output wire [31:0] instr    // Lệnh xuất ra cho CPU thực thi
+    input wire we,              
+    input wire [31:0] addr_ext, 
+    input wire [31:0] din_ext,  
+    input wire [31:0] pc,       
+    output wire [31:0] instr    
 );
-    // Khởi tạo bộ nhớ 1024 dòng (4KB), mỗi dòng 32-bit
-    reg [31:0] mem [0:1023];
+    // 128 dòng x 32-bit = 512 Bytes
+    reg [31:0] mem [0:127];
 
-    // Ghi lệnh vào bộ nhớ (quá trình nạp chương trình đồng bộ với xung nhịp)
+    // Ghi đồng bộ (Nạp chương trình)
     always @(posedge clk) begin
         if (we) begin
-            mem[addr_ext[11:2]] <= din_ext;
+            mem[addr_ext[8:2]] <= din_ext; // Dùng bit 8 tới 2 (7 bits = 128 ô)
         end
     end
 
-    // Đọc lệnh dựa trên PC (Đọc không đồng bộ để tầng Fetch lấy lệnh ngay)
-    // addr[11:2] vì địa chỉ RISC-V nhảy mỗi lần 4 đơn vị (byte-aligned)
-    assign instr = mem[pc[11:2]];
+    // Đọc không đồng bộ (Fetch lệnh)
+    // QUAN TRỌNG: Phải sửa pc[11:2] thành pc[8:2] để khớp với mảng 128
+    assign instr = mem[pc[8:2]]; 
 
 endmodule
