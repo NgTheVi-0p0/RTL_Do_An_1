@@ -4,7 +4,9 @@ module Program_Counter (
     input  wire        start,         // Tín hiệu cho phép vi xử lý hoạt động
     input  wire        stall,         // Tín hiệu dừng từ Hazard Unit
     input  wire [31:0] pc_next,       // Địa chỉ tiếp theo
-    output reg  [31:0] pc_out         // Địa chỉ hiện tại
+    output reg  [31:0] pc_out,         // Địa chỉ hiện tại
+    output reg  [31:0] pc_out_btb // Chân riêng chỉ nối vào BTB
+
 );
 
     // --- 1. Logic tổ hợp: Quyết định giá trị PC tiếp theo ---
@@ -24,10 +26,11 @@ module Program_Counter (
     // --- 2. Logic tuần tự: Chỉ thực hiện việc lưu trữ ---
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
-            pc_out <= 32'h0000_0000;
-        end 
-        else begin
-            pc_out <= next_pc_val;
+            pc_out     <= 32'b0;
+            pc_out_btb <= 32'b0;
+        end else if (start && !stall) begin
+            pc_out     <= pc_next;
+            pc_out_btb <= pc_next; // Chép giá trị vào 2 thanh ghi riêng biệt
         end
     end
 

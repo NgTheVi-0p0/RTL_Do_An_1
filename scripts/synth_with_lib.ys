@@ -18,6 +18,8 @@ memory
 opt
 techmap
 opt
+flatten
+opt -full
 
 dfflibmap -liberty __LIBERTY__
 abc -liberty __LIBERTY__

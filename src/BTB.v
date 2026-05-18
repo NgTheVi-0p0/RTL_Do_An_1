@@ -30,13 +30,13 @@ module BTB (
         end
     end
 
-    always @(*) begin
+    always @(posedge clk) begin
         if (valid[index_F] && (tag[index_F] == pc_F)) begin
-            pc_out = target[index_F];
-            hit = 1'b1;
-        end else begin
-            pc_out = 32'b0;
-            hit = 1'b0;
+                pc_out <= target[index_F];
+                hit    <= 1'b1;
+            end else begin
+                pc_out <= 32'b0;
+                hit    <= 1'b0;
         end
     end
 endmodule

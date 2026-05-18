@@ -1,23 +1,23 @@
 module ALU (
     input wire [31:0] a,
     input wire [31:0] b,
-    input wire [10:0]  alu_ctrl, // 10 bit theo đồ án
+    input wire [3:0]  alu_ctrl, // 10 bit theo đồ án
     output reg [31:0] result,
     output wire       zero
 );
     always @(*) begin
         case (alu_ctrl)
-            11'b00000000001: result = a + b;                   // Bit 0: ADD
-            11'b00000000010: result = a - b;                   // Bit 1: SUB
-            11'b00000000100: result = a << b[4:0];             // Bit 2: SLL
-            11'b00000001000: result = ($signed(a) < $signed(b)); // Bit 3: SLT
-            11'b00000010000: result = (a < b);                 // Bit 4: SLTU
-            11'b00000100000: result = a ^ b;                   // Bit 5: XOR
-            11'b00001000000: result = a >> b[4:0];             // Bit 6: SRL
-            11'b00010000000: result = $signed(a) >>> b[4:0];    // Bit 7: SRA
-            11'b00100000000: result = a | b;                   // Bit 8: OR
-            11'b01000000000: result = a & b;                   // Bit 9: AND
-            11'b10000000000: result = b;                      // ALU_LUI: Lấy thẳng giá trị b (Imm)
+            4'b0000: result = a + b;                   // Bit 0: ADD
+            4'b0001: result = a - b;                   // Bit 1: SUB
+            4'b0010: result = a << b[4:0];             // Bit 2: SLL
+            4'b0011: result = ($signed(a) < $signed(b)); // Bit 3: SLT
+            4'b0100: result = (a < b);                 // Bit 4: SLTU
+            4'b0101: result = a ^ b;                   // Bit 5: XOR
+            4'b0110: result = a >> b[4:0];             // Bit 6: SRL
+            4'b0111: result = $signed(a) >>> b[4:0];    // Bit 7: SRA
+            4'b1000: result = a | b;                   // Bit 8: OR
+            4'b1001: result = a & b;                   // Bit 9: AND
+            4'b1010: result = b;                      // ALU_LUI: Lấy thẳng giá trị b (Imm)
             default: result = 32'b0;
         endcase
     end
@@ -33,17 +33,19 @@ endmodulemodule BTB (
     output reg [31:0] pc_out,
     output reg hit
 );
-    reg [31:0] tag [255:0];
-    reg [31:0] target [255:0];
-    reg valid [255:0];
+    // Giảm từ 256 xuống 32
+    reg [31:0] tag [31:0];
+    reg [31:0] target [31:0];
+    reg valid [31:0];
     integer i;
 
-    wire [7:0] index_F = pc_F[9:2];
-    wire [7:0] index_E = pc_E[9:2];
+    // Dùng 5 bit index (32 = 2^5)
+    wire [4:0] index_F = pc_F[6:2]; 
+    wire [4:0] index_E = pc_E[6:2];
 
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
-            for (i = 0; i < 256; i = i + 1)
+            for (i = 0; i < 32; i = i + 1)
                 valid[i] <= 1'b0;
         end else if (branch_E || jump_E) begin
             tag[index_E] <= pc_E;
@@ -52,17 +54,16 @@ endmodulemodule BTB (
         end
     end
 
-    always @(*) begin
+    always @(posedge clk) begin
         if (valid[index_F] && (tag[index_F] == pc_F)) begin
-            pc_out = target[index_F];
-            hit = 1'b1;
-        end else begin
-            pc_out = 32'b0;
-            hit = 1'b0;
+                pc_out <= target[index_F];
+                hit    <= 1'b1;
+            end else begin
+                pc_out <= 32'b0;
+                hit    <= 1'b0;
         end
     end
-endmodule
-module Branch_Prediction_Unit (
+endmodulemodule Branch_Prediction_Unit (
     input wire clk,
     input wire rst_n,
     input wire branch_E,
@@ -78,15 +79,15 @@ module Branch_Prediction_Unit (
     output wire taken_F
 );
     // 1. Global History Register
-    reg [7:0] ghr;
+    reg [4:0] ghr; // Giảm GHR xuống 5 bit để khớp với index 5 bit của PHT
     always @(posedge clk or negedge rst_n) begin
-        if (!rst_n) ghr <= 8'b0;
-        else if (branch_E || jump_E) ghr <= {ghr[6:0], (branch_E ? branch : 1'b1)};
+        if (!rst_n) ghr <= 5'b0;
+        else if (branch_E || jump_E) ghr <= {ghr[3:0], (branch_E ? branch : 1'b1)};
     end
 
     // 2. PHT
-    wire [7:0] pht_predict_index = pc_F[9:2] ^ ghr;
-    wire [7:0] pht_update_index = pc_E[9:2] ^ ghr;
+    wire [4:0] pht_predict_index = pc_F[6:2] ^ ghr;
+    wire [4:0] pht_update_index = pc_E[6:2] ^ ghr;
     wire [1:0] pht_prediction;
     wire pht_update_en;
 
@@ -325,7 +326,7 @@ endmodulemodule ID_EX (
     input  wire [2:0]  id_imm_sel,
     input  wire        id_alu_srcA,
     input  wire        id_alu_srcB,
-    input  wire [10:0] id_alu_ctrl,
+    input  wire [3:0] id_alu_ctrl,
     input  wire        id_branch,
     input  wire [2:0]  id_bropcode,
     input  wire [1:0]  id_jump,
@@ -349,7 +350,7 @@ endmodulemodule ID_EX (
     output reg  [2:0]  ex_imm_sel,
     output reg         ex_alu_srcA,
     output reg         ex_alu_srcB,
-    output reg[10:0] ex_alu_ctrl,
+    output reg[3:0] ex_alu_ctrl,
     output reg         ex_branch,
     output reg[2:0]  ex_bropcode,
     output reg  [1:0]  ex_jump,
@@ -523,25 +524,31 @@ module MEM_WB (
         end
     end
 
-endmodule// Pattern History Table (PHT)
-module PHT (
+endmodulemodule PHT (
     input clk,
     input rst_n,
-    input [7:0] predict_index,
-    input [7:0] update_index,
+    input [4:0] predict_index, // Dùng 5 bit
+    input [4:0] update_index,  // Dùng 5 bit
     input update_taken,
     input update_en,
-    output [1:0] prediction
+    output reg [1:0] prediction
 );
-    reg [1:0] pht_table [255:0];
+    reg [1:0] pht_table [31:0]; // Giảm từ 256 xuống 32
     integer i;
     wire [1:0] update_counter = pht_table[update_index];
 
-    assign prediction = pht_table[predict_index];
+    // ĐỌC ĐỒNG BỘ: Kết quả xuất ra ở chu kỳ kế tiếp
+    always @(posedge clk or negedge rst_n) begin
+        if (!rst_n) begin
+            prediction <= 2'b01; // Reset giá trị dự đoán mặc định
+        end else begin
+            prediction <= pht_table[predict_index];
+        end
+    end
 
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
-            for (i = 0; i < 256; i = i + 1)
+            for (i = 0; i < 32; i = i + 1)
                 pht_table[i] <= 2'b01;
         end else if (update_en) begin
             if (update_taken) begin
@@ -557,14 +564,15 @@ module PHT (
             end
         end
     end
-endmodule
-module Program_Counter (
+endmodulemodule Program_Counter (
     input  wire        clk,
     input  wire        rst_n,
     input  wire        start,         // Tín hiệu cho phép vi xử lý hoạt động
     input  wire        stall,         // Tín hiệu dừng từ Hazard Unit
     input  wire [31:0] pc_next,       // Địa chỉ tiếp theo
-    output reg  [31:0] pc_out         // Địa chỉ hiện tại
+    output reg  [31:0] pc_out,         // Địa chỉ hiện tại
+    output reg  [31:0] pc_out_btb // Chân riêng chỉ nối vào BTB
+
 );
 
     // --- 1. Logic tổ hợp: Quyết định giá trị PC tiếp theo ---
@@ -584,10 +592,11 @@ module Program_Counter (
     // --- 2. Logic tuần tự: Chỉ thực hiện việc lưu trữ ---
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
-            pc_out <= 32'h0000_0000;
-        end 
-        else begin
-            pc_out <= next_pc_val;
+            pc_out     <= 32'b0;
+            pc_out_btb <= 32'b0;
+        end else if (start && !stall) begin
+            pc_out     <= pc_next;
+            pc_out_btb <= pc_next; // Chép giá trị vào 2 thanh ghi riêng biệt
         end
     end
 
@@ -639,30 +648,58 @@ endmodulemodule Top_module_pipeline_RISC_V_32I (
     input wire [31:0] instruction,
     input wire [31:0] address
 );
-    // =========================
-    // IF stage
-    // =========================
-    wire [31:0] pc_F;
-    wire [31:0] pc4_F;
-    wire [31:0] instr_F;
-    wire [31:0] predicted_pc_next_F;
-    wire [31:0] pc_restore_E;
+
+    // =========================================================================
+    // 0. KHAI BÁO TOÀN BỘ WIRES (CONNECTION LIST)
+    // =========================================================================
+    
+    // IF Stage
+    wire [31:0] pc_F, pc_out_btb, pc4_F, instr_F, predicted_pc_next_F, pc_next_F;
     wire        pred_taken_F;
-    wire        bpu_flush_E;
 
-    wire        stall_pc_hazard;
-    wire        stall_if_id_hazard;
-    wire        flush_id_ex_hazard;
-    wire        flush_if_id_hazard;
+    // ID Stage
+    wire [31:0] pc_D, pc4_D, instr_D, rs1_data_D, rs2_data_D, imm_D, fwd_rs1_data_D, fwd_rs2_data_D;
+    wire [4:0]  rs1_D, rs2_D, rd_D;
+    wire        uses_rs1_D, uses_rs2_D, regWrite_D, alu_srcA_D, alu_srcB_D, branch_D, memWrite_D;
+    wire [3:0]  alu_ctrl_D;
+    wire [2:0]  imm_sel_D, bropcode_D, load_sel_D, store_sel_D;
+    wire [1:0]  jump_D, write_back_D;
+    wire [31:0] regfile_debug_val;
 
-    wire [31:0] pc_next_F = bpu_flush_E ? pc_restore_E : predicted_pc_next_F;
-    wire        stall_pc_total = stall_pc_hazard | (~start);
-    wire        stall_if_id_total = stall_if_id_hazard | (~start);
-    wire        flush_if_id_total = flush_if_id_hazard | bpu_flush_E;
-    wire        flush_id_ex_total = flush_id_ex_hazard | bpu_flush_E;
-    wire        stall_id_ex_total = ~start;
+    // EX Stage
+    wire [31:0] pc_E, pc4_E, rs1_data_E, rs2_data_E, imm_E, pc_restore_E;
+    wire [4:0]  rd_E, rs1_E, rs2_E;
+    wire        regWrite_E, alu_srcA_E, alu_srcB_E, branch_E, memWrite_E;
+    wire [3:0]  alu_ctrl_E;
+    wire [2:0]  imm_sel_E, bropcode_E, load_sel_E, store_sel_E;
+    wire [1:0]  jump_E, write_back_E;
+    wire [1:0]  forwardA, forwardB;
+    wire [31:0] ex_rs1_fwd, ex_rs2_fwd, alu_result_E, alu_a_E, alu_b_E;
+    wire [31:0] pc_plus_imm_E, jalr_add_result_E, jalr_target_E, pc_target_E;
+    wire        equal_E, less_signed_E, less_unsigned_E, branch_taken_E, is_jump_E, bpu_flush_E;
 
-    assign pc4_F = pc_F + 32'd4;
+    // MEM Stage
+    wire [31:0] pc4_M, mem_alu_result_M, rs2_data_M, mem_read_data_M, mem_forward_data_M_for_EX, dmem_debug_val;
+    wire [4:0]  mem_rd_M;
+    wire        mem_regWrite_M, memWrite_M;
+    wire [2:0]  load_sel_M, store_sel_M;
+    wire [1:0]  write_back_M;
+
+    // WB Stage
+    wire [31:0] pc4_W, alu_result_W, mem_data_W, wb_data;
+    wire [4:0]  wb_rd;
+    wire        wb_regWrite;
+    wire [1:0]  write_back_W;
+
+    // Hazard & Stall Logic Signals
+    wire        stall_pc_hazard, stall_if_id_hazard, flush_id_ex_hazard, flush_if_id_hazard;
+    wire        stall_pc_total, stall_if_id_total, flush_if_id_total, flush_id_ex_total, stall_id_ex_total, stall_top_load_use;
+
+    // =========================================================================
+    // 1. INSTRUCTION FETCH (IF)
+    // =========================================================================
+    assign pc_next_F = bpu_flush_E ? pc_restore_E : predicted_pc_next_F;
+    assign pc4_F     = pc_F + 32'd4;
 
     Program_Counter pc_reg (
         .clk(clk),
@@ -670,7 +707,8 @@ endmodulemodule Top_module_pipeline_RISC_V_32I (
         .start(start),
         .stall(stall_pc_total),
         .pc_next(pc_next_F),
-        .pc_out(pc_F)
+        .pc_out(pc_F),
+        .pc_out_btb(pc_out_btb)
     );
 
     instruction_memory imem (
@@ -681,13 +719,6 @@ endmodulemodule Top_module_pipeline_RISC_V_32I (
         .pc(pc_F),
         .instr(instr_F)
     );
-
-    // =========================
-    // IF/ID register
-    // =========================
-    wire [31:0] pc_D;
-    wire [31:0] pc4_D;
-    wire [31:0] instr_D;
 
     IF_ID if_id_reg (
         .clk(clk),
@@ -702,32 +733,12 @@ endmodulemodule Top_module_pipeline_RISC_V_32I (
         .id_instr(instr_D)
     );
 
-    // =========================
-    // ID stage
-    // =========================
-    wire [31:0] rs1_data_D;
-    wire [31:0] rs2_data_D;
-    wire [31:0] imm_D;
-
-    wire        regWrite_D;
-    wire [2:0]  imm_sel_D;
-    wire        alu_srcA_D;
-    wire        alu_srcB_D;
-    wire [10:0] alu_ctrl_D;
-    wire        branch_D;
-    wire [2:0]  bropcode_D;
-    wire [1:0]  jump_D;
-    wire [2:0]  load_sel_D;
-    wire [2:0]  store_sel_D;
-    wire        memWrite_D;
-    wire [1:0]  write_back_D;
-    wire        uses_rs1_D;
-    wire        uses_rs2_D;
-
-    wire [31:0] wb_data;
-    wire [31:0] regfile_debug_val;
-    wire        wb_regWrite;
-    wire [4:0]  wb_rd;
+    // =========================================================================
+    // 2. INSTRUCTION DECODE (ID)
+    // =========================================================================
+    assign rs1_D = instr_D[19:15];
+    assign rs2_D = instr_D[24:20];
+    assign rd_D  = instr_D[11:7];
 
     control_unit cu (
         .opcode(instr_D[6:0]),
@@ -759,8 +770,8 @@ endmodulemodule Top_module_pipeline_RISC_V_32I (
         .clk(clk),
         .rst_n(rst_n),
         .reg_write(wb_regWrite),
-        .rs1(instr_D[19:15]),
-        .rs2(instr_D[24:20]),
+        .rs1(rs1_D),
+        .rs2(rs2_D),
         .rd(wb_rd),
         .wd(wb_data),
         .rd1(rs1_data_D),
@@ -769,29 +780,9 @@ endmodulemodule Top_module_pipeline_RISC_V_32I (
         .debug_val(regfile_debug_val)
     );
 
-    // =========================
-    // ID/EX register
-    // =========================
-    wire [31:0] pc_E;
-    wire [31:0] pc4_E;
-    wire [31:0] rs1_data_E;
-    wire [31:0] rs2_data_E;
-    wire [31:0] imm_E;
-    wire [4:0]  rd_E;
-    wire [4:0]  rs1_E;
-    wire [4:0]  rs2_E;
-    wire        regWrite_E;
-    wire [2:0]  imm_sel_E;
-    wire        alu_srcA_E;
-    wire        alu_srcB_E;
-    wire [10:0] alu_ctrl_E;
-    wire        branch_E;
-    wire [2:0]  bropcode_E;
-    wire [1:0]  jump_E;
-    wire [2:0]  load_sel_E;
-    wire [2:0]  store_sel_E;
-    wire        memWrite_E;
-    wire [1:0]  write_back_E;
+    assign fwd_rs1_data_D = (wb_regWrite && (wb_rd != 5'd0) && (wb_rd == rs1_D)) ? wb_data : rs1_data_D;
+    assign fwd_rs2_data_D = (wb_regWrite && (wb_rd != 5'd0) && (wb_rd == rs2_D)) ? wb_data : rs2_data_D;
+
     ID_EX id_ex_reg (
         .clk(clk),
         .rst_n(rst_n),
@@ -799,24 +790,25 @@ endmodulemodule Top_module_pipeline_RISC_V_32I (
         .flush(flush_id_ex_total),
         .id_pc(pc_D),
         .id_pc_plus4(pc4_D),
-        .id_rs1_data(rs1_data_D),
-        .id_rs2_data(rs2_data_D),
+        .id_rs1_data(fwd_rs1_data_D),
+        .id_rs2_data(fwd_rs2_data_D),
         .id_imm(imm_D),
-        .id_rd(instr_D[11:7]),
-        .id_rs1(instr_D[19:15]),
-        .id_rs2(instr_D[24:20]),
+        .id_rd(rd_D),
+        .id_rs1(rs1_D),
+        .id_rs2(rs2_D),
         .id_regWrite(regWrite_D),
         .id_imm_sel(imm_sel_D),
         .id_alu_srcA(alu_srcA_D),
         .id_alu_srcB(alu_srcB_D),
         .id_alu_ctrl(alu_ctrl_D),
-        .id_branch(branch_D),
-        .id_bropcode(bropcode_D),
-        .id_jump(jump_D),
+        .id_branch(branch_D),       
+        .id_bropcode(bropcode_D),   
+        .id_jump(jump_D),           
         .id_load_sel(load_sel_D),
         .id_store_sel(store_sel_D),
         .id_memWrite(memWrite_D),
         .id_write_back(write_back_D),
+        // Outputs
         .ex_pc(pc_E),
         .ex_pc_plus4(pc4_E),
         .ex_rs1_data(rs1_data_E),
@@ -830,7 +822,7 @@ endmodulemodule Top_module_pipeline_RISC_V_32I (
         .ex_alu_srcA(alu_srcA_E),
         .ex_alu_srcB(alu_srcB_E),
         .ex_alu_ctrl(alu_ctrl_E),
-        .ex_branch(branch_E),
+        .ex_branch(branch_E),       
         .ex_bropcode(bropcode_E),
         .ex_jump(jump_E),
         .ex_load_sel(load_sel_E),
@@ -839,25 +831,9 @@ endmodulemodule Top_module_pipeline_RISC_V_32I (
         .ex_write_back(write_back_E)
     );
 
-    // =========================
-    // EX stage + forwarding
-    // =========================
-    wire [1:0] forwardA;
-    wire [1:0] forwardB;
-
-    wire [31:0] mem_alu_result_M;
-    wire [4:0]  mem_rd_M;
-    wire        mem_regWrite_M;
-    wire [31:0] mem_read_data_M;
-    wire [31:0] pc4_M;
-    wire [1:0]  write_back_M;
-    wire [31:0] dmem_debug_val;
-
-    wire [31:0] mem_forward_data_M = (write_back_M == 2'b00) ? mem_alu_result_M :
-                                     (write_back_M == 2'b01) ? mem_read_data_M :
-                                     (write_back_M == 2'b10) ? pc4_M :
-                                     32'b0;
-
+    // =========================================================================
+    // 3. EXECUTE (EX)
+    // =========================================================================
     Forwarding_Unit fwd_unit (
         .id_ex_rs1(rs1_E),
         .id_ex_rs2(rs2_E),
@@ -869,81 +845,51 @@ endmodulemodule Top_module_pipeline_RISC_V_32I (
         .forwardB(forwardB)
     );
 
-    wire [31:0] ex_rs1_fwd = (forwardA == 2'b01) ? mem_forward_data_M :
-                             (forwardA == 2'b10) ? wb_data :
-                             rs1_data_E;
-    wire [31:0] ex_rs2_fwd = (forwardB == 2'b01) ? mem_forward_data_M :
-                             (forwardB == 2'b10) ? wb_data :
-                             rs2_data_E;
+    assign mem_forward_data_M_for_EX = (write_back_M == 2'b10) ? pc4_M : mem_alu_result_M;
+    assign ex_rs1_fwd = (forwardA == 2'b01) ? mem_forward_data_M_for_EX : (forwardA == 2'b10) ? wb_data : rs1_data_E;
+    assign ex_rs2_fwd = (forwardB == 2'b01) ? mem_forward_data_M_for_EX : (forwardB == 2'b10) ? wb_data : rs2_data_E;
 
-    wire [31:0] alu_a_E = alu_srcA_E ? pc_E : ex_rs1_fwd;
-    wire [31:0] alu_b_E = alu_srcB_E ? imm_E : ex_rs2_fwd;
-    wire [31:0] alu_result_E;
-    ALU alu (
+    assign equal_E         = (ex_rs1_fwd == ex_rs2_fwd);
+    assign less_signed_E   = ($signed(ex_rs1_fwd) < $signed(ex_rs2_fwd));
+    assign less_unsigned_E = (ex_rs1_fwd < ex_rs2_fwd);
+    assign branch_taken_E  = branch_E && (
+        (bropcode_E == 3'b000 && equal_E) || (bropcode_E == 3'b001 && !equal_E) ||
+        (bropcode_E == 3'b100 && less_signed_E) || (bropcode_E == 3'b101 && !less_signed_E) ||
+        (bropcode_E == 3'b110 && less_unsigned_E) || (bropcode_E == 3'b111 && !less_unsigned_E)
+    );
+
+    assign is_jump_E = (jump_E != 2'b00);
+    assign pc_plus_imm_E = pc_E + imm_E;
+    assign jalr_add_result_E = ex_rs1_fwd + imm_E; 
+    assign jalr_target_E = { jalr_add_result_E[31:1], 1'b0 };
+    assign pc_target_E = (jump_E == 2'b10) ? jalr_target_E : pc_plus_imm_E;
+
+    Branch_Prediction_Unit bpu (
+        .clk(clk),
+        .rst_n(rst_n),
+        .branch_E(branch_E),         
+        .jump_E(is_jump_E),          
+        .branch(branch_taken_E),     
+        .pc_F(pc_F),
+        .pc_D(pc_D),                 
+        .pc_E(pc_E),                 
+        .pc_target(pc_target_E),     
+        .pc_next(predicted_pc_next_F),
+        .pc_restore(pc_restore_E),   
+        .flush(bpu_flush_E),         
+        .taken_F(pred_taken_F)
+    );
+
+    assign alu_a_E = alu_srcA_E ? pc_E : ex_rs1_fwd;
+    assign alu_b_E = alu_srcB_E ? imm_E : ex_rs2_fwd;
+
+    ALU alu_inst (
         .a(alu_a_E),
         .b(alu_b_E),
         .alu_ctrl(alu_ctrl_E),
         .result(alu_result_E),
-        .zero()
+        .zero() 
     );
-
-    wire equal_E         = (ex_rs1_fwd == ex_rs2_fwd);
-    wire less_signed_E   = ($signed(ex_rs1_fwd) < $signed(ex_rs2_fwd));
-    wire less_unsigned_E = (ex_rs1_fwd < ex_rs2_fwd);
-
-    wire branch_taken_E = branch_E && (
-        (bropcode_E == 3'b000 && equal_E)         ||
-        (bropcode_E == 3'b001 && !equal_E)        ||
-        (bropcode_E == 3'b100 && less_signed_E)   ||
-        (bropcode_E == 3'b101 && !less_signed_E)  ||
-        (bropcode_E == 3'b110 && less_unsigned_E) ||
-        (bropcode_E == 3'b111 && !less_unsigned_E)
-    );
-
-    wire is_jump_E = (jump_E != 2'b00);
-    wire [31:0] jump_target_E = (jump_E == 2'b10) ? {alu_result_E[31:1], 1'b0} : (pc_E + imm_E);
-    wire [31:0] pc_target_E = is_jump_E ? jump_target_E : (pc_E + imm_E);
-
-    // =========================
-    // Branch Prediction Unit
-    // =========================
-    Branch_Prediction_Unit bpu (
-        .clk(clk),
-        .rst_n(rst_n),
-        .branch_E(branch_E),
-        .jump_E(is_jump_E),
-        .branch(branch_taken_E),
-        .pc_F(pc_F),
-        .pc_D(pc_D),
-        .pc_E(pc_E),
-        .pc_target(pc_target_E),
-        .pc_next(predicted_pc_next_F),
-        .pc_restore(pc_restore_E),
-        .flush(bpu_flush_E),
-        .taken_F(pred_taken_F)
-    );
-
-    Hazard_Unit hazard_unit (
-        .if_id_rs1(instr_D[19:15]),
-        .if_id_rs2(instr_D[24:20]),
-        .if_id_uses_rs1(uses_rs1_D),
-        .if_id_uses_rs2(uses_rs2_D),
-        .id_ex_rd(rd_E),
-        .id_ex_wb_sel(write_back_E),
-        .branch_mispredicted(bpu_flush_E),
-        .stall_pc(stall_pc_hazard),
-        .stall_if_id(stall_if_id_hazard),
-        .flush_id_ex(flush_id_ex_hazard),
-        .flush_if_id(flush_if_id_hazard)
-    );
-
-    // =========================
-    // EX/MEM register
-    // =========================
-    wire [31:0] rs2_data_M;
-    wire [2:0]  load_sel_M;
-    wire [2:0]  store_sel_M;
-    wire        memWrite_M;
 
     EX_MEM ex_mem_reg (
         .clk(clk),
@@ -958,6 +904,7 @@ endmodulemodule Top_module_pipeline_RISC_V_32I (
         .ex_store_sel(store_sel_E),
         .ex_memWrite(memWrite_E),
         .ex_write_back(write_back_E),
+        // Outputs
         .mem_pc_plus4(pc4_M),
         .mem_alu_result(mem_alu_result_M),
         .mem_rs2_data(rs2_data_M),
@@ -969,9 +916,9 @@ endmodulemodule Top_module_pipeline_RISC_V_32I (
         .mem_write_back(write_back_M)
     );
 
-    // =========================
-    // MEM stage + MEM/WB
-    // =========================
+    // =========================================================================
+    // 4. MEMORY ACCESS (MEM)
+    // =========================================================================
     data_memory dmem (
         .clk(clk),
         .mem_write(memWrite_M),
@@ -984,11 +931,6 @@ endmodulemodule Top_module_pipeline_RISC_V_32I (
         .debug_val(dmem_debug_val)
     );
 
-    wire [31:0] pc4_W;
-    wire [31:0] alu_result_W;
-    wire [31:0] mem_data_W;
-    wire [1:0]  write_back_W;
-
     MEM_WB mem_wb_reg (
         .clk(clk),
         .rst_n(rst_n),
@@ -998,6 +940,7 @@ endmodulemodule Top_module_pipeline_RISC_V_32I (
         .mem_rd(mem_rd_M),
         .mem_regWrite(mem_regWrite_M),
         .mem_write_back(write_back_M),
+        // Outputs
         .wb_pc_plus4(pc4_W),
         .wb_alu_result(alu_result_W),
         .wb_mem_data(mem_data_W),
@@ -1006,16 +949,42 @@ endmodulemodule Top_module_pipeline_RISC_V_32I (
         .wb_write_back(write_back_W)
     );
 
+    // =========================================================================
+    // 5. WRITE BACK (WB)
+    // =========================================================================
     assign wb_data = (write_back_W == 2'b00) ? alu_result_W :
                      (write_back_W == 2'b01) ? mem_data_W :
-                     (write_back_W == 2'b10) ? pc4_W :
-                     32'b0;
+                     (write_back_W == 2'b10) ? pc4_W : 32'b0;
 
+    // =========================================================================
+    // 6. HAZARD, STALL & DEBUG LOGIC
+    // =========================================================================
+    Hazard_Unit hazard_unit (
+        .if_id_rs1(rs1_D),
+        .if_id_rs2(rs2_D),
+        .if_id_uses_rs1(uses_rs1_D),
+        .if_id_uses_rs2(uses_rs2_D),
+        .id_ex_rd(rd_E),
+        .id_ex_wb_sel(write_back_E),
+        .branch_mispredicted(bpu_flush_E), 
+        .stall_pc(stall_pc_hazard),
+        .stall_if_id(stall_if_id_hazard),
+        .flush_id_ex(flush_id_ex_hazard),
+        .flush_if_id(flush_if_id_hazard)
+    );
 
-    // =========================
+    assign stall_top_load_use = (write_back_M == 2'b01) && (mem_rd_M != 5'd0) && 
+                                ((uses_rs1_D && (mem_rd_M == rs1_D)) || (uses_rs2_D && (mem_rd_M == rs2_D)));
+
+    assign stall_pc_total    = stall_pc_hazard | stall_top_load_use | (~start);
+    assign stall_if_id_total = stall_if_id_hazard | stall_top_load_use | (~start);
+    assign flush_if_id_total = flush_if_id_hazard | bpu_flush_E;
+    assign flush_id_ex_total = flush_id_ex_hazard | bpu_flush_E | stall_top_load_use;
+    assign stall_id_ex_total = ~start;
+
     assign value = DataOrReg ? dmem_debug_val : regfile_debug_val;
-endmodule
-module control_unit (
+
+endmodulemodule control_unit (
     input wire [6:0] opcode,
     input wire [2:0] funct3,
     input wire [6:0] funct7, // funct7[5] là bit thứ 30 của lệnh
@@ -1024,7 +993,7 @@ module control_unit (
     output reg [2:0]  imm_sel,      // Chọn kiểu mở rộng hằng số
     output reg        alu_srcA_D,   // Chọn đầu vào A cho ALU (0: rs1, 1: PC)
     output reg        alu_srcB_D,   // Chọn đầu vào B cho ALU (0: rs2, 1: Imm)
-    output reg [10:0]  alu_ctrl,     // 10-bit One-hot điều khiển phép toán ALU
+    output reg [3:0]  alu_ctrl,     // 10-bit One-hot điều khiển phép toán ALU
     output reg        branch_D,     // Báo hiệu lệnh rẽ nhánh (đi vào bộ dự đoán)
     output reg [2:0]  bropcode,     // Loại rẽ nhánh (BEQ, BNE, BLT...)
     output reg [1:0]  jump_D,       // Loại nhảy (00: No, 01: JAL, 10: JALR)
@@ -1037,17 +1006,17 @@ module control_unit (
 );
 
     // Định nghĩa hằng số ALU One-hot
-localparam ALU_ADD  = 11'b00000000001;
-localparam ALU_SUB  = 11'b00000000010;
-localparam ALU_SLL  = 11'b00000000100;
-localparam ALU_SLT  = 11'b00000001000;
-localparam ALU_SLTU = 11'b00000010000;
-localparam ALU_XOR  = 11'b00000100000;
-localparam ALU_SRL  = 11'b00001000000;
-localparam ALU_SRA  = 11'b00010000000;
-localparam ALU_OR   = 11'b00100000000;
-localparam ALU_AND  = 11'b01000000000;
-localparam ALU_LUI  = 11'b10000000000; // Mã mới: Bit thứ 11
+localparam ALU_ADD  = 4'b0000;
+localparam ALU_SUB  = 4'b0001;
+localparam ALU_SLL  = 4'b0010;
+localparam ALU_SLT  = 4'b0011;
+localparam ALU_SLTU = 4'b0100;
+localparam ALU_XOR  = 4'b0101;
+localparam ALU_SRL  = 4'b0110;
+localparam ALU_SRA  = 4'b0111;
+localparam ALU_OR   = 4'b1000;
+localparam ALU_AND  = 4'b1001;
+localparam ALU_LUI  = 4'b1010; // Mã mới: Bit thứ 10
 
     always @(*) begin
         // --- Mặc định ---
@@ -1141,54 +1110,50 @@ localparam ALU_LUI  = 11'b10000000000; // Mã mới: Bit thứ 11
     end
 endmodulemodule data_memory (
     input wire clk,
-    input wire mem_write,       // Tín hiệu memWrite_D từ Control Unit
-    input wire [31:0] addr,     // Địa chỉ từ ALU
-    input wire [31:0] write_data, // Dữ liệu từ thanh ghi nguồn 2 (rs2)
-    input wire [2:0] load_sel,  // load_sel_D: 000-LB, 001-LH, 010-LW, 100-LBU, 101-LHU
-    input wire [2:0] store_sel, // store_sel_D: 000-SB, 001-SH, 010-SW
-    output reg [31:0] read_data, // Dữ liệu trả về cho CPU
+    input wire mem_write,       
+    input wire [31:0] addr,     
+    input wire [31:0] write_data, 
+    input wire [2:0] load_sel,  
+    input wire [2:0] store_sel, 
+    output reg [31:0] read_data, 
     input wire [9:0] debug_addr,
     output wire [31:0] debug_val
 );
-    // Khai báo bộ nhớ 4KB (1024 dòng x 32 bit)
-    reg [31:0] ram [0:1023]; // 1024 dòng, mỗi dòng 32-bit (4KB)
+    // 128 dòng x 32-bit
+    reg [31:0] ram [0:127]; 
 
     // --- LOGIC GHI (STORE) ---
-    // Sử dụng addr[11:2] để chọn dòng (Word)
-    // Sử dụng addr[1:0] để chọn vị trí ghi trong Word
     always @(posedge clk) begin
         if (mem_write) begin
             case (store_sel)
-                3'b000: begin // SB: Ghi 1 byte vào bất kỳ vị trí nào (0, 1, 2, 3)
+                3'b000: begin // SB
                     case (addr[1:0])
-                        2'b00: ram[addr[11:2]][7:0]   <= write_data[7:0];
-                        2'b01: ram[addr[11:2]][15:8]  <= write_data[7:0];
-                        2'b10: ram[addr[11:2]][23:16] <= write_data[7:0];
-                        2'b11: ram[addr[11:2]][31:24] <= write_data[7:0];
+                        2'b00: ram[addr[8:2]][7:0]   <= write_data[7:0];
+                        2'b01: ram[addr[8:2]][15:8]  <= write_data[7:0];
+                        2'b10: ram[addr[8:2]][23:16] <= write_data[7:0];
+                        2'b11: ram[addr[8:2]][31:24] <= write_data[7:0];
                     endcase
                 end
-
-                3'b001: begin // SH: Ghi 2 byte, mặc định địa chỉ chẵn (chỉ xét bit addr[1])
-                    if (addr[1] == 1'b0) // Vị trí 0 (byte 0, 1)
-                        ram[addr[11:2]][15:0]  <= write_data[15:0];
-                    else                 // Vị trí 2 (byte 2, 3)
-                        ram[addr[11:2]][31:16] <= write_data[15:0];
+                3'b001: begin // SH
+                    if (addr[1] == 1'b0)
+                        ram[addr[8:2]][15:0]  <= write_data[15:0];
+                    else
+                        ram[addr[8:2]][31:16] <= write_data[15:0];
                 end
-
-                3'b010: begin // SW: Ghi cả 4 byte (Word)
-                    ram[addr[11:2]] <= write_data;
+                3'b010: begin // SW
+                    ram[addr[8:2]] <= write_data;
                 end
             endcase
         end
     end
 
     // --- LOGIC ĐỌC (LOAD) ---
-    wire [31:0] raw_word = ram[addr[11:2]]; // Đọc nguyên dòng 32-bit lên trước
+    // Sử dụng addr[8:2] thống nhất
+    wire [31:0] raw_word = ram[addr[8:2]]; 
     reg [7:0]  byte_to_load;
     reg [15:0] half_to_load;
 
     always @(*) begin
-        // 1. Logic chọn Byte (hỗ trợ bất kỳ địa chỉ nào từ 0-3)
         case (addr[1:0])
             2'b00: byte_to_load = raw_word[7:0];
             2'b01: byte_to_load = raw_word[15:8];
@@ -1196,21 +1161,20 @@ endmodulemodule data_memory (
             2'b11: byte_to_load = raw_word[31:24];
         endcase
 
-        // 2. Logic chọn Half-word (mặc định địa chỉ chẵn, bỏ qua addr[0])
         half_to_load = (addr[1] == 1'b0) ? raw_word[15:0] : raw_word[31:16];
 
-        // 3. Logic xuất dữ liệu cuối cùng kèm mở rộng dấu/không dấu
         case (load_sel)
-            3'b000: read_data = {{24{byte_to_load[7]}}, byte_to_load}; // LB: Mở rộng dấu
-            3'b001: read_data = {{16{half_to_load[15]}}, half_to_load};// LH: Mở rộng dấu
-            3'b010: read_data = raw_word;                               // LW: Word
-            3'b100: read_data = {24'b0, byte_to_load};                 // LBU: Mở rộng zero
-            3'b101: read_data = {16'b0, half_to_load};                 // LHU: Mở rộng zero
+            3'b000: read_data = {{24{byte_to_load[7]}}, byte_to_load};
+            3'b001: read_data = {{16{half_to_load[15]}}, half_to_load};
+            3'b010: read_data = raw_word;
+            3'b100: read_data = {24'b0, byte_to_load};
+            3'b101: read_data = {16'b0, half_to_load};
             default: read_data = raw_word;
         endcase
     end
 
-    assign debug_val = ram[debug_addr];
+    // Chỉ lấy 7 bit thấp của debug_addr để trỏ vào 128 dòng
+    assign debug_val = ram[debug_addr[6:0]];
 
 endmodulemodule imm_extend (
     input wire [31:0] instr,      // Nhận toàn bộ lệnh 32-bit
@@ -1239,24 +1203,24 @@ endmodulemodule imm_extend (
 endmodule
 module instruction_memory (
     input wire clk,
-    input wire we,              // Tín hiệu cho phép nạp lệnh từ bên ngoài (khi start=0)
-    input wire [31:0] addr_ext, // Địa chỉ nạp lệnh từ bên ngoài
-    input wire [31:0] din_ext,  // Dữ liệu lệnh nạp từ bên ngoài
-    input wire [31:0] pc,       // Địa chỉ từ Program Counter của CPU
-    output wire [31:0] instr    // Lệnh xuất ra cho CPU thực thi
+    input wire we,              
+    input wire [31:0] addr_ext, 
+    input wire [31:0] din_ext,  
+    input wire [31:0] pc,       
+    output wire [31:0] instr    
 );
-    // Khởi tạo bộ nhớ 1024 dòng (4KB), mỗi dòng 32-bit
-    reg [31:0] mem [0:1023];
+    // 128 dòng x 32-bit = 512 Bytes
+    reg [31:0] mem [0:127];
 
-    // Ghi lệnh vào bộ nhớ (quá trình nạp chương trình đồng bộ với xung nhịp)
+    // Ghi đồng bộ (Nạp chương trình)
     always @(posedge clk) begin
         if (we) begin
-            mem[addr_ext[11:2]] <= din_ext;
+            mem[addr_ext[8:2]] <= din_ext; // Dùng bit 8 tới 2 (7 bits = 128 ô)
         end
     end
 
-    // Đọc lệnh dựa trên PC (Đọc không đồng bộ để tầng Fetch lấy lệnh ngay)
-    // addr[11:2] vì địa chỉ RISC-V nhảy mỗi lần 4 đơn vị (byte-aligned)
-    assign instr = mem[pc[11:2]];
+    // Đọc không đồng bộ (Fetch lệnh)
+    // QUAN TRỌNG: Phải sửa pc[11:2] thành pc[8:2] để khớp với mảng 128
+    assign instr = mem[pc[8:2]]; 
 
 endmodule

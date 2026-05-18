@@ -5,13 +5,20 @@ module PHT (
     input [4:0] update_index,  // Dùng 5 bit
     input update_taken,
     input update_en,
-    output [1:0] prediction
+    output reg [1:0] prediction
 );
     reg [1:0] pht_table [31:0]; // Giảm từ 256 xuống 32
     integer i;
     wire [1:0] update_counter = pht_table[update_index];
 
-    assign prediction = pht_table[predict_index];
+    // ĐỌC ĐỒNG BỘ: Kết quả xuất ra ở chu kỳ kế tiếp
+    always @(posedge clk or negedge rst_n) begin
+        if (!rst_n) begin
+            prediction <= 2'b01; // Reset giá trị dự đoán mặc định
+        end else begin
+            prediction <= pht_table[predict_index];
+        end
+    end
 
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin

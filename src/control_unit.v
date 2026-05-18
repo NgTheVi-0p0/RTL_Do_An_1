@@ -7,7 +7,7 @@ module control_unit (
     output reg [2:0]  imm_sel,      // Chọn kiểu mở rộng hằng số
     output reg        alu_srcA_D,   // Chọn đầu vào A cho ALU (0: rs1, 1: PC)
     output reg        alu_srcB_D,   // Chọn đầu vào B cho ALU (0: rs2, 1: Imm)
-    output reg [10:0]  alu_ctrl,     // 10-bit One-hot điều khiển phép toán ALU
+    output reg [3:0]  alu_ctrl,     // 10-bit One-hot điều khiển phép toán ALU
     output reg        branch_D,     // Báo hiệu lệnh rẽ nhánh (đi vào bộ dự đoán)
     output reg [2:0]  bropcode,     // Loại rẽ nhánh (BEQ, BNE, BLT...)
     output reg [1:0]  jump_D,       // Loại nhảy (00: No, 01: JAL, 10: JALR)
@@ -20,17 +20,17 @@ module control_unit (
 );
 
     // Định nghĩa hằng số ALU One-hot
-localparam ALU_ADD  = 11'b00000000001;
-localparam ALU_SUB  = 11'b00000000010;
-localparam ALU_SLL  = 11'b00000000100;
-localparam ALU_SLT  = 11'b00000001000;
-localparam ALU_SLTU = 11'b00000010000;
-localparam ALU_XOR  = 11'b00000100000;
-localparam ALU_SRL  = 11'b00001000000;
-localparam ALU_SRA  = 11'b00010000000;
-localparam ALU_OR   = 11'b00100000000;
-localparam ALU_AND  = 11'b01000000000;
-localparam ALU_LUI  = 11'b10000000000; // Mã mới: Bit thứ 11
+localparam ALU_ADD  = 4'b0000;
+localparam ALU_SUB  = 4'b0001;
+localparam ALU_SLL  = 4'b0010;
+localparam ALU_SLT  = 4'b0011;
+localparam ALU_SLTU = 4'b0100;
+localparam ALU_XOR  = 4'b0101;
+localparam ALU_SRL  = 4'b0110;
+localparam ALU_SRA  = 4'b0111;
+localparam ALU_OR   = 4'b1000;
+localparam ALU_AND  = 4'b1001;
+localparam ALU_LUI  = 4'b1010; // Mã mới: Bit thứ 10
 
     always @(*) begin
         // --- Mặc định ---
