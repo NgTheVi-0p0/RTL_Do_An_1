@@ -17,12 +17,6 @@ module instruction_memory (
     end
 
     // Đọc không đồng bộ (Fetch lệnh)
-    // QUAN TRỌNG: Phải sửa pc[11:2] thành pc[8:2] để khớp với mảng 128
     assign instr = mem[pc[8:2]]; 
-	 
-	 
-	 
-	     // =========================================================================
-   
 
 endmodule
