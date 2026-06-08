@@ -1,36 +1,34 @@
 module Program_Counter (
     input  wire        clk,
     input  wire        rst_n,
-    input  wire        start,         // Tín hiệu cho phép vi xử lý hoạt động
-    input  wire        stall,         // Tín hiệu dừng từ Hazard Unit
-    input  wire [31:0] pc_next,       // Địa chỉ tiếp theo
-    output reg  [31:0] pc_out,         // Địa chỉ hiện tại
-    output reg  [31:0] pc_out_btb // Chân riêng chỉ nối vào BTB
-
+    input  wire        start,        // Tín hiệu kích hoạt từ Switch/Button bên ngoài
+    input  wire        stall,        // Tín hiệu dừng từ Hazard Unit
+    input  wire [31:0] pc_next,       
+    output reg  [31:0] pc_out,        
+    output reg  [31:0] pc_out_btb     
 );
 
-    // --- 1. Logic tổ hợp: Quyết định giá trị PC tiếp theo ---
-    reg [31:0] next_pc_val;
-
-    always @(*) begin
-        if (start && !stall) begin
-            // Chỉ cập nhật khi máy đã khởi động và không bị dừng (Stall)
-            next_pc_val = pc_next;
-        end 
-        else begin
-            // Giữ nguyên giá trị PC cũ (Đứng yên)
-            next_pc_val = pc_out;
-        end
+    // Quản lý trạng thái hoạt động nội bộ của CPU bằng 1 thanh ghi trạng thái (Run state)
+    reg run_reg;
+    always @(posedge clk or negedge rst_n) begin
+        if (!rst_n)
+            run_reg <= 1'b0;
+        else if (start)
+            run_reg <= 1'b1; // Khi nhấn start, CPU chuyển sang trạng thái chạy liên tục
     end
 
-    // --- 2. Logic tuần tự: Chỉ thực hiện việc lưu trữ ---
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
             pc_out     <= 32'b0;
             pc_out_btb <= 32'b0;
-        end else if (start && !stall) begin
-            pc_out     <= pc_next;
-            pc_out_btb <= pc_next; // Chép giá trị vào 2 thanh ghi riêng biệt
+        end 
+        else begin
+            // Chỉ cập nhật PC khi CPU đã được kích hoạt (run_reg == 1) VÀ không bị stall
+            if (run_reg && !stall) begin
+                pc_out     <= pc_next;
+                pc_out_btb <= pc_next;
+            end
+            // Trường hợp ngược lại tự động giữ nguyên giá trị cũ, không sinh ra Latch thừa
         end
     end
 
