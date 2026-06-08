@@ -14,7 +14,7 @@ module Register_File (
     reg [31:0] rf [31:0];
     integer i;
 
-    // --- 1. LOGIC GHI DỮ LIỆU VÀ RESET (ĐỒNG BỘ THEO CẠNH CLOCK) ---
+    // Logic Ghi dữ liệu và Reset
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
             // Khi reset, đưa tất cả 32 thanh ghi về giá trị 0
@@ -28,20 +28,12 @@ module Register_File (
         end
     end
 
-    // --- 2. LOGIC ĐỌC DỮ LIỆU KHÔNG ĐỒNG BỘ (ASYNCHRONOUS READ) ---
-    // Tích hợp mạch Internal Forwarding (Bypass luồng dữ liệu ghi thẳng sang ngõ ra đọc)
-    // Quy ước RISC-V: Thanh ghi x0 luôn luôn cố định bằng 0 trong mọi tình huống.
-
-    // Ngõ ra đọc thanh ghi rs1
-    assign rd1 = (rs1 == 5'b0) ? 32'b0 :
-                 ((reg_write && (rd == rs1)) ? wd : rf[rs1]);
-
-    // Ngõ ra đọc thanh ghi rs2
-    assign rd2 = (rs2 == 5'b0) ? 32'b0 :
-                 ((reg_write && (rd == rs2)) ? wd : rf[rs2]);
-
-    // Ngõ ra Debug (Đã sửa: Thêm Internal Forwarding để đồng bộ dạng sóng khi debug)
-    assign debug_val = (debug_addr == 5'b0) ? 32'b0 :
-                       ((reg_write && (rd == debug_addr)) ? wd : rf[debug_addr]);
+    // Logic Đọc dữ liệu (Không đồng bộ - Asynchronous Read)
+    // Theo kiến trúc RISC-V: thanh ghi x0 luôn luôn trả về giá trị 0
+    assign rd1 = (reg_write && (rd == rs1) && (rs1 != 5'b0)) ? wd :
+                 ((rs1 == 5'b0) ? 32'b0 : rf[rs1]);
+    assign rd2 = (reg_write && (rd == rs2) && (rs2 != 5'b0)) ? wd :
+                 ((rs2 == 5'b0) ? 32'b0 : rf[rs2]);
+    assign debug_val = (debug_addr == 5'b0) ? 32'b0 : rf[debug_addr];
 
 endmodule

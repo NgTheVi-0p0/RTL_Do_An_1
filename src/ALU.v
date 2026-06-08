@@ -21,6 +21,6 @@ module ALU (
             default: result = 32'b0;
         endcase
     end
-    
+    //moi
     assign zero = (result == 32'b0);
 endmodule

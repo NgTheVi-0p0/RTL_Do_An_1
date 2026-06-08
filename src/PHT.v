@@ -1,40 +1,38 @@
 module PHT (
     input clk,
     input rst_n,
-    input [4:0] predict_index, 
-    input [4:0] update_index,  
+    input [4:0] predict_index, // Dùng 5 bit
+    input [4:0] update_index,  // Dùng 5 bit
     input update_taken,
     input update_en,
-    output wire [1:0] prediction // Đổi sang wire để gán tổ hợp
+    output [1:0] prediction    // Bỏ 'reg' để biến thành wire cho mạch tổ hợp
 );
-    reg [1:0] pht_table [31:0]; 
+    reg [1:0] pht_table [31:0]; // Bảng PHT 32 mục
     integer i;
+    
+    wire [1:0] update_counter = pht_table[update_index];
 
-    // Tính toán trước giá trị mới của bộ đếm bão hòa (Saturating Counter)
-    wire [1:0] current_counter = pht_table[update_index];
-    reg [1:0] next_counter;
+    // Combinational read: Đọc dữ liệu ra ngay lập tức không cần đợi xung nhịp clk
+    assign prediction = pht_table[predict_index];
 
-    always @(*) begin
-        if (update_taken) begin
-            next_counter = (current_counter == 2'b11) ? 2'b11 : (current_counter + 2'b01);
-        end else begin
-            next_counter = (current_counter == 2'b00) ? 2'b00 : (current_counter - 2'b01);
-        end
-    end
-
-    // Logic GHI/CẬP NHẬT BỘ ĐẾM (Đồng bộ)
+    // Synchronous write: Ghi dữ liệu đồng bộ với xung nhịp clk
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
+            // Reset toàn bộ bảng PHT về giá trị mặc định (2'b01 - weakly not taken)
             for (i = 0; i < 32; i = i + 1)
-                pht_table[i] <= 2'b01; // Mặc định là Weakly Not Taken (hoặc Weakly Taken tuỳ bạn chọn)
+                pht_table[i] <= 2'b01;
         end else if (update_en) begin
-            pht_table[update_index] <= next_counter;
+            if (update_taken) begin
+                if (update_counter != 2'b11)
+                    pht_table[update_index] <= update_counter + 2'b01; // Tăng trạng thái
+                else
+                    pht_table[update_index] <= update_counter;         // Bão hòa tại 2'b11 (strongly taken)
+            end else begin
+                if (update_counter != 2'b00)
+                    pht_table[update_index] <= update_counter - 2'b01; // Giảm trạng thái
+                else
+                    pht_table[update_index] <= update_counter;         // Bão hòa tại 2'b00 (strongly not taken)
+            end
         end
     end
-
-    // Logic ĐỌC TRA CỨU BẤT ĐỒNG BỘ + BYPASS
-    // Nếu tầng IF đọc đúng vị trí tầng EX đang cập nhật, lấy thẳng dữ liệu "next_counter"
-    assign prediction = (update_en && (predict_index == update_index)) ? next_counter : 
-                        pht_table[predict_index];
-
 endmodule
