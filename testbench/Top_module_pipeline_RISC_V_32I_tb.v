@@ -161,9 +161,16 @@ module Top_module_pipeline_RISC_V_32I_tb;
     // -----------------------------
     // Main test
     // -----------------------------
+    integer idx; 
+
     initial begin
         $dumpfile("mophong_vcd/Top_module_pipeline_RISC_V_32I_tb.vcd");
         $dumpvars(0, Top_module_pipeline_RISC_V_32I_tb);
+         for (idx = 0; idx < 32; idx = idx + 1) begin
+        $dumpvars(0, Top_module_pipeline_RISC_V_32I_tb.uut.regfile.rf[idx]);
+    end
+
+        
         $monitor("t=%0t clk=%b rst_n=%b start=%b pc_F=%h instr_F=%h value=%h flush=%b",
                  $time, clk, rst_n, start, uut.pc_F, uut.instr_F, value, uut.bpu_flush_E);
 

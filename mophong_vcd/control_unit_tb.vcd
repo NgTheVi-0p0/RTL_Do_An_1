@@ -1,5 +1,5 @@
 $date
-	Mon May 11 14:44:21 2026
+	Mon Jun  8 23:44:17 2026
 $end
 $version
 	Icarus Verilog
@@ -27,18 +27,18 @@ $scope module uut $end
 $var wire 3 0 funct3 [2:0] $end
 $var wire 7 1 funct7 [6:0] $end
 $var wire 7 2 opcode [6:0] $end
-$var parameter 11 3 ALU_ADD $end
-$var parameter 11 4 ALU_AND $end
-$var parameter 11 5 ALU_LUI $end
-$var parameter 11 6 ALU_OR $end
-$var parameter 11 7 ALU_SLL $end
-$var parameter 11 8 ALU_SLT $end
-$var parameter 11 9 ALU_SLTU $end
-$var parameter 11 : ALU_SRA $end
-$var parameter 11 ; ALU_SRL $end
-$var parameter 11 < ALU_SUB $end
-$var parameter 11 = ALU_XOR $end
-$var reg 11 > alu_ctrl [10:0] $end
+$var parameter 4 3 ALU_ADD $end
+$var parameter 4 4 ALU_AND $end
+$var parameter 4 5 ALU_LUI $end
+$var parameter 4 6 ALU_OR $end
+$var parameter 4 7 ALU_SLL $end
+$var parameter 4 8 ALU_SLT $end
+$var parameter 4 9 ALU_SLTU $end
+$var parameter 4 : ALU_SRA $end
+$var parameter 4 ; ALU_SRL $end
+$var parameter 4 < ALU_SUB $end
+$var parameter 4 = ALU_XOR $end
+$var reg 4 > alu_ctrl [3:0] $end
 $var reg 1 + alu_srcA_D $end
 $var reg 1 * alu_srcB_D $end
 $var reg 1 ) branch_D $end
@@ -61,17 +61,17 @@ $upscope $end
 $enddefinitions $end
 $comment Show the parameter values. $end
 $dumpall
-b100000 =
-b10 <
-b1000000 ;
-b10000000 :
-b10000 9
-b1000 8
-b100 7
-b100000000 6
-b10000000000 5
-b1000000000 4
-b1 3
+b101 =
+b1 <
+b110 ;
+b111 :
+b100 9
+b11 8
+b10 7
+b1000 6
+b1010 5
+b1001 4
+b0 3
 $end
 #0
 $dumpvars
@@ -85,14 +85,14 @@ b10 B
 b0 A
 b11 @
 b0 ?
-b10000000000 >
+b1010 >
 b110111 2
 b0 1
 b0 0
 b110111 /
 b0 .
 b0 -
-b10000000000 ,
+b1010 ,
 0+
 1*
 0)
@@ -107,8 +107,8 @@ b0 !
 $end
 #5000
 1+
-b1 ,
-b1 >
+b0 ,
+b0 >
 1*
 b11 '
 b11 @
@@ -145,8 +145,8 @@ b1100111 /
 b1100111 2
 #20000
 1E
-b10 ,
-b10 >
+b1 ,
+b1 >
 b10 '
 b10 @
 1)
@@ -169,8 +169,8 @@ b1 F
 0E
 1D
 0)
-b1 ,
-b1 >
+b0 ,
+b0 >
 b0 '
 b0 @
 b1 G
@@ -215,8 +215,8 @@ b10000010100010001000100 H
 b110011 /
 b110011 2
 #45000
-b10 ,
-b10 >
+b1 ,
+b1 >
 1E
 1D
 1#

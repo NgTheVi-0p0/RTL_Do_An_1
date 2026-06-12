@@ -1,5 +1,5 @@
 $date
-	Mon May 11 14:44:21 2026
+	Mon Jun  8 23:44:17 2026
 $end
 $version
 	Icarus Verilog
@@ -20,9 +20,7 @@ $var wire 1 # clk $end
 $var wire 32 ( din_ext [31:0] $end
 $var wire 32 ) instr [31:0] $end
 $var wire 32 * pc [31:0] $end
-$var wire 1 + rst_n $end
 $var wire 1 & we $end
-$var integer 32 , i [31:0] $end
 $upscope $end
 $upscope $end
 $enddefinitions $end
@@ -31,8 +29,6 @@ $dumpall
 $end
 #0
 $dumpvars
-bx ,
-z+
 b0 *
 bx )
 b0 (
