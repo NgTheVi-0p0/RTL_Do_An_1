@@ -4,7 +4,7 @@ module Program_Counter (
     input  wire        start,         // Tín hiệu cho phép vi xử lý hoạt động
     input  wire        stall,         // Tín hiệu dừng từ Hazard Unit
     input  wire [31:0] pc_next,       // Địa chỉ tiếp theo
-    output reg  [31:0] pc_out,         // Địa chỉ hiện tại
+    output reg  [31:0] pc_out        // Địa chỉ hiện tại
 
 );
 

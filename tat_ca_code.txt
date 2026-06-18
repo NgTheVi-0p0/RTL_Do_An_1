@@ -532,35 +532,33 @@ endmodulemodule PHT (
     input [4:0] update_index,  // Dùng 5 bit
     input update_taken,
     input update_en,
-    output reg [1:0] prediction
+    output [1:0] prediction    // Bỏ 'reg' để biến thành wire cho mạch tổ hợp
 );
-    reg [1:0] pht_table [31:0]; // Giảm từ 256 xuống 32
+    reg [1:0] pht_table [31:0]; // Bảng PHT 32 mục
     integer i;
+    
     wire [1:0] update_counter = pht_table[update_index];
 
-    always @(posedge clk or negedge rst_n) begin
-        if (!rst_n) begin
-            prediction <= 2'b01; // Reset giá trị dự đoán mặc định
-        end else begin
-            prediction <= pht_table[predict_index];
-        end
-    end
+    // Combinational read: Đọc dữ liệu ra ngay lập tức không cần đợi xung nhịp clk
+    assign prediction = pht_table[predict_index];
 
+    // Synchronous write: Ghi dữ liệu đồng bộ với xung nhịp clk
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
+            // Reset toàn bộ bảng PHT về giá trị mặc định (2'b01 - weakly not taken)
             for (i = 0; i < 32; i = i + 1)
                 pht_table[i] <= 2'b01;
         end else if (update_en) begin
             if (update_taken) begin
                 if (update_counter != 2'b11)
-                    pht_table[update_index] <= update_counter + 2'b01;
+                    pht_table[update_index] <= update_counter + 2'b01; // Tăng trạng thái
                 else
-                    pht_table[update_index] <= update_counter;
+                    pht_table[update_index] <= update_counter;         // Bão hòa tại 2'b11 (strongly taken)
             end else begin
                 if (update_counter != 2'b00)
-                    pht_table[update_index] <= update_counter - 2'b01;
+                    pht_table[update_index] <= update_counter - 2'b01; // Giảm trạng thái
                 else
-                    pht_table[update_index] <= update_counter;
+                    pht_table[update_index] <= update_counter;         // Bão hòa tại 2'b00 (strongly not taken)
             end
         end
     end
@@ -570,8 +568,7 @@ endmodulemodule Program_Counter (
     input  wire        start,         // Tín hiệu cho phép vi xử lý hoạt động
     input  wire        stall,         // Tín hiệu dừng từ Hazard Unit
     input  wire [31:0] pc_next,       // Địa chỉ tiếp theo
-    output reg  [31:0] pc_out,         // Địa chỉ hiện tại
-    output reg  [31:0] pc_out_btb // Chân riêng chỉ nối vào BTB
+    output reg  [31:0] pc_out        // Địa chỉ hiện tại
 
 );
 
@@ -593,10 +590,8 @@ endmodulemodule Program_Counter (
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
             pc_out     <= 32'b0;
-            pc_out_btb <= 32'b0;
         end else if (start && !stall) begin
             pc_out     <= pc_next;
-            pc_out_btb <= pc_next; // Chép giá trị vào 2 thanh ghi riêng biệt
         end
     end
 
@@ -655,7 +650,6 @@ endmodulemodule Top_module_pipeline_RISC_V_32I (
     
     // --- Tín hiệu tầng IF (Instruction Fetch) ---
     wire [31:0] pc_F;                 // Giá trị PC hiện tại ở tầng Fetch
-    wire [31:0] pc_out_btb;           // Giá trị PC dự đoán từ khối Branch Target Buffer
     wire [31:0] pc4_F;                // Giá trị PC + 4 (địa chỉ lệnh kế tiếp)
     wire [31:0] instr_F;              // Lệnh lấy ra từ bộ nhớ Instruction Memory
     wire [31:0] predicted_pc_next_F;  // PC tiếp theo do khối BPU dự đoán
@@ -777,8 +771,7 @@ endmodulemodule Top_module_pipeline_RISC_V_32I (
         .start      (start),             // Tín hiệu bắt đầu chạy CPU
         .stall      (stall_pc_total),    // Đóng băng PC khi có Hazard
         .pc_next    (pc_next_F),         // Giá trị PC tiếp theo cần cập nhật
-        .pc_out     (pc_F),              // PC hiện tại xuất ra Fetch
-        .pc_out_btb (pc_out_btb)         // PC dùng cho dự đoán nhánh (BTB)
+        .pc_out     (pc_F)               // PC hiện tại xuất ra Fetch
     );
 
     instruction_memory imem (
@@ -997,11 +990,11 @@ endmodulemodule Top_module_pipeline_RISC_V_32I (
     // =========================================================================
 data_memory dmem (
         .clk          (clk),               // Xung nhịp
-        .mem_write    (memWrite_E),        // SỬA: Lấy cờ ghi từ tầng EX
-        .addr         (alu_result_E),      // Đ/c bộ nhớ cần truy cập (từ ALU)
-        .write_data   (ex_rs2_fwd),        // Dữ liệu cần ghi vào
-        .load_sel     (load_sel_E),        // SỬA: Lấy định dạng đọc từ tầng EX
-        .store_sel    (store_sel_E),       // SỬA: Lấy định dạng ghi từ tầng EX
+        .mem_write    (memWrite_M),        // Lấy cờ ghi từ tầng MEM
+        .addr         (mem_alu_result_M),  // Đ/c bộ nhớ cần truy cập từ MEM
+        .write_data   (rs2_data_M),        // Dữ liệu cần ghi vào từ MEM
+        .load_sel     (load_sel_M),        // Lấy định dạng đọc từ MEM
+        .store_sel    (store_sel_M),       // Lấy định dạng ghi từ MEM
         .read_data    (mem_read_data_M),   // Kết quả sẽ tự động xuất ra ở tầng MEM!
         .debug_addr   (check_address[11:2]),
         .debug_val    (dmem_debug_val)     
