@@ -69,7 +69,7 @@ module ID_EX (
             ex_imm_sel    <= 3'b0;
             ex_alu_srcA   <= 1'b0;
             ex_alu_srcB   <= 1'b0;
-            ex_alu_ctrl   <= 11'b0;
+            ex_alu_ctrl   <= 4'b0;
             ex_branch     <= 1'b0;
             ex_bropcode   <= 3'b0;
             ex_jump       <= 2'b0;
@@ -92,7 +92,7 @@ module ID_EX (
             ex_imm_sel    <= 3'b0;
             ex_alu_srcA   <= 1'b0;
             ex_alu_srcB   <= 1'b0;
-            ex_alu_ctrl   <= 11'b0;
+            ex_alu_ctrl   <= 4'b0;
             ex_branch     <= 1'b0;
             ex_bropcode   <= 3'b0;
             ex_jump       <= 2'b0;

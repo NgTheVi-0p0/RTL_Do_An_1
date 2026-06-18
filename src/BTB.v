@@ -9,13 +9,11 @@ module BTB (
     output reg [31:0] pc_out,
     output reg hit
 );
-    // Giảm từ 256 xuống 32
     reg [31:0] tag [31:0];
     reg [31:0] target [31:0];
     reg valid [31:0];
     integer i;
 
-    // Dùng 5 bit index (32 = 2^5)
     wire [4:0] index_F = pc_F[6:2]; 
     wire [4:0] index_E = pc_E[6:2];
 
@@ -32,11 +30,11 @@ module BTB (
 
     always @(*) begin
         if (valid[index_F] && (tag[index_F] == pc_F)) begin
-                pc_out = target[index_F];
-                hit    = 1'b1;
-            end else begin
-                pc_out = 32'b0;
-                hit    = 1'b0;
+            pc_out = target[index_F];
+            hit    = 1'b1;
+        end else begin
+            pc_out = 32'b0;
+            hit    = 1'b0;
         end
     end
 endmodule

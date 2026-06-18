@@ -12,7 +12,7 @@ echo "=========================================================="
 
 # Đường dẫn tới thư mục cài đặt OpenLane của bạn
 # Sửa lại nếu bạn cài OpenLane ở chỗ khác
-OPENLANE_DIR="$HOME/OpenLane"
+OPENLANE_DIR="/home/thinkbook/OpenLane"
 
 # Copy cấu hình vào thư mục của OpenLane để nó nhận dạng dự án
 mkdir -p $OPENLANE_DIR/designs/RISCV_DO_AN

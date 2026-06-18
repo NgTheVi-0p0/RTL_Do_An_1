@@ -1,0 +1,17 @@
+# Các file mô phỏng và waveform nặng
+*.wdb
+*.vcd
+*.fsdb
+*.log
+*.jou
+xsim.dir/
+
+# Các thư mục kết quả của Vivado/Quartus
+.Xil/
+*.runs/
+*.sim/
+*.ip_user_files/
+*.hw/
+db/
+incremental_db/
+mophong_vcd/

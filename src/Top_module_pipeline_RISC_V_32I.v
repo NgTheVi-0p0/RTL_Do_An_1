@@ -414,4 +414,6 @@ data_memory dmem (
     assign flush_id_ex_total = flush_id_ex_hazard | bpu_flush_E;
     assign stall_id_ex_total = ~start;
 
+    assign value = DataOrReg ? dmem_debug_val : regfile_debug_val;
+
 endmodule

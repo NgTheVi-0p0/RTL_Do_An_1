@@ -7,7 +7,7 @@ blackbox Register_File
 
 hierarchy -check -top __TOP__
 prep -top __TOP__
-#flatten
+flatten
 memory
 opt
 design -stash gold
@@ -25,7 +25,7 @@ blackbox Register_File
 
 hierarchy -check -top __TOP__
 prep -top __TOP__
-#flatten
+flatten
 memory
 opt
 design -stash gate
@@ -37,6 +37,8 @@ design -copy-from gate -as gate __TOP__
 
 equiv_make gold gate equiv
 #prep -top equiv
+hierarchy -top equiv
+flatten
 
 setundef -undriven -zero
 setundef -zero
