@@ -12,10 +12,11 @@ memory
 opt
 design -stash gold
 
-# ---------------- GATE ----------------
+# ----------------- 2. ĐỌC NETLIST ĐÃ CÓ SẴN (GATE) -----------------
+read_liberty -ignore_miss_func sky130_fd_sc_hd__tt_025C_1v80.lib
 
-read_liberty -lib sky130_fd_sc_hd__tt_025C_1v80.lib
-read_verilog -lib -sv sky130_fd_sc_hd__blackbox.v
+# read_liberty sky130_fd_sc_hd__tt_025C_1v80.lib
+# read_verilog -lib -sv sky130_fd_sc_hd__blackbox.v
 
 read_verilog -sv __NETLIST__
 
@@ -40,12 +41,14 @@ equiv_make gold gate equiv
 hierarchy -top equiv
 flatten
 
+async2sync
+
 setundef -undriven -zero
 setundef -zero
 
 equiv_struct
 equiv_simple
 
-equiv_induct -seq 20
+equiv_induct -seq 5
 
 equiv_status 

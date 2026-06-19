@@ -6,24 +6,28 @@
 # - Performs technology mapping using the provided liberty file.
 # - Hierarchy is preserved by default (no flatten) to match modular RTL structure.
 
+# 1. Đọc mã nguồn Verilog
 read_verilog -sv src/*.v
 
+# 2. Kiểm tra cấu trúc cây phân cấp
 hierarchy -check -top __TOP__
 
-proc
-opt
-fsm
-opt
-memory
-opt
-techmap
-opt
-flatten
-opt -full
+# 3. Chạy luồng tổng hợp và tối ưu hóa chuẩn hóa của Yosys
+# (Lệnh này thay thế cho proc, opt, fsm, memory, techmap... tự động tối ưu hóa sâu hơn)
+# Phân cấp (hierarchy) được giữ nguyên hoàn toàn vì KHÔNG có cờ -flatten.
+synth -top __TOP__
 
+# 4. Ánh xạ các Flip-Flop (DFF) vào thư viện chuẩn (.lib)
 dfflibmap -liberty __LIBERTY__
+
+# 5. Sử dụng công cụ ABC để tối ưu hóa logic cửa (gates) dựa trên thư viện chuẩn
 abc -liberty __LIBERTY__
+
+# 6. Dọn dẹp tài nguyên thừa sau tổng hợp
 clean -purge
+
+# 7. Hiển thị báo cáo diện tích dựa trên thư viện công nghệ
 stat -liberty __LIBERTY__
 
+# 8. Xuất file netlist cổng logic vật lý
 write_verilog -noattr __OUT_NETLIST__
