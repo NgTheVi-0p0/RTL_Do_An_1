@@ -2,7 +2,7 @@
     "DESIGN_NAME": "Top_module_pipeline_RISC_V_32I",
     "VERILOG_FILES": "dir::netlist/Top_module_pipeline_RISC_V_32I_syn.v",
     "CLOCK_PORT": "clk",
-    "CLOCK_PERIOD": 20.0,
+    "CLOCK_PERIOD": 50.0,
     "SDC_FILE": "dir::constraints/Top_module_pipeline_RISC_V_32I.sdc",
 
     "SKIP_SYNTHESIS": 1,
@@ -19,7 +19,7 @@
     "FP_IO_HLAYER": "met3",
 
     "//3": "Khoảng cách từ Core đến Boundary (Để đặt Power Ring)",
-    "FP_CORE_MARGIN": 15,
+    "FP_CORE_MARGIN": 20,
     "FP_IO_VEXTEND": 4,
     "FP_IO_HEXTEND": 4,
 

@@ -21,7 +21,8 @@ synth -top __TOP__
 dfflibmap -liberty __LIBERTY__
 
 # 5. Sử dụng công cụ ABC để tối ưu hóa logic cửa (gates) dựa trên thư viện chuẩn
-abc -liberty __LIBERTY__
+# abc -liberty __LIBERTY__
+abc -liberty __LIBERTY__ -script "+strash;dch;map;buffer -N 10;upsize;dnsize"
 
 # 6. Dọn dẹp tài nguyên thừa sau tổng hợp
 clean -purge
