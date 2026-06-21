@@ -4,7 +4,6 @@
 *.fsdb
 *.log
 *.jou
-*.rpt
 xsim.dir/
 
 # Các thư mục kết quả của Vivado/Quartus
