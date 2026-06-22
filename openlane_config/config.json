@@ -5,7 +5,7 @@
     "CLOCK_PERIOD": 50.0,
     "SDC_FILE": "dir::constraints/Top_module_pipeline_RISC_V_32I.sdc",
 
-    "SKIP_SYNTHESIS": 1,
+    "SKIP_SYNTHESIS": 1,    
     "SYNTH_READ_BLACKBOX_LIB": 1,
 
     "//1": "--- MỤC 3.2.3.2 FLOORPLAN ---",
@@ -15,13 +15,13 @@
     "FP_PIN_ORDER_CFG": "dir::pin_order.cfg",
     
     "//2": "Giả lập đặt I/O ở Layer giữa (met3) thay vì Layer 5 như GPDK045",
-    "FP_IO_VLAYER": "met3",
+    "FP_IO_VLAYER": "met4",
     "FP_IO_HLAYER": "met3",
 
     "//3": "Khoảng cách từ Core đến Boundary (Để đặt Power Ring)",
     "FP_CORE_MARGIN": 20,
-    "FP_IO_VEXTEND": 4,
-    "FP_IO_HEXTEND": 4,
+    "FP_IO_VEXTEND": 0,
+    "FP_IO_HEXTEND": 0,
 
     "//4": "--- MỤC 3.2.3.3 POWER PLANNING ---",
     "VDD_NETS": ["vccd1"],
@@ -45,4 +45,5 @@
 
     "//9": "--- TẮT KIỂM TRA LINTER CHO NETLIST ĐẦU VÀO ---",
     "RUN_LINTER": 0
+
 }

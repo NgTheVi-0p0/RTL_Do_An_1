@@ -18,11 +18,13 @@ hierarchy -check -top __TOP__
 synth -top __TOP__
 
 # 4. Ánh xạ các Flip-Flop (DFF) vào thư viện chuẩn (.lib)
-dfflibmap -liberty __LIBERTY__
+#dfflibmap -liberty __LIBERTY__
+dfflibmap -liberty __LIBERTY__ -dont_use "sky130_fd_sc_hd__lpflow_*"
 
 # 5. Sử dụng công cụ ABC để tối ưu hóa logic cửa (gates) dựa trên thư viện chuẩn
 # abc -liberty __LIBERTY__
-abc -liberty __LIBERTY__ -script "+strash;dch;map;buffer -N 10;upsize;dnsize"
+# abc -liberty __LIBERTY__ -script "+strash;dch;map;buffer -N 10;upsize;dnsize"
+abc -liberty __LIBERTY__ -dont_use "sky130_fd_sc_hd__lpflow_*" -script "+strash;dch;map;buffer -N 10;upsize;dnsize"
 
 # 6. Dọn dẹp tài nguyên thừa sau tổng hợp
 clean -purge

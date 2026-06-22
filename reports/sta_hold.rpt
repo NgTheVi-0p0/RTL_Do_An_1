@@ -1,5 +1,5 @@
-Startpoint: ex_mem_reg/_162_ (rising edge-triggered flip-flop clocked by clk)
-Endpoint: mem_wb_reg/_042_ (rising edge-triggered flip-flop clocked by clk)
+Startpoint: ex_mem_reg/_121_ (rising edge-triggered flip-flop clocked by clk)
+Endpoint: mem_wb_reg/_001_ (rising edge-triggered flip-flop clocked by clk)
 Path Group: clk
 Path Type: min
 
@@ -7,26 +7,26 @@ Path Type: min
 -------------------------------------------------------------
    0.0000    0.0000   clock clk (rise edge)
    0.0000    0.0000   clock network delay (ideal)
-   0.0000    0.0000 ^ ex_mem_reg/_162_/CLK (sky130_fd_sc_hd__dfrtp_1)
-   0.3417    0.3417 ^ ex_mem_reg/_162_/Q (sky130_fd_sc_hd__dfrtp_1)
-   0.0000    0.3417 ^ mem_wb_reg/_042_/D (sky130_fd_sc_hd__dfrtp_1)
-             0.3417   data arrival time
+   0.0000    0.0000 ^ ex_mem_reg/_121_/CLK (sky130_fd_sc_hd__dfrtp_1)
+   0.3397    0.3397 ^ ex_mem_reg/_121_/Q (sky130_fd_sc_hd__dfrtp_1)
+   0.0000    0.3397 ^ mem_wb_reg/_001_/D (sky130_fd_sc_hd__dfrtp_1)
+             0.3397   data arrival time
 
    0.0000    0.0000   clock clk (rise edge)
    0.0000    0.0000   clock network delay (ideal)
    0.0000    0.0000   clock reconvergence pessimism
-             0.0000 ^ mem_wb_reg/_042_/CLK (sky130_fd_sc_hd__dfrtp_1)
-  -0.0291   -0.0291   library hold time
-            -0.0291   data required time
+             0.0000 ^ mem_wb_reg/_001_/CLK (sky130_fd_sc_hd__dfrtp_1)
+  -0.0287   -0.0287   library hold time
+            -0.0287   data required time
 -------------------------------------------------------------
-            -0.0291   data required time
-            -0.3417   data arrival time
+            -0.0287   data required time
+            -0.3397   data arrival time
 -------------------------------------------------------------
-             0.3708   slack (MET)
+             0.3684   slack (MET)
 
 
-Startpoint: ex_mem_reg/_163_ (rising edge-triggered flip-flop clocked by clk)
-Endpoint: mem_wb_reg/_043_ (rising edge-triggered flip-flop clocked by clk)
+Startpoint: ex_mem_reg/_125_ (rising edge-triggered flip-flop clocked by clk)
+Endpoint: mem_wb_reg/_005_ (rising edge-triggered flip-flop clocked by clk)
 Path Group: clk
 Path Type: min
 
@@ -34,26 +34,26 @@ Path Type: min
 -------------------------------------------------------------
    0.0000    0.0000   clock clk (rise edge)
    0.0000    0.0000   clock network delay (ideal)
-   0.0000    0.0000 ^ ex_mem_reg/_163_/CLK (sky130_fd_sc_hd__dfrtp_1)
-   0.3417    0.3417 ^ ex_mem_reg/_163_/Q (sky130_fd_sc_hd__dfrtp_1)
-   0.0000    0.3417 ^ mem_wb_reg/_043_/D (sky130_fd_sc_hd__dfrtp_1)
-             0.3417   data arrival time
+   0.0000    0.0000 ^ ex_mem_reg/_125_/CLK (sky130_fd_sc_hd__dfrtp_1)
+   0.3459    0.3459 ^ ex_mem_reg/_125_/Q (sky130_fd_sc_hd__dfrtp_1)
+   0.0000    0.3459 ^ mem_wb_reg/_005_/D (sky130_fd_sc_hd__dfrtp_1)
+             0.3459   data arrival time
 
    0.0000    0.0000   clock clk (rise edge)
    0.0000    0.0000   clock network delay (ideal)
    0.0000    0.0000   clock reconvergence pessimism
-             0.0000 ^ mem_wb_reg/_043_/CLK (sky130_fd_sc_hd__dfrtp_1)
-  -0.0291   -0.0291   library hold time
-            -0.0291   data required time
+             0.0000 ^ mem_wb_reg/_005_/CLK (sky130_fd_sc_hd__dfrtp_1)
+  -0.0301   -0.0301   library hold time
+            -0.0301   data required time
 -------------------------------------------------------------
-            -0.0291   data required time
-            -0.3417   data arrival time
+            -0.0301   data required time
+            -0.3459   data arrival time
 -------------------------------------------------------------
-             0.3708   slack (MET)
+             0.3760   slack (MET)
 
 
-Startpoint: ex_mem_reg/_164_ (rising edge-triggered flip-flop clocked by clk)
-Endpoint: mem_wb_reg/_044_ (rising edge-triggered flip-flop clocked by clk)
+Startpoint: ex_mem_reg/_126_ (rising edge-triggered flip-flop clocked by clk)
+Endpoint: mem_wb_reg/_006_ (rising edge-triggered flip-flop clocked by clk)
 Path Group: clk
 Path Type: min
 
@@ -61,26 +61,26 @@ Path Type: min
 -------------------------------------------------------------
    0.0000    0.0000   clock clk (rise edge)
    0.0000    0.0000   clock network delay (ideal)
-   0.0000    0.0000 ^ ex_mem_reg/_164_/CLK (sky130_fd_sc_hd__dfrtp_1)
-   0.3417    0.3417 ^ ex_mem_reg/_164_/Q (sky130_fd_sc_hd__dfrtp_1)
-   0.0000    0.3417 ^ mem_wb_reg/_044_/D (sky130_fd_sc_hd__dfrtp_1)
-             0.3417   data arrival time
+   0.0000    0.0000 ^ ex_mem_reg/_126_/CLK (sky130_fd_sc_hd__dfrtp_1)
+   0.3459    0.3459 ^ ex_mem_reg/_126_/Q (sky130_fd_sc_hd__dfrtp_1)
+   0.0000    0.3459 ^ mem_wb_reg/_006_/D (sky130_fd_sc_hd__dfrtp_1)
+             0.3459   data arrival time
 
    0.0000    0.0000   clock clk (rise edge)
    0.0000    0.0000   clock network delay (ideal)
    0.0000    0.0000   clock reconvergence pessimism
-             0.0000 ^ mem_wb_reg/_044_/CLK (sky130_fd_sc_hd__dfrtp_1)
-  -0.0291   -0.0291   library hold time
-            -0.0291   data required time
+             0.0000 ^ mem_wb_reg/_006_/CLK (sky130_fd_sc_hd__dfrtp_1)
+  -0.0301   -0.0301   library hold time
+            -0.0301   data required time
 -------------------------------------------------------------
-            -0.0291   data required time
-            -0.3417   data arrival time
+            -0.0301   data required time
+            -0.3459   data arrival time
 -------------------------------------------------------------
-             0.3708   slack (MET)
+             0.3760   slack (MET)
 
 
-Startpoint: ex_mem_reg/_168_ (rising edge-triggered flip-flop clocked by clk)
-Endpoint: mem_wb_reg/_048_ (rising edge-triggered flip-flop clocked by clk)
+Startpoint: ex_mem_reg/_127_ (rising edge-triggered flip-flop clocked by clk)
+Endpoint: mem_wb_reg/_007_ (rising edge-triggered flip-flop clocked by clk)
 Path Group: clk
 Path Type: min
 
@@ -88,26 +88,26 @@ Path Type: min
 -------------------------------------------------------------
    0.0000    0.0000   clock clk (rise edge)
    0.0000    0.0000   clock network delay (ideal)
-   0.0000    0.0000 ^ ex_mem_reg/_168_/CLK (sky130_fd_sc_hd__dfrtp_1)
-   0.3417    0.3417 ^ ex_mem_reg/_168_/Q (sky130_fd_sc_hd__dfrtp_1)
-   0.0000    0.3417 ^ mem_wb_reg/_048_/D (sky130_fd_sc_hd__dfrtp_1)
-             0.3417   data arrival time
+   0.0000    0.0000 ^ ex_mem_reg/_127_/CLK (sky130_fd_sc_hd__dfrtp_1)
+   0.3459    0.3459 ^ ex_mem_reg/_127_/Q (sky130_fd_sc_hd__dfrtp_1)
+   0.0000    0.3459 ^ mem_wb_reg/_007_/D (sky130_fd_sc_hd__dfrtp_1)
+             0.3459   data arrival time
 
    0.0000    0.0000   clock clk (rise edge)
    0.0000    0.0000   clock network delay (ideal)
    0.0000    0.0000   clock reconvergence pessimism
-             0.0000 ^ mem_wb_reg/_048_/CLK (sky130_fd_sc_hd__dfrtp_1)
-  -0.0291   -0.0291   library hold time
-            -0.0291   data required time
+             0.0000 ^ mem_wb_reg/_007_/CLK (sky130_fd_sc_hd__dfrtp_1)
+  -0.0301   -0.0301   library hold time
+            -0.0301   data required time
 -------------------------------------------------------------
-            -0.0291   data required time
-            -0.3417   data arrival time
+            -0.0301   data required time
+            -0.3459   data arrival time
 -------------------------------------------------------------
-             0.3708   slack (MET)
+             0.3760   slack (MET)
 
 
-Startpoint: ex_mem_reg/_169_ (rising edge-triggered flip-flop clocked by clk)
-Endpoint: mem_wb_reg/_049_ (rising edge-triggered flip-flop clocked by clk)
+Startpoint: ex_mem_reg/_129_ (rising edge-triggered flip-flop clocked by clk)
+Endpoint: mem_wb_reg/_009_ (rising edge-triggered flip-flop clocked by clk)
 Path Group: clk
 Path Type: min
 
@@ -115,26 +115,26 @@ Path Type: min
 -------------------------------------------------------------
    0.0000    0.0000   clock clk (rise edge)
    0.0000    0.0000   clock network delay (ideal)
-   0.0000    0.0000 ^ ex_mem_reg/_169_/CLK (sky130_fd_sc_hd__dfrtp_1)
-   0.3417    0.3417 ^ ex_mem_reg/_169_/Q (sky130_fd_sc_hd__dfrtp_1)
-   0.0000    0.3417 ^ mem_wb_reg/_049_/D (sky130_fd_sc_hd__dfrtp_1)
-             0.3417   data arrival time
+   0.0000    0.0000 ^ ex_mem_reg/_129_/CLK (sky130_fd_sc_hd__dfrtp_1)
+   0.3459    0.3459 ^ ex_mem_reg/_129_/Q (sky130_fd_sc_hd__dfrtp_1)
+   0.0000    0.3459 ^ mem_wb_reg/_009_/D (sky130_fd_sc_hd__dfrtp_1)
+             0.3459   data arrival time
 
    0.0000    0.0000   clock clk (rise edge)
    0.0000    0.0000   clock network delay (ideal)
    0.0000    0.0000   clock reconvergence pessimism
-             0.0000 ^ mem_wb_reg/_049_/CLK (sky130_fd_sc_hd__dfrtp_1)
-  -0.0291   -0.0291   library hold time
-            -0.0291   data required time
+             0.0000 ^ mem_wb_reg/_009_/CLK (sky130_fd_sc_hd__dfrtp_1)
+  -0.0301   -0.0301   library hold time
+            -0.0301   data required time
 -------------------------------------------------------------
-            -0.0291   data required time
-            -0.3417   data arrival time
+            -0.0301   data required time
+            -0.3459   data arrival time
 -------------------------------------------------------------
-             0.3708   slack (MET)
+             0.3760   slack (MET)
 
 
-Startpoint: ex_mem_reg/_170_ (rising edge-triggered flip-flop clocked by clk)
-Endpoint: mem_wb_reg/_050_ (rising edge-triggered flip-flop clocked by clk)
+Startpoint: ex_mem_reg/_130_ (rising edge-triggered flip-flop clocked by clk)
+Endpoint: mem_wb_reg/_010_ (rising edge-triggered flip-flop clocked by clk)
 Path Group: clk
 Path Type: min
 
@@ -142,26 +142,26 @@ Path Type: min
 -------------------------------------------------------------
    0.0000    0.0000   clock clk (rise edge)
    0.0000    0.0000   clock network delay (ideal)
-   0.0000    0.0000 ^ ex_mem_reg/_170_/CLK (sky130_fd_sc_hd__dfrtp_1)
-   0.3417    0.3417 ^ ex_mem_reg/_170_/Q (sky130_fd_sc_hd__dfrtp_1)
-   0.0000    0.3417 ^ mem_wb_reg/_050_/D (sky130_fd_sc_hd__dfrtp_1)
-             0.3417   data arrival time
+   0.0000    0.0000 ^ ex_mem_reg/_130_/CLK (sky130_fd_sc_hd__dfrtp_1)
+   0.3459    0.3459 ^ ex_mem_reg/_130_/Q (sky130_fd_sc_hd__dfrtp_1)
+   0.0000    0.3459 ^ mem_wb_reg/_010_/D (sky130_fd_sc_hd__dfrtp_1)
+             0.3459   data arrival time
 
    0.0000    0.0000   clock clk (rise edge)
    0.0000    0.0000   clock network delay (ideal)
    0.0000    0.0000   clock reconvergence pessimism
-             0.0000 ^ mem_wb_reg/_050_/CLK (sky130_fd_sc_hd__dfrtp_1)
-  -0.0291   -0.0291   library hold time
-            -0.0291   data required time
+             0.0000 ^ mem_wb_reg/_010_/CLK (sky130_fd_sc_hd__dfrtp_1)
+  -0.0301   -0.0301   library hold time
+            -0.0301   data required time
 -------------------------------------------------------------
-            -0.0291   data required time
-            -0.3417   data arrival time
+            -0.0301   data required time
+            -0.3459   data arrival time
 -------------------------------------------------------------
-             0.3708   slack (MET)
+             0.3760   slack (MET)
 
 
-Startpoint: ex_mem_reg/_171_ (rising edge-triggered flip-flop clocked by clk)
-Endpoint: mem_wb_reg/_051_ (rising edge-triggered flip-flop clocked by clk)
+Startpoint: ex_mem_reg/_131_ (rising edge-triggered flip-flop clocked by clk)
+Endpoint: mem_wb_reg/_011_ (rising edge-triggered flip-flop clocked by clk)
 Path Group: clk
 Path Type: min
 
@@ -169,26 +169,26 @@ Path Type: min
 -------------------------------------------------------------
    0.0000    0.0000   clock clk (rise edge)
    0.0000    0.0000   clock network delay (ideal)
-   0.0000    0.0000 ^ ex_mem_reg/_171_/CLK (sky130_fd_sc_hd__dfrtp_1)
-   0.3417    0.3417 ^ ex_mem_reg/_171_/Q (sky130_fd_sc_hd__dfrtp_1)
-   0.0000    0.3417 ^ mem_wb_reg/_051_/D (sky130_fd_sc_hd__dfrtp_1)
-             0.3417   data arrival time
+   0.0000    0.0000 ^ ex_mem_reg/_131_/CLK (sky130_fd_sc_hd__dfrtp_1)
+   0.3459    0.3459 ^ ex_mem_reg/_131_/Q (sky130_fd_sc_hd__dfrtp_1)
+   0.0000    0.3459 ^ mem_wb_reg/_011_/D (sky130_fd_sc_hd__dfrtp_1)
+             0.3459   data arrival time
 
    0.0000    0.0000   clock clk (rise edge)
    0.0000    0.0000   clock network delay (ideal)
    0.0000    0.0000   clock reconvergence pessimism
-             0.0000 ^ mem_wb_reg/_051_/CLK (sky130_fd_sc_hd__dfrtp_1)
-  -0.0291   -0.0291   library hold time
-            -0.0291   data required time
+             0.0000 ^ mem_wb_reg/_011_/CLK (sky130_fd_sc_hd__dfrtp_1)
+  -0.0301   -0.0301   library hold time
+            -0.0301   data required time
 -------------------------------------------------------------
-            -0.0291   data required time
-            -0.3417   data arrival time
+            -0.0301   data required time
+            -0.3459   data arrival time
 -------------------------------------------------------------
-             0.3708   slack (MET)
+             0.3760   slack (MET)
 
 
-Startpoint: ex_mem_reg/_173_ (rising edge-triggered flip-flop clocked by clk)
-Endpoint: mem_wb_reg/_053_ (rising edge-triggered flip-flop clocked by clk)
+Startpoint: ex_mem_reg/_132_ (rising edge-triggered flip-flop clocked by clk)
+Endpoint: mem_wb_reg/_012_ (rising edge-triggered flip-flop clocked by clk)
 Path Group: clk
 Path Type: min
 
@@ -196,26 +196,26 @@ Path Type: min
 -------------------------------------------------------------
    0.0000    0.0000   clock clk (rise edge)
    0.0000    0.0000   clock network delay (ideal)
-   0.0000    0.0000 ^ ex_mem_reg/_173_/CLK (sky130_fd_sc_hd__dfrtp_1)
-   0.3417    0.3417 ^ ex_mem_reg/_173_/Q (sky130_fd_sc_hd__dfrtp_1)
-   0.0000    0.3417 ^ mem_wb_reg/_053_/D (sky130_fd_sc_hd__dfrtp_1)
-             0.3417   data arrival time
+   0.0000    0.0000 ^ ex_mem_reg/_132_/CLK (sky130_fd_sc_hd__dfrtp_1)
+   0.3459    0.3459 ^ ex_mem_reg/_132_/Q (sky130_fd_sc_hd__dfrtp_1)
+   0.0000    0.3459 ^ mem_wb_reg/_012_/D (sky130_fd_sc_hd__dfrtp_1)
+             0.3459   data arrival time
 
    0.0000    0.0000   clock clk (rise edge)
    0.0000    0.0000   clock network delay (ideal)
    0.0000    0.0000   clock reconvergence pessimism
-             0.0000 ^ mem_wb_reg/_053_/CLK (sky130_fd_sc_hd__dfrtp_1)
-  -0.0291   -0.0291   library hold time
-            -0.0291   data required time
+             0.0000 ^ mem_wb_reg/_012_/CLK (sky130_fd_sc_hd__dfrtp_1)
+  -0.0301   -0.0301   library hold time
+            -0.0301   data required time
 -------------------------------------------------------------
-            -0.0291   data required time
-            -0.3417   data arrival time
+            -0.0301   data required time
+            -0.3459   data arrival time
 -------------------------------------------------------------
-             0.3708   slack (MET)
+             0.3760   slack (MET)
 
 
-Startpoint: ex_mem_reg/_174_ (rising edge-triggered flip-flop clocked by clk)
-Endpoint: mem_wb_reg/_054_ (rising edge-triggered flip-flop clocked by clk)
+Startpoint: ex_mem_reg/_133_ (rising edge-triggered flip-flop clocked by clk)
+Endpoint: mem_wb_reg/_013_ (rising edge-triggered flip-flop clocked by clk)
 Path Group: clk
 Path Type: min
 
@@ -223,26 +223,26 @@ Path Type: min
 -------------------------------------------------------------
    0.0000    0.0000   clock clk (rise edge)
    0.0000    0.0000   clock network delay (ideal)
-   0.0000    0.0000 ^ ex_mem_reg/_174_/CLK (sky130_fd_sc_hd__dfrtp_1)
-   0.3417    0.3417 ^ ex_mem_reg/_174_/Q (sky130_fd_sc_hd__dfrtp_1)
-   0.0000    0.3417 ^ mem_wb_reg/_054_/D (sky130_fd_sc_hd__dfrtp_1)
-             0.3417   data arrival time
+   0.0000    0.0000 ^ ex_mem_reg/_133_/CLK (sky130_fd_sc_hd__dfrtp_1)
+   0.3459    0.3459 ^ ex_mem_reg/_133_/Q (sky130_fd_sc_hd__dfrtp_1)
+   0.0000    0.3459 ^ mem_wb_reg/_013_/D (sky130_fd_sc_hd__dfrtp_1)
+             0.3459   data arrival time
 
    0.0000    0.0000   clock clk (rise edge)
    0.0000    0.0000   clock network delay (ideal)
    0.0000    0.0000   clock reconvergence pessimism
-             0.0000 ^ mem_wb_reg/_054_/CLK (sky130_fd_sc_hd__dfrtp_1)
-  -0.0291   -0.0291   library hold time
-            -0.0291   data required time
+             0.0000 ^ mem_wb_reg/_013_/CLK (sky130_fd_sc_hd__dfrtp_1)
+  -0.0301   -0.0301   library hold time
+            -0.0301   data required time
 -------------------------------------------------------------
-            -0.0291   data required time
-            -0.3417   data arrival time
+            -0.0301   data required time
+            -0.3459   data arrival time
 -------------------------------------------------------------
-             0.3708   slack (MET)
+             0.3760   slack (MET)
 
 
-Startpoint: ex_mem_reg/_175_ (rising edge-triggered flip-flop clocked by clk)
-Endpoint: mem_wb_reg/_055_ (rising edge-triggered flip-flop clocked by clk)
+Startpoint: ex_mem_reg/_135_ (rising edge-triggered flip-flop clocked by clk)
+Endpoint: mem_wb_reg/_015_ (rising edge-triggered flip-flop clocked by clk)
 Path Group: clk
 Path Type: min
 
@@ -250,22 +250,238 @@ Path Type: min
 -------------------------------------------------------------
    0.0000    0.0000   clock clk (rise edge)
    0.0000    0.0000   clock network delay (ideal)
-   0.0000    0.0000 ^ ex_mem_reg/_175_/CLK (sky130_fd_sc_hd__dfrtp_1)
-   0.3417    0.3417 ^ ex_mem_reg/_175_/Q (sky130_fd_sc_hd__dfrtp_1)
-   0.0000    0.3417 ^ mem_wb_reg/_055_/D (sky130_fd_sc_hd__dfrtp_1)
-             0.3417   data arrival time
+   0.0000    0.0000 ^ ex_mem_reg/_135_/CLK (sky130_fd_sc_hd__dfrtp_1)
+   0.3459    0.3459 ^ ex_mem_reg/_135_/Q (sky130_fd_sc_hd__dfrtp_1)
+   0.0000    0.3459 ^ mem_wb_reg/_015_/D (sky130_fd_sc_hd__dfrtp_1)
+             0.3459   data arrival time
 
    0.0000    0.0000   clock clk (rise edge)
    0.0000    0.0000   clock network delay (ideal)
    0.0000    0.0000   clock reconvergence pessimism
-             0.0000 ^ mem_wb_reg/_055_/CLK (sky130_fd_sc_hd__dfrtp_1)
-  -0.0291   -0.0291   library hold time
-            -0.0291   data required time
+             0.0000 ^ mem_wb_reg/_015_/CLK (sky130_fd_sc_hd__dfrtp_1)
+  -0.0301   -0.0301   library hold time
+            -0.0301   data required time
 -------------------------------------------------------------
-            -0.0291   data required time
-            -0.3417   data arrival time
+            -0.0301   data required time
+            -0.3459   data arrival time
 -------------------------------------------------------------
-             0.3708   slack (MET)
+             0.3760   slack (MET)
+
+
+Startpoint: ex_mem_reg/_136_ (rising edge-triggered flip-flop clocked by clk)
+Endpoint: mem_wb_reg/_016_ (rising edge-triggered flip-flop clocked by clk)
+Path Group: clk
+Path Type: min
+
+    Delay      Time   Description
+-------------------------------------------------------------
+   0.0000    0.0000   clock clk (rise edge)
+   0.0000    0.0000   clock network delay (ideal)
+   0.0000    0.0000 ^ ex_mem_reg/_136_/CLK (sky130_fd_sc_hd__dfrtp_1)
+   0.3459    0.3459 ^ ex_mem_reg/_136_/Q (sky130_fd_sc_hd__dfrtp_1)
+   0.0000    0.3459 ^ mem_wb_reg/_016_/D (sky130_fd_sc_hd__dfrtp_1)
+             0.3459   data arrival time
+
+   0.0000    0.0000   clock clk (rise edge)
+   0.0000    0.0000   clock network delay (ideal)
+   0.0000    0.0000   clock reconvergence pessimism
+             0.0000 ^ mem_wb_reg/_016_/CLK (sky130_fd_sc_hd__dfrtp_1)
+  -0.0301   -0.0301   library hold time
+            -0.0301   data required time
+-------------------------------------------------------------
+            -0.0301   data required time
+            -0.3459   data arrival time
+-------------------------------------------------------------
+             0.3760   slack (MET)
+
+
+Startpoint: ex_mem_reg/_137_ (rising edge-triggered flip-flop clocked by clk)
+Endpoint: mem_wb_reg/_017_ (rising edge-triggered flip-flop clocked by clk)
+Path Group: clk
+Path Type: min
+
+    Delay      Time   Description
+-------------------------------------------------------------
+   0.0000    0.0000   clock clk (rise edge)
+   0.0000    0.0000   clock network delay (ideal)
+   0.0000    0.0000 ^ ex_mem_reg/_137_/CLK (sky130_fd_sc_hd__dfrtp_1)
+   0.3459    0.3459 ^ ex_mem_reg/_137_/Q (sky130_fd_sc_hd__dfrtp_1)
+   0.0000    0.3459 ^ mem_wb_reg/_017_/D (sky130_fd_sc_hd__dfrtp_1)
+             0.3459   data arrival time
+
+   0.0000    0.0000   clock clk (rise edge)
+   0.0000    0.0000   clock network delay (ideal)
+   0.0000    0.0000   clock reconvergence pessimism
+             0.0000 ^ mem_wb_reg/_017_/CLK (sky130_fd_sc_hd__dfrtp_1)
+  -0.0301   -0.0301   library hold time
+            -0.0301   data required time
+-------------------------------------------------------------
+            -0.0301   data required time
+            -0.3459   data arrival time
+-------------------------------------------------------------
+             0.3760   slack (MET)
+
+
+Startpoint: ex_mem_reg/_138_ (rising edge-triggered flip-flop clocked by clk)
+Endpoint: mem_wb_reg/_018_ (rising edge-triggered flip-flop clocked by clk)
+Path Group: clk
+Path Type: min
+
+    Delay      Time   Description
+-------------------------------------------------------------
+   0.0000    0.0000   clock clk (rise edge)
+   0.0000    0.0000   clock network delay (ideal)
+   0.0000    0.0000 ^ ex_mem_reg/_138_/CLK (sky130_fd_sc_hd__dfrtp_1)
+   0.3459    0.3459 ^ ex_mem_reg/_138_/Q (sky130_fd_sc_hd__dfrtp_1)
+   0.0000    0.3459 ^ mem_wb_reg/_018_/D (sky130_fd_sc_hd__dfrtp_1)
+             0.3459   data arrival time
+
+   0.0000    0.0000   clock clk (rise edge)
+   0.0000    0.0000   clock network delay (ideal)
+   0.0000    0.0000   clock reconvergence pessimism
+             0.0000 ^ mem_wb_reg/_018_/CLK (sky130_fd_sc_hd__dfrtp_1)
+  -0.0301   -0.0301   library hold time
+            -0.0301   data required time
+-------------------------------------------------------------
+            -0.0301   data required time
+            -0.3459   data arrival time
+-------------------------------------------------------------
+             0.3760   slack (MET)
+
+
+Startpoint: ex_mem_reg/_139_ (rising edge-triggered flip-flop clocked by clk)
+Endpoint: mem_wb_reg/_019_ (rising edge-triggered flip-flop clocked by clk)
+Path Group: clk
+Path Type: min
+
+    Delay      Time   Description
+-------------------------------------------------------------
+   0.0000    0.0000   clock clk (rise edge)
+   0.0000    0.0000   clock network delay (ideal)
+   0.0000    0.0000 ^ ex_mem_reg/_139_/CLK (sky130_fd_sc_hd__dfrtp_1)
+   0.3459    0.3459 ^ ex_mem_reg/_139_/Q (sky130_fd_sc_hd__dfrtp_1)
+   0.0000    0.3459 ^ mem_wb_reg/_019_/D (sky130_fd_sc_hd__dfrtp_1)
+             0.3459   data arrival time
+
+   0.0000    0.0000   clock clk (rise edge)
+   0.0000    0.0000   clock network delay (ideal)
+   0.0000    0.0000   clock reconvergence pessimism
+             0.0000 ^ mem_wb_reg/_019_/CLK (sky130_fd_sc_hd__dfrtp_1)
+  -0.0301   -0.0301   library hold time
+            -0.0301   data required time
+-------------------------------------------------------------
+            -0.0301   data required time
+            -0.3459   data arrival time
+-------------------------------------------------------------
+             0.3760   slack (MET)
+
+
+Startpoint: ex_mem_reg/_140_ (rising edge-triggered flip-flop clocked by clk)
+Endpoint: mem_wb_reg/_020_ (rising edge-triggered flip-flop clocked by clk)
+Path Group: clk
+Path Type: min
+
+    Delay      Time   Description
+-------------------------------------------------------------
+   0.0000    0.0000   clock clk (rise edge)
+   0.0000    0.0000   clock network delay (ideal)
+   0.0000    0.0000 ^ ex_mem_reg/_140_/CLK (sky130_fd_sc_hd__dfrtp_1)
+   0.3459    0.3459 ^ ex_mem_reg/_140_/Q (sky130_fd_sc_hd__dfrtp_1)
+   0.0000    0.3459 ^ mem_wb_reg/_020_/D (sky130_fd_sc_hd__dfrtp_1)
+             0.3459   data arrival time
+
+   0.0000    0.0000   clock clk (rise edge)
+   0.0000    0.0000   clock network delay (ideal)
+   0.0000    0.0000   clock reconvergence pessimism
+             0.0000 ^ mem_wb_reg/_020_/CLK (sky130_fd_sc_hd__dfrtp_1)
+  -0.0301   -0.0301   library hold time
+            -0.0301   data required time
+-------------------------------------------------------------
+            -0.0301   data required time
+            -0.3459   data arrival time
+-------------------------------------------------------------
+             0.3760   slack (MET)
+
+
+Startpoint: ex_mem_reg/_141_ (rising edge-triggered flip-flop clocked by clk)
+Endpoint: mem_wb_reg/_021_ (rising edge-triggered flip-flop clocked by clk)
+Path Group: clk
+Path Type: min
+
+    Delay      Time   Description
+-------------------------------------------------------------
+   0.0000    0.0000   clock clk (rise edge)
+   0.0000    0.0000   clock network delay (ideal)
+   0.0000    0.0000 ^ ex_mem_reg/_141_/CLK (sky130_fd_sc_hd__dfrtp_1)
+   0.3459    0.3459 ^ ex_mem_reg/_141_/Q (sky130_fd_sc_hd__dfrtp_1)
+   0.0000    0.3459 ^ mem_wb_reg/_021_/D (sky130_fd_sc_hd__dfrtp_1)
+             0.3459   data arrival time
+
+   0.0000    0.0000   clock clk (rise edge)
+   0.0000    0.0000   clock network delay (ideal)
+   0.0000    0.0000   clock reconvergence pessimism
+             0.0000 ^ mem_wb_reg/_021_/CLK (sky130_fd_sc_hd__dfrtp_1)
+  -0.0301   -0.0301   library hold time
+            -0.0301   data required time
+-------------------------------------------------------------
+            -0.0301   data required time
+            -0.3459   data arrival time
+-------------------------------------------------------------
+             0.3760   slack (MET)
+
+
+Startpoint: ex_mem_reg/_143_ (rising edge-triggered flip-flop clocked by clk)
+Endpoint: mem_wb_reg/_023_ (rising edge-triggered flip-flop clocked by clk)
+Path Group: clk
+Path Type: min
+
+    Delay      Time   Description
+-------------------------------------------------------------
+   0.0000    0.0000   clock clk (rise edge)
+   0.0000    0.0000   clock network delay (ideal)
+   0.0000    0.0000 ^ ex_mem_reg/_143_/CLK (sky130_fd_sc_hd__dfrtp_1)
+   0.3459    0.3459 ^ ex_mem_reg/_143_/Q (sky130_fd_sc_hd__dfrtp_1)
+   0.0000    0.3459 ^ mem_wb_reg/_023_/D (sky130_fd_sc_hd__dfrtp_1)
+             0.3459   data arrival time
+
+   0.0000    0.0000   clock clk (rise edge)
+   0.0000    0.0000   clock network delay (ideal)
+   0.0000    0.0000   clock reconvergence pessimism
+             0.0000 ^ mem_wb_reg/_023_/CLK (sky130_fd_sc_hd__dfrtp_1)
+  -0.0301   -0.0301   library hold time
+            -0.0301   data required time
+-------------------------------------------------------------
+            -0.0301   data required time
+            -0.3459   data arrival time
+-------------------------------------------------------------
+             0.3760   slack (MET)
+
+
+Startpoint: ex_mem_reg/_144_ (rising edge-triggered flip-flop clocked by clk)
+Endpoint: mem_wb_reg/_024_ (rising edge-triggered flip-flop clocked by clk)
+Path Group: clk
+Path Type: min
+
+    Delay      Time   Description
+-------------------------------------------------------------
+   0.0000    0.0000   clock clk (rise edge)
+   0.0000    0.0000   clock network delay (ideal)
+   0.0000    0.0000 ^ ex_mem_reg/_144_/CLK (sky130_fd_sc_hd__dfrtp_1)
+   0.3459    0.3459 ^ ex_mem_reg/_144_/Q (sky130_fd_sc_hd__dfrtp_1)
+   0.0000    0.3459 ^ mem_wb_reg/_024_/D (sky130_fd_sc_hd__dfrtp_1)
+             0.3459   data arrival time
+
+   0.0000    0.0000   clock clk (rise edge)
+   0.0000    0.0000   clock network delay (ideal)
+   0.0000    0.0000   clock reconvergence pessimism
+             0.0000 ^ mem_wb_reg/_024_/CLK (sky130_fd_sc_hd__dfrtp_1)
+  -0.0301   -0.0301   library hold time
+            -0.0301   data required time
+-------------------------------------------------------------
+            -0.0301   data required time
+            -0.3459   data arrival time
+-------------------------------------------------------------
+             0.3760   slack (MET)
 
 
 Startpoint: ex_mem_reg/_145_ (rising edge-triggered flip-flop clocked by clk)
@@ -278,176 +494,14 @@ Path Type: min
    0.0000    0.0000   clock clk (rise edge)
    0.0000    0.0000   clock network delay (ideal)
    0.0000    0.0000 ^ ex_mem_reg/_145_/CLK (sky130_fd_sc_hd__dfrtp_1)
-   0.3423    0.3423 ^ ex_mem_reg/_145_/Q (sky130_fd_sc_hd__dfrtp_1)
-   0.0000    0.3423 ^ mem_wb_reg/_025_/D (sky130_fd_sc_hd__dfrtp_1)
-             0.3423   data arrival time
+   0.3459    0.3459 ^ ex_mem_reg/_145_/Q (sky130_fd_sc_hd__dfrtp_1)
+   0.0000    0.3459 ^ mem_wb_reg/_025_/D (sky130_fd_sc_hd__dfrtp_1)
+             0.3459   data arrival time
 
    0.0000    0.0000   clock clk (rise edge)
    0.0000    0.0000   clock network delay (ideal)
    0.0000    0.0000   clock reconvergence pessimism
              0.0000 ^ mem_wb_reg/_025_/CLK (sky130_fd_sc_hd__dfrtp_1)
-  -0.0292   -0.0292   library hold time
-            -0.0292   data required time
--------------------------------------------------------------
-            -0.0292   data required time
-            -0.3423   data arrival time
--------------------------------------------------------------
-             0.3715   slack (MET)
-
-
-Startpoint: ex_mem_reg/_147_ (rising edge-triggered flip-flop clocked by clk)
-Endpoint: mem_wb_reg/_027_ (rising edge-triggered flip-flop clocked by clk)
-Path Group: clk
-Path Type: min
-
-    Delay      Time   Description
--------------------------------------------------------------
-   0.0000    0.0000   clock clk (rise edge)
-   0.0000    0.0000   clock network delay (ideal)
-   0.0000    0.0000 ^ ex_mem_reg/_147_/CLK (sky130_fd_sc_hd__dfrtp_1)
-   0.3423    0.3423 ^ ex_mem_reg/_147_/Q (sky130_fd_sc_hd__dfrtp_1)
-   0.0000    0.3423 ^ mem_wb_reg/_027_/D (sky130_fd_sc_hd__dfrtp_1)
-             0.3423   data arrival time
-
-   0.0000    0.0000   clock clk (rise edge)
-   0.0000    0.0000   clock network delay (ideal)
-   0.0000    0.0000   clock reconvergence pessimism
-             0.0000 ^ mem_wb_reg/_027_/CLK (sky130_fd_sc_hd__dfrtp_1)
-  -0.0292   -0.0292   library hold time
-            -0.0292   data required time
--------------------------------------------------------------
-            -0.0292   data required time
-            -0.3423   data arrival time
--------------------------------------------------------------
-             0.3715   slack (MET)
-
-
-Startpoint: ex_mem_reg/_150_ (rising edge-triggered flip-flop clocked by clk)
-Endpoint: mem_wb_reg/_030_ (rising edge-triggered flip-flop clocked by clk)
-Path Group: clk
-Path Type: min
-
-    Delay      Time   Description
--------------------------------------------------------------
-   0.0000    0.0000   clock clk (rise edge)
-   0.0000    0.0000   clock network delay (ideal)
-   0.0000    0.0000 ^ ex_mem_reg/_150_/CLK (sky130_fd_sc_hd__dfrtp_1)
-   0.3423    0.3423 ^ ex_mem_reg/_150_/Q (sky130_fd_sc_hd__dfrtp_1)
-   0.0000    0.3423 ^ mem_wb_reg/_030_/D (sky130_fd_sc_hd__dfrtp_1)
-             0.3423   data arrival time
-
-   0.0000    0.0000   clock clk (rise edge)
-   0.0000    0.0000   clock network delay (ideal)
-   0.0000    0.0000   clock reconvergence pessimism
-             0.0000 ^ mem_wb_reg/_030_/CLK (sky130_fd_sc_hd__dfrtp_1)
-  -0.0292   -0.0292   library hold time
-            -0.0292   data required time
--------------------------------------------------------------
-            -0.0292   data required time
-            -0.3423   data arrival time
--------------------------------------------------------------
-             0.3715   slack (MET)
-
-
-Startpoint: ex_mem_reg/_177_ (rising edge-triggered flip-flop clocked by clk)
-Endpoint: mem_wb_reg/_057_ (rising edge-triggered flip-flop clocked by clk)
-Path Group: clk
-Path Type: min
-
-    Delay      Time   Description
--------------------------------------------------------------
-   0.0000    0.0000   clock clk (rise edge)
-   0.0000    0.0000   clock network delay (ideal)
-   0.0000    0.0000 ^ ex_mem_reg/_177_/CLK (sky130_fd_sc_hd__dfrtp_1)
-   0.3435    0.3435 ^ ex_mem_reg/_177_/Q (sky130_fd_sc_hd__dfrtp_1)
-   0.0000    0.3435 ^ mem_wb_reg/_057_/D (sky130_fd_sc_hd__dfrtp_1)
-             0.3435   data arrival time
-
-   0.0000    0.0000   clock clk (rise edge)
-   0.0000    0.0000   clock network delay (ideal)
-   0.0000    0.0000   clock reconvergence pessimism
-             0.0000 ^ mem_wb_reg/_057_/CLK (sky130_fd_sc_hd__dfrtp_1)
-  -0.0295   -0.0295   library hold time
-            -0.0295   data required time
--------------------------------------------------------------
-            -0.0295   data required time
-            -0.3435   data arrival time
--------------------------------------------------------------
-             0.3730   slack (MET)
-
-
-Startpoint: ex_mem_reg/_179_ (rising edge-triggered flip-flop clocked by clk)
-Endpoint: mem_wb_reg/_059_ (rising edge-triggered flip-flop clocked by clk)
-Path Group: clk
-Path Type: min
-
-    Delay      Time   Description
--------------------------------------------------------------
-   0.0000    0.0000   clock clk (rise edge)
-   0.0000    0.0000   clock network delay (ideal)
-   0.0000    0.0000 ^ ex_mem_reg/_179_/CLK (sky130_fd_sc_hd__dfrtp_1)
-   0.3435    0.3435 ^ ex_mem_reg/_179_/Q (sky130_fd_sc_hd__dfrtp_1)
-   0.0000    0.3435 ^ mem_wb_reg/_059_/D (sky130_fd_sc_hd__dfrtp_1)
-             0.3435   data arrival time
-
-   0.0000    0.0000   clock clk (rise edge)
-   0.0000    0.0000   clock network delay (ideal)
-   0.0000    0.0000   clock reconvergence pessimism
-             0.0000 ^ mem_wb_reg/_059_/CLK (sky130_fd_sc_hd__dfrtp_1)
-  -0.0295   -0.0295   library hold time
-            -0.0295   data required time
--------------------------------------------------------------
-            -0.0295   data required time
-            -0.3435   data arrival time
--------------------------------------------------------------
-             0.3730   slack (MET)
-
-
-Startpoint: ex_mem_reg/_182_ (rising edge-triggered flip-flop clocked by clk)
-Endpoint: mem_wb_reg/_062_ (rising edge-triggered flip-flop clocked by clk)
-Path Group: clk
-Path Type: min
-
-    Delay      Time   Description
--------------------------------------------------------------
-   0.0000    0.0000   clock clk (rise edge)
-   0.0000    0.0000   clock network delay (ideal)
-   0.0000    0.0000 ^ ex_mem_reg/_182_/CLK (sky130_fd_sc_hd__dfrtp_1)
-   0.3435    0.3435 ^ ex_mem_reg/_182_/Q (sky130_fd_sc_hd__dfrtp_1)
-   0.0000    0.3435 ^ mem_wb_reg/_062_/D (sky130_fd_sc_hd__dfrtp_1)
-             0.3435   data arrival time
-
-   0.0000    0.0000   clock clk (rise edge)
-   0.0000    0.0000   clock network delay (ideal)
-   0.0000    0.0000   clock reconvergence pessimism
-             0.0000 ^ mem_wb_reg/_062_/CLK (sky130_fd_sc_hd__dfrtp_1)
-  -0.0295   -0.0295   library hold time
-            -0.0295   data required time
--------------------------------------------------------------
-            -0.0295   data required time
-            -0.3435   data arrival time
--------------------------------------------------------------
-             0.3730   slack (MET)
-
-
-Startpoint: ex_mem_reg/_178_ (rising edge-triggered flip-flop clocked by clk)
-Endpoint: mem_wb_reg/_058_ (rising edge-triggered flip-flop clocked by clk)
-Path Group: clk
-Path Type: min
-
-    Delay      Time   Description
--------------------------------------------------------------
-   0.0000    0.0000   clock clk (rise edge)
-   0.0000    0.0000   clock network delay (ideal)
-   0.0000    0.0000 ^ ex_mem_reg/_178_/CLK (sky130_fd_sc_hd__dfrtp_1)
-   0.3459    0.3459 ^ ex_mem_reg/_178_/Q (sky130_fd_sc_hd__dfrtp_1)
-   0.0000    0.3459 ^ mem_wb_reg/_058_/D (sky130_fd_sc_hd__dfrtp_1)
-             0.3459   data arrival time
-
-   0.0000    0.0000   clock clk (rise edge)
-   0.0000    0.0000   clock network delay (ideal)
-   0.0000    0.0000   clock reconvergence pessimism
-             0.0000 ^ mem_wb_reg/_058_/CLK (sky130_fd_sc_hd__dfrtp_1)
   -0.0301   -0.0301   library hold time
             -0.0301   data required time
 -------------------------------------------------------------
@@ -457,8 +511,8 @@ Path Type: min
              0.3760   slack (MET)
 
 
-Startpoint: ex_mem_reg/_180_ (rising edge-triggered flip-flop clocked by clk)
-Endpoint: mem_wb_reg/_060_ (rising edge-triggered flip-flop clocked by clk)
+Startpoint: ex_mem_reg/_146_ (rising edge-triggered flip-flop clocked by clk)
+Endpoint: mem_wb_reg/_026_ (rising edge-triggered flip-flop clocked by clk)
 Path Group: clk
 Path Type: min
 
@@ -466,69 +520,15 @@ Path Type: min
 -------------------------------------------------------------
    0.0000    0.0000   clock clk (rise edge)
    0.0000    0.0000   clock network delay (ideal)
-   0.0000    0.0000 ^ ex_mem_reg/_180_/CLK (sky130_fd_sc_hd__dfrtp_1)
-   0.3459    0.3459 ^ ex_mem_reg/_180_/Q (sky130_fd_sc_hd__dfrtp_1)
-   0.0000    0.3459 ^ mem_wb_reg/_060_/D (sky130_fd_sc_hd__dfrtp_1)
+   0.0000    0.0000 ^ ex_mem_reg/_146_/CLK (sky130_fd_sc_hd__dfrtp_1)
+   0.3459    0.3459 ^ ex_mem_reg/_146_/Q (sky130_fd_sc_hd__dfrtp_1)
+   0.0000    0.3459 ^ mem_wb_reg/_026_/D (sky130_fd_sc_hd__dfrtp_1)
              0.3459   data arrival time
 
    0.0000    0.0000   clock clk (rise edge)
    0.0000    0.0000   clock network delay (ideal)
    0.0000    0.0000   clock reconvergence pessimism
-             0.0000 ^ mem_wb_reg/_060_/CLK (sky130_fd_sc_hd__dfrtp_1)
-  -0.0301   -0.0301   library hold time
-            -0.0301   data required time
--------------------------------------------------------------
-            -0.0301   data required time
-            -0.3459   data arrival time
--------------------------------------------------------------
-             0.3760   slack (MET)
-
-
-Startpoint: ex_mem_reg/_181_ (rising edge-triggered flip-flop clocked by clk)
-Endpoint: mem_wb_reg/_061_ (rising edge-triggered flip-flop clocked by clk)
-Path Group: clk
-Path Type: min
-
-    Delay      Time   Description
--------------------------------------------------------------
-   0.0000    0.0000   clock clk (rise edge)
-   0.0000    0.0000   clock network delay (ideal)
-   0.0000    0.0000 ^ ex_mem_reg/_181_/CLK (sky130_fd_sc_hd__dfrtp_1)
-   0.3459    0.3459 ^ ex_mem_reg/_181_/Q (sky130_fd_sc_hd__dfrtp_1)
-   0.0000    0.3459 ^ mem_wb_reg/_061_/D (sky130_fd_sc_hd__dfrtp_1)
-             0.3459   data arrival time
-
-   0.0000    0.0000   clock clk (rise edge)
-   0.0000    0.0000   clock network delay (ideal)
-   0.0000    0.0000   clock reconvergence pessimism
-             0.0000 ^ mem_wb_reg/_061_/CLK (sky130_fd_sc_hd__dfrtp_1)
-  -0.0301   -0.0301   library hold time
-            -0.0301   data required time
--------------------------------------------------------------
-            -0.0301   data required time
-            -0.3459   data arrival time
--------------------------------------------------------------
-             0.3760   slack (MET)
-
-
-Startpoint: ex_mem_reg/_183_ (rising edge-triggered flip-flop clocked by clk)
-Endpoint: mem_wb_reg/_063_ (rising edge-triggered flip-flop clocked by clk)
-Path Group: clk
-Path Type: min
-
-    Delay      Time   Description
--------------------------------------------------------------
-   0.0000    0.0000   clock clk (rise edge)
-   0.0000    0.0000   clock network delay (ideal)
-   0.0000    0.0000 ^ ex_mem_reg/_183_/CLK (sky130_fd_sc_hd__dfrtp_1)
-   0.3459    0.3459 ^ ex_mem_reg/_183_/Q (sky130_fd_sc_hd__dfrtp_1)
-   0.0000    0.3459 ^ mem_wb_reg/_063_/D (sky130_fd_sc_hd__dfrtp_1)
-             0.3459   data arrival time
-
-   0.0000    0.0000   clock clk (rise edge)
-   0.0000    0.0000   clock network delay (ideal)
-   0.0000    0.0000   clock reconvergence pessimism
-             0.0000 ^ mem_wb_reg/_063_/CLK (sky130_fd_sc_hd__dfrtp_1)
+             0.0000 ^ mem_wb_reg/_026_/CLK (sky130_fd_sc_hd__dfrtp_1)
   -0.0301   -0.0301   library hold time
             -0.0301   data required time
 -------------------------------------------------------------

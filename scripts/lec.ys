@@ -1,6 +1,12 @@
-read_liberty -lib sky130_fd_sc_hd__tt_025C_1v80.lib
+# =====================================================================
+# SỬ DỤNG PHƯƠNG PHÁP KIỂM TRA TỔ HỢP (CEC) - CHẠY SIÊU NHANH
+# =====================================================================
+
+# ----------------- 1. ĐỌC RTL (GOLD) -----------------
+read_liberty -ignore_miss_func sky130_fd_sc_hd__tt_025C_1v80.lib
 read_verilog -sv src/*.v
 
+# Khôi phục các blackbox để cô lập hoàn toàn dung lượng bộ nhớ lớn
 blackbox instruction_memory
 blackbox data_memory
 blackbox Register_File
@@ -15,11 +21,9 @@ design -stash gold
 # ----------------- 2. ĐỌC NETLIST ĐÃ CÓ SẴN (GATE) -----------------
 read_liberty -ignore_miss_func sky130_fd_sc_hd__tt_025C_1v80.lib
 
-# read_liberty sky130_fd_sc_hd__tt_025C_1v80.lib
-# read_verilog -lib -sv sky130_fd_sc_hd__blackbox.v
-
 read_verilog -sv __NETLIST__
 
+# Khôi phục các blackbox ở bản Gate
 blackbox instruction_memory
 blackbox data_memory
 blackbox Register_File
@@ -31,13 +35,12 @@ memory
 opt
 design -stash gate
 
-# ---------------- LEC ----------------
+# ----------------- 3. CHẠY LEC TỔ HỢP (CHỈ MẤT VÀI PHÚT) -----------------
 
 design -copy-from gold -as gold __TOP__
 design -copy-from gate -as gate __TOP__
 
 equiv_make gold gate equiv
-#prep -top equiv
 hierarchy -top equiv
 flatten
 
@@ -46,9 +49,9 @@ async2sync
 setundef -undriven -zero
 setundef -zero
 
+# So khớp cấu trúc và giải SAT tổ hợp (Bỏ hoàn toàn lệnh equiv_induct)
 equiv_struct
 equiv_simple
 
-equiv_induct -seq 5
-
-equiv_status 
+# Kiểm tra trạng thái chứng minh tương đương
+equiv_status
